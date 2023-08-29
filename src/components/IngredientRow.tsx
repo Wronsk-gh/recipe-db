@@ -1,19 +1,15 @@
 import { Months, Ingredient } from "../db-types";
-import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
 
 // export function FilterableIngredientTable({ months, loading }: { months: Months, loading: boolean }) {
 export function IngredientRow({
   months,
-  ingredient
+  ingredient,
 }: {
   months: Months;
   ingredient: Ingredient;
 }) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm();
+  const [displayedIngredient, setDisplayedIngredient] = useState();
   const cells = [];
 
   cells.push(
@@ -25,18 +21,7 @@ export function IngredientRow({
   }
 
   for (const monthId in months) {
-    // if (ingredient.months[monthId] === true) {
-    //   cells.push(<td>X</td>)
-    // }
-    // else {
-    //   cells.push(<td>-</td>)
-    // }
-
     const handleChange = () => {};
-
-    // if (!("months" in ingredient) || !(monthId in ingredient.months)) {
-    //   console.log(ingredient);
-    // }
 
     cells.push(
       <td key={monthId}>

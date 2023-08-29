@@ -22,7 +22,7 @@ let tokenClient: any;
 async function initializeGapiClient() {
   await gapi.client.init({
     apiKey: API_KEY,
-    discoveryDocs: [DISCOVERY_DOC]
+    discoveryDocs: [DISCOVERY_DOC],
   });
 }
 
@@ -41,10 +41,12 @@ async function listFiles() {
   try {
     response = await gapi.client.drive.files.list({
       pageSize: 10,
-      fields: "files(id, name)"
+      fields: "files(id, name)",
     });
   } catch (err) {
-    console.log(err.message);
+    if (err instanceof Error) {
+      console.log(err.message);
+    }
     return;
   }
   const files = response.result.files;
@@ -88,7 +90,7 @@ function gisLoaded() {
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
-    callback: "" as any // defined later
+    callback: "" as any, // defined later
   });
 }
 

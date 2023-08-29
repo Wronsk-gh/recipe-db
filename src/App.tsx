@@ -16,28 +16,11 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [months, setMonths] = useState({});
   const [ingredients, setIngredients] = useState({});
-  const [db, setDb] = useState((null as unknown) as Database);
+  const [db, setDb] = useState(null as unknown as Database);
 
   const getDbSingleton = async () => {
     setDb(await getDb());
   };
-
-  // useEffect(async () => {
-  //   // await setDb(getDb());
-  //   let a = 1;
-  // }, []);
-
-  // useEffect(() => {
-  //   const awaitGetDb = async () => {
-  //     if (dbStatus === "empty") {
-  //       setDb(await getDb());
-  //       SetDbStatus("Pending");
-  //       console.log("setting the DB object");
-  //     }
-  //     console.log("App init effect");
-  //   };
-  //   awaitGetDb();
-  // }, [db, dbStatus]);
 
   const fetchMonths = async () => {
     setLoading(true);
@@ -48,9 +31,6 @@ function App() {
     const dbIngredients: Ingredients = (
       await get(child(dbRef, `ingredients`))
     ).val();
-
-    // const res = _.cloneDeep(dbMonths)
-    // setMonths({...dbMonths})
 
     setMonths(dbMonths);
     setIngredients(dbIngredients);
@@ -68,52 +48,6 @@ function App() {
     console.log(db);
   };
 
-  // useEffect(() => {
-  //   const fetchMonths = async () => {
-  //     setLoading(true);
-
-  //     const dbRef = ref(db);
-  //     // Fetch the months from the db
-  //     const dbMonths: Months = (await get(child(dbRef, `months`))).val();
-
-  //     // const res = _.cloneDeep(dbMonths)
-  //     // setMonths({...dbMonths})
-
-  //     setMonths(dbMonths);
-  //     setLoading(false);
-  //     console.log(months);
-  //   };
-  //   const awaitFetchMonths = async () => {
-  //     if (db) {
-  //       await fetchMonths();
-  //     }
-  //   };
-  //   awaitFetchMonths();
-  // }, [db]);
-
-  // useEffect(() => {
-  //   fetchMonths()
-  // }, [])
-
-  // return (
-  //   // <div className="App">
-  //   //   <header className="App-header">
-  //   //     <img src={logo} className="App-logo" alt="logo" />
-  //   //     <p>
-  //   //       Edit <code>src/App.tsx</code> and save to reload.
-  //   //     </p>
-  //   //     <a
-  //   //       className="App-link"
-  //   //       href="https://reactjs.org"
-  //   //       target="_blank"
-  //   //       rel="noopener noreferrer"
-  //   //     >
-  //   //       Learn React
-  //   //     </a>
-  //   //   </header>
-  //   // </div>
-  //   <FilterableIngredientTable months={months} />
-  // );
   return (
     <div>
       <RefreshDbButton />
