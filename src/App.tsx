@@ -28,9 +28,7 @@ function App() {
     const dbRef = ref(db);
     // Fetch the months and ingredients from the db
     const dbMonths: Months = (await get(child(dbRef, `months`))).val();
-    const dbIngredients: Ingredients = (
-      await get(child(dbRef, `ingredients`))
-    ).val();
+    const dbIngredients: Ingredients = (await get(child(dbRef, `ingredients`))).val();
 
     setMonths(dbMonths);
     setIngredients(dbIngredients);

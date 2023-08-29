@@ -7,6 +7,9 @@
     "react",
     "starter"
   ],
+  "prettier": {
+    "printWidth": 20
+  },
   "main": "src/index.tsx",
   "dependencies": {
     "@firebase/app": "0.9.5",
