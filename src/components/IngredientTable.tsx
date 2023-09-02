@@ -1,47 +1,43 @@
-import { Months, Ingredients, Ingredient } from "../db-types"
+import { Months, Ingredients, Ingredient } from "../db-types";
 import { IngredientRow } from "./IngredientRow";
 
-
 // export function IngredientTable({ months, loading }: { months: Months, loading: boolean }) {
-export function IngredientTable({ months, ingredients }: { months: Months, ingredients: Ingredients }) {
+export function IngredientTable({
+  months,
+  ingredients,
+}: {
+  months: Months | undefined;
+  ingredients: Ingredients | undefined;
+}) {
   const rows = [];
   const headers1 = [];
   const headers2 = [];
 
-  headers1.push(<th key={"header"}></th>)
-  headers2.push(<th key={"header"}>Ingredients</th>)
+  headers1.push(<th key="header"></th>);
+  headers2.push(<th key="header">Ingredients</th>);
   for (const monthId in months) {
-    headers1.push(
-      <th key={monthId}>{months[monthId].name}</th>
-    );
-    headers2.push(
-      <th key={monthId}></th>
-    );
+    headers1.push(<th key={monthId}>{months[monthId].name}</th>);
+    headers2.push(<th key={monthId}></th>);
   }
+  headers1.push(<th key="resync"></th>);
+  headers2.push(<th key="resync"></th>);
+  headers1.push(<th key="Update"></th>);
+  headers2.push(<th key="Update"></th>);
 
   for (const ingredientId in ingredients) {
     const ingredient: Ingredient = {
       ...ingredients[ingredientId],
-      "ingredientId": ingredientId
+      ingredientId: ingredientId,
     };
-    rows.push(<IngredientRow key={ingredientId} months={months} ingredient={ingredient} />)
+    rows.push(
+      <IngredientRow
+        key={ingredientId}
+        months={months}
+        ingredient={ingredient}
+      />
+    );
+    break;
   }
-
-  // products.forEach((product) => {
-  //   if (product.category !== lastCategory) {
-  //     rows.push(
-  //       <ProductCategoryRow
-  //         category={product.category}
-  //         key={product.category} />
-  //     );
-  //   }
-  //   rows.push(
-  //     <ProductRow
-  //       product={product}
-  //       key={product.name} />
-  //   );
-  //   lastCategory = product.category;
-  // });
 
   return (
     <table>

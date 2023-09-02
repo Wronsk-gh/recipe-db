@@ -1,9 +1,17 @@
 export function CallbackButton({
   label,
-  onButtonClick
+  onButtonClick,
 }: {
   label: string;
   onButtonClick: any;
 }) {
-  return <button onClick={onButtonClick}>{label}</button>;
+  return (
+    <button
+      onClick={
+        onButtonClick
+      }
+    >
+      {label}
+    </button>
+  );
 }

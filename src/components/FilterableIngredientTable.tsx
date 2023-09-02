@@ -6,8 +6,8 @@ export function FilterableIngredientTable({
   months,
   ingredients
 }: {
-  months: Months;
-  ingredients: Ingredients;
+  months: Months | undefined;
+  ingredients: Ingredients | undefined;
 }) {
   return (
     <div>

@@ -8,13 +8,15 @@
     "starter"
   ],
   "prettier": {
-    "printWidth": 20
+    "tabWidth": 2,
+    "printWidth": 80
   },
   "main": "src/index.tsx",
   "dependencies": {
     "@firebase/app": "0.9.5",
     "@firebase/auth": "0.21.5",
     "@firebase/database": "0.14.4",
+    "@tanstack/react-query": "^4.33.0",
     "@types/gapi": "0.0.44",
     "@types/gapi.auth2": "0.0.57",
     "@types/gapi.client.drive-v3": "0.0.1",
