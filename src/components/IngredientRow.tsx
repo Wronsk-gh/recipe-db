@@ -39,7 +39,9 @@ export function IngredientRow({
 
   const ingredientMutation = useMutation({
     mutationFn: async (newIngredient: Ingredient) => { await updateIngredientDb(db, newIngredient); },
-    onSuccess: onMutationSuccess
+    onError: () => {window.alert("Could not update...")},
+    onSuccess: onMutationSuccess,
+    onSettled: () => {ingredientMutation.reset();}
   })
 
   // Helper function to check if the displayed ingredient is desync
@@ -102,10 +104,12 @@ export function IngredientRow({
 
   // Add the update button
   async function onUpdateButtonClick() {
-    // TODO  prevent updating if it is desynced (deactivate the button ?)
-    // TODO raise something in case the ingredient is desynced
-    if ((displayedIngredient !== undefined) && (!isIngredientDesync())) {
-      ingredientMutation.mutate(displayedIngredient)
+    if ((displayedIngredient !== undefined) && (ingredientMutation.isIdle)) {
+      if (!isIngredientDesync()) {
+        ingredientMutation.mutate(displayedIngredient)
+      } else {
+        window.alert("Ingredient is desynced, sync it first !")
+      }
     }
   }
   function onMutationSuccess() {
