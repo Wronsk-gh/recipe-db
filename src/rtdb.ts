@@ -1,12 +1,10 @@
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-import { getDatabase, Database, ref, set } from "firebase/database";
+import { getDatabase, Database, ref, child, set, get } from "firebase/database";
 
-import { Ingredient } from "./db-types";
+import { Months, Ingredients, Ingredient } from "./db-types";
 
 export async function getDb(): Promise<Database> {
-  let db: Database;
-  //if (!db) {
   // Your web app's Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyA1kUO5D0N0KAyNP4QVruujJocM7YM6IQc",
@@ -21,31 +19,6 @@ export async function getDb(): Promise<Database> {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
-
-  // signInWithPopup(auth, provider)
-  // .then((result: UserCredential) => {
-  //   // This gives you a Google Access Token. You can use it to access the Google API.
-  //   const credential = GoogleAuthProvider.credentialFromResult(result);
-  //   const token = credential!.accessToken;
-  //   // The signed-in user info.
-  //   const user = result.user;
-  //   // IdP data available using getAdditionalUserInfo(result)
-  //   // ...
-  // }).catch((error) => {
-  //   // Handle Errors here.
-  //   const errorCode = error.code;
-  //   const errorMessage = error.message;
-  //   // The email of the user's account used.
-  //   const email = error.customData.email;
-  //   // The AuthCredential type that was used.
-  //   const credential = GoogleAuthProvider.credentialFromError(error);
-  //   // ...
-  // });
-
-  // const credentials = GoogleAuthProvider.credentialFromResult(await signInWithPopup(auth, provider));
-  // GoogleAuthProvider.credentialFromResult(
-  //   await signInWithPopup(auth, provider)
-  // );
 
   signInWithPopup(auth, provider)
     .then((result) => {
@@ -62,10 +35,7 @@ export async function getDb(): Promise<Database> {
       alert(errorMessage);
     });
 
-  db = getDatabase(app);
-  // }
-
-  return db;
+  return getDatabase(app);
 }
 
   export async function updateIngredientDb(db: Database | undefined, newIngredient: Ingredient) {
@@ -78,3 +48,20 @@ export async function getDb(): Promise<Database> {
     const {ingredientId: removed, ...newDbIngredient} = newIngredient;
     await set(ingredientRef, newDbIngredient);
   }
+
+async function fetchFromDb<DataType>(db: Database | undefined, dataName: string): Promise<DataType> {
+    if (!db) {
+      throw new Error('No database connection available')
+    }
+    const dbRef = ref(db);
+    const dbData: DataType = (await get(child(dbRef, dataName))).val();
+    return dbData;
+}
+  
+export async function fetchMonths(db: Database | undefined) {
+    return await fetchFromDb<Months>(db, "months");
+}
+
+export async function fetchIngredients(db: Database | undefined) {
+    return await fetchFromDb<Ingredients>(db, "ingredients");
+}

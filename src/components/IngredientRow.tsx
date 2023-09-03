@@ -1,8 +1,7 @@
-import { ref, child, set, Database } from "firebase/database";
+import { Database } from "firebase/database";
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState, useEffect } from "react";
-// import { isEqual } from "lodash";
-import * as _ from "lodash";
+import _ from "lodash";
 
 
 import { updateIngredientDb } from "../rtdb";
@@ -39,7 +38,6 @@ export function IngredientRow({
   const queryClient = useQueryClient();
 
   const ingredientMutation = useMutation({
-    //mutationFn: updateIngredientDb,
     mutationFn: async (newIngredient: Ingredient) => { await updateIngredientDb(db, newIngredient); },
     onSuccess: onMutationSuccess
   })
@@ -48,8 +46,7 @@ export function IngredientRow({
   function isIngredientDesync() : boolean {
     // The condition is that the prop data that was used to init the display has changed
     // and the display doesn't match with the new prop data
-    return (!areIngredientsEqual(ingredient, previousIngredient)
-      && !areIngredientsEqual(ingredient, displayedIngredient));
+    return (!areIngredientsEqual(ingredient, previousIngredient));
   }
 
   // Return an empty div in case there's no data to display
@@ -58,7 +55,6 @@ export function IngredientRow({
   }
 
   // Evaluate if ingredient's data is out of sync to apply a specific style if it's the case
-  // const rowStyle = {color: (syncStatus) ? ("black") : ("red")};
   const rowStyle = {color:
     (isIngredientDesync()) ? ("red") : ("black")};
   console.log("ingredient: " + JSON.stringify(ingredient))
@@ -87,26 +83,6 @@ export function IngredientRow({
         setDisplayedIngredient(newIngredient);
       }
       console.log(`new content : ` + JSON.stringify(newIngredient));
-      // if (displayedIngredient === undefined) {
-      //   return;
-      // } else {
-      //   console.log(`old content : ` + JSON.stringify(displayedIngredient));
-      //   const newIngredient = copyIngredient(displayedIngredient);
-      //   if ((newIngredient.months === undefined) || (!(monthId in newIngredient.months))) {
-      //     if (newIngredient.months === undefined) {
-      //       newIngredient.months = {};
-      //     }
-      //     // Add the month
-      //     newIngredient.months[monthId] = true;
-      //     setDisplayedIngredient(newIngredient);
-      //   } else {
-      //     // Remove the month
-      //     const {[monthId]: removed, ...newMonths} = newIngredient.months;
-      //     newIngredient.months = newMonths;
-      //     setDisplayedIngredient(newIngredient);
-      //     }
-      //     console.log(`new content : ` + JSON.stringify(newIngredient));
-      //   }
     };
     cells.push(
       <td key={monthId}>
