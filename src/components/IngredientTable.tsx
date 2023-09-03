@@ -24,8 +24,8 @@ export function IngredientTable({
   }
   headers1.push(<th key="resync"></th>);
   headers2.push(<th key="resync"></th>);
-  headers1.push(<th key="Update"></th>);
-  headers2.push(<th key="Update"></th>);
+  headers1.push(<th key="update"></th>);
+  headers2.push(<th key="update"></th>);
 
   for (const ingredientId in ingredients) {
     const ingredient: Ingredient = {

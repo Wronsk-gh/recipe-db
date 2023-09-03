@@ -52,54 +52,66 @@ export function IngredientRow({
   }
 
   // Return an empty div in case there's no data to display
-  if ((months === undefined) || (displayedIngredient === undefined)) {
-    return <div />
-  }
+  // if ((months === undefined) || (displayedIngredient === undefined)) {
+  //   return <div />
+  // }
+  // if (months === undefined) {
+  //   // On td for ingredient name, update button and resync button
+  //   return
+  //     <tr>
+  //       <td></td>
+  //       <td></td>
+  //       <td></td>
+  //     </tr>
+  // }
 
   // Evaluate if ingredient's data is out of sync to apply a specific style if it's the case
   const rowStyle = {color:
     (isIngredientDesync()) ? ("red") : ("black")};
-  console.log("ingredient: " + JSON.stringify(ingredient))
-  console.log("displayedIngredient: " + JSON.stringify(displayedIngredient))
-  console.log("previousIngredient: " + JSON.stringify(previousIngredient))
 
   const cells = [];
-  cells.push(
-    <td key={"header" + displayedIngredient.ingredientId}>{displayedIngredient.name}</td>
-  );
-  for (const monthId in months) {
-    const handleChange = () => {
-      console.log(`old content : ` + JSON.stringify(displayedIngredient));
-      const newIngredient = copyIngredient(displayedIngredient);
-      if ((newIngredient.months === undefined) || (!(monthId in newIngredient.months))) {
-        if (newIngredient.months === undefined) {
-          newIngredient.months = {};
-        }
-        // Add the month
-        newIngredient.months[monthId] = true;
-        setDisplayedIngredient(newIngredient);
-      } else {
-        // Remove the month
-        const {[monthId]: removed, ...newMonths} = newIngredient.months;
-        newIngredient.months = newMonths;
-        setDisplayedIngredient(newIngredient);
-      }
-      console.log(`new content : ` + JSON.stringify(newIngredient));
-    };
+  if (displayedIngredient !== undefined) {
     cells.push(
-      <td key={monthId}>
-        <input
-          type="checkbox"
-          checked={
-            displayedIngredient !== undefined &&
-            displayedIngredient.months !== undefined &&
-            monthId in displayedIngredient.months &&
-            displayedIngredient.months[monthId] === true
+      <td key={"header" + displayedIngredient.ingredientId}>{displayedIngredient.name}</td>
+      );
+  } else {
+    cells.push(<td key={"header empty"}></td>);
+  }
+  for (const monthId in months) {
+    if (displayedIngredient !== undefined) {
+      const handleChange = () => {
+        const newIngredient = copyIngredient(displayedIngredient);
+        if ((newIngredient.months === undefined) || (!(monthId in newIngredient.months))) {
+          if (newIngredient.months === undefined) {
+            newIngredient.months = {};
           }
-          onChange={handleChange}
-        />
-      </td>
-    );
+          // Add the month
+          newIngredient.months[monthId] = true;
+          setDisplayedIngredient(newIngredient);
+        } else {
+          // Remove the month
+          const {[monthId]: removed, ...newMonths} = newIngredient.months;
+          newIngredient.months = newMonths;
+          setDisplayedIngredient(newIngredient);
+        }
+      };
+      cells.push(
+        <td key={monthId}>
+          <input
+            type="checkbox"
+            checked={
+              displayedIngredient !== undefined &&
+              displayedIngredient.months !== undefined &&
+              monthId in displayedIngredient.months &&
+              displayedIngredient.months[monthId] === true
+            }
+            onChange={handleChange}
+          />
+        </td>
+      );
+    } else {
+      cells.push(<td key={monthId}></td>);
+    }
   }
 
   // Add the update button
@@ -118,7 +130,11 @@ export function IngredientRow({
     // Update the new reference value of ingredient here
     setPreviousIngredient(copyIngredient(displayedIngredient!))
   }
-  cells.push(<td key="update"><CallbackButton label="Update" onButtonClick={onUpdateButtonClick} /></td>)
+  if (displayedIngredient !== undefined) {
+    cells.push(<td key="update"><CallbackButton label="Update" onButtonClick={onUpdateButtonClick} /></td>)
+  } else {
+    cells.push(<td key="update"></td>)
+  }
 
   // Add the resync button
   function onResyncButtonClick() {
@@ -128,7 +144,11 @@ export function IngredientRow({
         setPreviousIngredient(copyIngredient(ingredient));
       }
   }
-  cells.push(<td key="resync"><CallbackButton label="Resync" onButtonClick={onResyncButtonClick} /></td>)
+  if (displayedIngredient !== undefined) {
+    cells.push(<td key="resync"><CallbackButton label="Resync" onButtonClick={onResyncButtonClick} /></td>)
+  } else {
+    cells.push(<td key="resync"></td>)
+  }
 
   return <tr style={rowStyle}>{cells}</tr>;
 }
