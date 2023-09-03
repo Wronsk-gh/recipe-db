@@ -1,11 +1,14 @@
+import { Database } from "firebase/database";
 import { Months, Ingredients, Ingredient } from "../db-types";
 import { IngredientRow } from "./IngredientRow";
 
 // export function IngredientTable({ months, loading }: { months: Months, loading: boolean }) {
 export function IngredientTable({
+  db,
   months,
   ingredients,
 }: {
+  db: Database | undefined;
   months: Months | undefined;
   ingredients: Ingredients | undefined;
 }) {
@@ -32,6 +35,7 @@ export function IngredientTable({
     rows.push(
       <IngredientRow
         key={ingredientId}
+        db={db}
         months={months}
         ingredient={ingredient}
       />

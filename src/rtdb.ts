@@ -1,8 +1,8 @@
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-import { getDatabase, Database } from "firebase/database";
+import { getDatabase, Database, ref, set } from "firebase/database";
 
-//let db: Database;
+import { Ingredient } from "./db-types";
 
 export async function getDb(): Promise<Database> {
   let db: Database;
@@ -67,3 +67,14 @@ export async function getDb(): Promise<Database> {
 
   return db;
 }
+
+  export async function updateIngredientDb(db: Database | undefined, newIngredient: Ingredient) {
+    if (db === undefined) {
+      throw new Error('No database connection available')
+    }
+    // TODO while updating, need to flag it such that the ingredient is not marked as desynced
+    // TODO also, the checkboxes should not be updated while it is updating
+    const ingredientRef = ref(db, 'ingredients/' + newIngredient.ingredientId);
+    const {ingredientId: removed, ...newDbIngredient} = newIngredient;
+    await set(ingredientRef, newDbIngredient);
+  }

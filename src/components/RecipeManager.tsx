@@ -73,7 +73,7 @@ export function RecipeManager() {
     <div>
         <br />
     </div>
-    <FilterableIngredientTable months={monthsData} ingredients={ingredientsData} />
+    <FilterableIngredientTable db={db} months={monthsData} ingredients={ingredientsData} />
     </div>
   );
 }
