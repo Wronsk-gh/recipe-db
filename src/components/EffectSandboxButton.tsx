@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export function EffectSandboxButton({
   initialCount,
@@ -12,7 +12,7 @@ export function EffectSandboxButton({
     setCount(initialCount);
   }, [initialCount]);
   useEffect(() => {
-    console.log("rendering effect button...");
+    console.log('rendering effect button...');
   });
   function onButtonClick() {
     setCount(count + 1);

@@ -1,13 +1,12 @@
-import { Database } from "firebase/database";
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useState, useEffect } from "react";
-import _ from "lodash";
+import { Database } from 'firebase/database';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
+import _ from 'lodash';
 
+import { updateIngredientDb } from '../rtdb';
+import { Months, Ingredient } from '../db-types';
 
-import { updateIngredientDb } from "../rtdb";
-import { Months, Ingredient } from "../db-types";
-
-import { CallbackButton } from "./CallbackButton";
+import { CallbackButton } from './CallbackButton';
 
 export function IngredientRow({
   db,
@@ -18,18 +17,20 @@ export function IngredientRow({
   months: Months | undefined;
   ingredient: Ingredient | undefined;
 }) {
-  const [displayedIngredient, setDisplayedIngredient]
-    = useState<Ingredient | undefined>(undefined);
+  const [displayedIngredient, setDisplayedIngredient] = useState<
+    Ingredient | undefined
+  >(undefined);
   // The previousIngredient state holds the initial prop value that was used to initialise the displayedIngredient state
-  const [previousIngredient, setPreviousIngredient]
-    = useState<Ingredient | undefined>(undefined);
+  const [previousIngredient, setPreviousIngredient] = useState<
+    Ingredient | undefined
+  >(undefined);
 
   useEffect(() => {
     if (displayedIngredient === undefined) {
       // initialise the display variable if possible
       if (ingredient !== undefined) {
         setDisplayedIngredient(copyIngredient(ingredient));
-        setPreviousIngredient(copyIngredient(ingredient))
+        setPreviousIngredient(copyIngredient(ingredient));
       }
     }
   }, [ingredient]);
@@ -38,17 +39,23 @@ export function IngredientRow({
   const queryClient = useQueryClient();
 
   const ingredientMutation = useMutation({
-    mutationFn: async (newIngredient: Ingredient) => { await updateIngredientDb(db, newIngredient); },
-    onError: () => {window.alert("Could not update...")},
+    mutationFn: async (newIngredient: Ingredient) => {
+      await updateIngredientDb(db, newIngredient);
+    },
+    onError: () => {
+      window.alert('Could not update...');
+    },
     onSuccess: onMutationSuccess,
-    onSettled: () => {ingredientMutation.reset();}
-  })
+    onSettled: () => {
+      ingredientMutation.reset();
+    },
+  });
 
   // Helper function to check if the displayed ingredient is desync
-  function isIngredientDesync() : boolean {
+  function isIngredientDesync(): boolean {
     // The condition is that the prop data that was used to init the display has changed
     // and the display doesn't match with the new prop data
-    return (!areIngredientsEqual(ingredient, previousIngredient));
+    return !areIngredientsEqual(ingredient, previousIngredient);
   }
 
   // Return an empty div in case there's no data to display
@@ -66,22 +73,26 @@ export function IngredientRow({
   // }
 
   // Evaluate if ingredient's data is out of sync to apply a specific style if it's the case
-  const rowStyle = {color:
-    (isIngredientDesync()) ? ("red") : ("black")};
+  const rowStyle = { color: isIngredientDesync() ? 'red' : 'black' };
 
   const cells = [];
   if (displayedIngredient !== undefined) {
     cells.push(
-      <td key={"header" + displayedIngredient.ingredientId}>{displayedIngredient.name}</td>
-      );
+      <td key={'header' + displayedIngredient.ingredientId}>
+        {displayedIngredient.name}
+      </td>
+    );
   } else {
-    cells.push(<td key={"header empty"}></td>);
+    cells.push(<td key={'header empty'}></td>);
   }
   for (const monthId in months) {
     if (displayedIngredient !== undefined) {
       const handleChange = () => {
         const newIngredient = copyIngredient(displayedIngredient);
-        if ((newIngredient.months === undefined) || (!(monthId in newIngredient.months))) {
+        if (
+          newIngredient.months === undefined ||
+          !(monthId in newIngredient.months)
+        ) {
           if (newIngredient.months === undefined) {
             newIngredient.months = {};
           }
@@ -90,7 +101,7 @@ export function IngredientRow({
           setDisplayedIngredient(newIngredient);
         } else {
           // Remove the month
-          const {[monthId]: removed, ...newMonths} = newIngredient.months;
+          const { [monthId]: removed, ...newMonths } = newIngredient.months;
           newIngredient.months = newMonths;
           setDisplayedIngredient(newIngredient);
         }
@@ -116,11 +127,11 @@ export function IngredientRow({
 
   // Add the update button
   async function onUpdateButtonClick() {
-    if ((displayedIngredient !== undefined) && (ingredientMutation.isIdle)) {
+    if (displayedIngredient !== undefined && ingredientMutation.isIdle) {
       if (!isIngredientDesync()) {
-        ingredientMutation.mutate(displayedIngredient)
+        ingredientMutation.mutate(displayedIngredient);
       } else {
-        window.alert("Ingredient is desynced, sync it first !")
+        window.alert('Ingredient is desynced, sync it first !');
       }
     }
   }
@@ -128,26 +139,34 @@ export function IngredientRow({
     // Force an update of the ingredients
     queryClient.invalidateQueries({ queryKey: ['ingredients'] });
     // Update the new reference value of ingredient here
-    setPreviousIngredient(copyIngredient(displayedIngredient!))
+    setPreviousIngredient(copyIngredient(displayedIngredient!));
   }
   if (displayedIngredient !== undefined) {
-    cells.push(<td key="update"><CallbackButton label="Update" onButtonClick={onUpdateButtonClick} /></td>)
+    cells.push(
+      <td key="update">
+        <CallbackButton label="Update" onButtonClick={onUpdateButtonClick} />
+      </td>
+    );
   } else {
-    cells.push(<td key="update"></td>)
+    cells.push(<td key="update"></td>);
   }
 
   // Add the resync button
   function onResyncButtonClick() {
-      if (ingredient !== undefined) {
-        setDisplayedIngredient(copyIngredient(ingredient));
-        // setSyncStatus(true);
-        setPreviousIngredient(copyIngredient(ingredient));
-      }
+    if (ingredient !== undefined) {
+      setDisplayedIngredient(copyIngredient(ingredient));
+      // setSyncStatus(true);
+      setPreviousIngredient(copyIngredient(ingredient));
+    }
   }
   if (displayedIngredient !== undefined) {
-    cells.push(<td key="resync"><CallbackButton label="Resync" onButtonClick={onResyncButtonClick} /></td>)
+    cells.push(
+      <td key="resync">
+        <CallbackButton label="Resync" onButtonClick={onResyncButtonClick} />
+      </td>
+    );
   } else {
-    cells.push(<td key="resync"></td>)
+    cells.push(<td key="resync"></td>);
   }
 
   return <tr style={rowStyle}>{cells}</tr>;
@@ -160,7 +179,7 @@ function areIngredientsEqual(
   // Note: as of ECMA6, the keys of a JS object are officially ordered
   // thus comparing with stringify means that the order would need to be the same.
   // return JSON.stringify(in1) === JSON.stringify(in2);
-  return (_.isEqual(in1, in2));
+  return _.isEqual(in1, in2);
 }
 
 function copyIngredient(ingredient: Ingredient): Ingredient {

@@ -31,6 +31,11 @@
       "name": "eject",
       "command": "yarn eject",
       "runAtStart": false
+    },
+    "format": {
+      "name": "format",
+      "command": "yarn prettier src -w",
+      "runAtStart": false
     }
   }
 }

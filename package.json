@@ -8,8 +8,11 @@
     "starter"
   ],
   "prettier": {
+    "trailingComma": "es5",
     "tabWidth": 2,
-    "printWidth": 80
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true
   },
   "main": "src/index.tsx",
   "dependencies": {
@@ -24,6 +27,7 @@
     "firebase": "9.18.0",
     "loader-utils": "3.2.1",
     "lodash": "^4.17.21",
+    "prettier": "^3.0.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "7.43.9",

@@ -1,6 +1,8 @@
-import { Database } from "firebase/database";
-import { Months, Ingredients, Ingredient } from "../db-types";
-import { IngredientRow } from "./IngredientRow";
+import '../App.css';
+import { Database } from 'firebase/database';
+import { Months, Ingredients, Ingredient } from '../db-types';
+import { IngredientRow } from './IngredientRow';
+import { AddIngredientButton } from './AddIngredientButton';
 
 // export function IngredientTable({ months, loading }: { months: Months, loading: boolean }) {
 export function IngredientTable({
@@ -40,16 +42,19 @@ export function IngredientTable({
         ingredient={ingredient}
       />
     );
-    break;
+    // break;
   }
 
   return (
-    <table>
-      <thead>
-        <tr>{headers1}</tr>
-        <tr>{headers2}</tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </table>
+    <div>
+      <table className="tableFixHead">
+        <thead>
+          <tr>{headers1}</tr>
+          <tr>{headers2}</tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+      <AddIngredientButton db={db} />
+    </div>
   );
 }

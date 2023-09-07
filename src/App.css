@@ -2,6 +2,62 @@
   text-align: center;
 }
 
+.tableFixHead {
+  /* make the table scrollable if height is more than 200 px */
+  overflow-y: auto;
+  overflow-x: auto;
+  /* gives an initial height of 200px to the table */
+  height: 200;
+}
+/* This is for all the the "th" elements in the first child row */
+.tableFixHead thead > :first-child th {
+  /* make the table heads sticky */
+  position: sticky;
+  /* table head will be placed from the top of the table and sticks to it */
+  top: 0px;
+  height: 30px;
+}
+/* This is for all the the "th" elements in the second row, (in this casa is the last child element into the thead) */
+.tableFixHead thead > :last-child th {
+  /* make the table heads sticky */
+  position: sticky;
+  /* table head will be placed from the top of the table and sticks to it */
+  top: 40px;
+}
+
+table {
+  /* make the table borders collapse to each other */
+  border-collapse: collapse;
+  width: 100%;
+}
+th,
+td {
+  padding: 5px 16px;
+  border: 1px solid #ccc;
+}
+th {
+  background: #eee;
+}
+
+/* This is for all the the "th" elements in the second row, (in this casa is the last child element into the thead) */
+/* thead > :last-child th
+{
+    position: sticky;
+    top: 30px;
+} */
+
+/* This is for all the the "th" elements in the first child row */
+/* thead > :first-child th
+{
+    position: sticky;
+    top: 0px;
+} */
+
+/* thead, th {
+  position: sticky;
+  top: 0px;
+} */
+
 /* .App-logo {
   height: 40vmin;
   pointer-events: none;
