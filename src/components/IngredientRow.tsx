@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
 
-import { updateIngredientDb } from '../rtdb';
+import { updateIngredientDb, updateIngredientNameDb } from '../rtdb';
 import { Months, Ingredient } from '../db-types';
 
 import { CallbackButton } from './CallbackButton';
@@ -38,16 +38,35 @@ export function IngredientRow({
   // Get QueryClient from the context
   const queryClient = useQueryClient();
 
-  const ingredientMutation = useMutation({
+  const ingredientMonthsMutation = useMutation({
     mutationFn: async (newIngredient: Ingredient) => {
       await updateIngredientDb(db, newIngredient);
     },
     onError: () => {
       window.alert('Could not update...');
     },
-    onSuccess: onMutationSuccess,
+    onSuccess: onIngredientMonthsMutationSuccess,
     onSettled: () => {
-      ingredientMutation.reset();
+      ingredientMonthsMutation.reset();
+    },
+  });
+
+  const ingredientNameMutation = useMutation({
+    mutationFn: async ({
+      ingredientId,
+      newName,
+    }: {
+      ingredientId: string;
+      newName: string;
+    }) => {
+      await updateIngredientNameDb(db, ingredientId, newName);
+    },
+    onError: () => {
+      window.alert('Could not update...');
+    },
+    onSuccess: onIngredientNameMutationSuccess,
+    onSettled: () => {
+      ingredientNameMutation.reset();
     },
   });
 
@@ -127,20 +146,22 @@ export function IngredientRow({
 
   // Add the update button
   async function onUpdateButtonClick() {
-    if (displayedIngredient !== undefined && ingredientMutation.isIdle) {
+    if (displayedIngredient !== undefined && ingredientMonthsMutation.isIdle) {
       if (!isIngredientDesync()) {
-        ingredientMutation.mutate(displayedIngredient);
+        ingredientMonthsMutation.mutate(displayedIngredient);
       } else {
         window.alert('Ingredient is desynced, sync it first !');
       }
     }
   }
-  function onMutationSuccess() {
+
+  function onIngredientMonthsMutationSuccess() {
     // Force an update of the ingredients
     queryClient.invalidateQueries({ queryKey: ['ingredients'] });
     // Update the new reference value of ingredient here
     setPreviousIngredient(copyIngredient(displayedIngredient!));
   }
+
   if (displayedIngredient !== undefined) {
     cells.push(
       <td key="update">
@@ -167,6 +188,55 @@ export function IngredientRow({
     );
   } else {
     cells.push(<td key="resync"></td>);
+  }
+
+  // Add the rename button
+  async function onRenameButtonClick() {
+    if (displayedIngredient !== undefined && ingredientMonthsMutation.isIdle) {
+      if (!isIngredientDesync()) {
+        const newName = window.prompt('New names ?');
+        if (newName !== null) {
+          ingredientNameMutation.mutate({
+            ingredientId: displayedIngredient.ingredientId,
+            newName: newName,
+          });
+        } else {
+          window.alert('Enter a valid new name !');
+        }
+      } else {
+        window.alert('Ingredient is desynced, sync it first !');
+      }
+    }
+  }
+
+  function onIngredientNameMutationSuccess(
+    data: void,
+    {
+      ingredientId,
+      newName,
+    }: {
+      ingredientId: string;
+      newName: string;
+    },
+    context: unknown
+  ) {
+    // Force an update of the ingredients
+    queryClient.invalidateQueries({ queryKey: ['ingredients'] });
+    // Update the new reference value of ingredient here
+    const newIngredient = copyIngredient(displayedIngredient!);
+    newIngredient.name = newName;
+    setDisplayedIngredient(newIngredient);
+    setPreviousIngredient({ ...previousIngredient!, name: newName });
+  }
+
+  if (displayedIngredient !== undefined) {
+    cells.push(
+      <td key="rename">
+        <CallbackButton label="Rename" onButtonClick={onRenameButtonClick} />
+      </td>
+    );
+  } else {
+    cells.push(<td key="rename"></td>);
   }
 
   return <tr style={rowStyle}>{cells}</tr>;

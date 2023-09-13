@@ -28,6 +28,8 @@ export function IngredientTable({
   headers2.push(<th key="resync"></th>);
   headers1.push(<th key="update"></th>);
   headers2.push(<th key="update"></th>);
+  headers1.push(<th key="rename"></th>);
+  headers2.push(<th key="rename"></th>);
 
   for (const ingredientId in ingredients) {
     const ingredient: Ingredient = {
