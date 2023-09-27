@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import { Database } from 'firebase/database';
+import { Recipes } from '../db-types';
 
 // TODO(developer): Set to client ID and API key from the Developer Console
 const CLIENT_ID =
@@ -37,40 +39,91 @@ function gapiLoaded() {
  * Print metadata for first 10 files.
  */
 async function listFiles() {
+  await getGapiGoogleIds();
+}
+
+function getDbGoogleIds(recipes: Recipes): { [id: string]: boolean } {
+  const googleIdsList: { [id: string]: boolean } = {};
+  for (const recipeId in recipes) {
+    googleIdsList[recipes[recipeId].google_id] = true;
+  }
+  return googleIdsList;
+}
+
+async function getGapiGoogleIds(): Promise<{ [id: string]: boolean }> {
   let response;
+  let page_token: string | undefined = '';
+  const allFiles: gapi.client.drive.File[] = [];
+  const googleIdsList: { [id: string]: boolean } = {};
+
   try {
-    response = await gapi.client.drive.files.list({
-      pageSize: 10,
-      fields: 'files(id, name)',
-    });
+    while (true) {
+      // Send the request to gdrive api
+      response = await gapi.client.drive.files.list({
+        pageSize: 500,
+        fields: 'nextPageToken,files(id, name)',
+        q: "'1-fJ3w31oxP6P1zrHnZXkuCl-f6ACzACI' in parents and trashed=false",
+        pageToken: page_token,
+      });
+
+      // Get the received files and append them to the list
+      const files = response.result.files;
+      if (files !== undefined && files.length > 0) {
+        allFiles.push(...files);
+      }
+      // Prepare next request or break out if there are no more items
+      page_token = response.result.nextPageToken;
+      if (page_token === undefined) {
+        break;
+      }
+    }
   } catch (err) {
     if (err instanceof Error) {
       console.log(err.message);
     }
-    return;
+    return {};
   }
-  const files = response.result.files;
-  if (!files || files.length === 0) {
-    console.log('No files found.');
-    return;
+
+  // Create the set of google ids present in the database
+  allFiles.forEach((file) => {
+    googleIdsList[file!.id!] = true;
+  });
+
+  return googleIdsList;
+}
+
+// Set operation 'A - B' (aka return elements that are present in A, but not is B)
+function arrayDiff(A: string[], B: string[]): string[] {
+  const filteredArray = A.filter((value) => !B.includes(value));
+  return filteredArray;
+}
+
+async function manageAuthClickCallback(
+  db: Database | undefined,
+  recipes: Recipes | undefined
+) {
+  if (recipes !== undefined) {
+    const dbGoogleIds = getDbGoogleIds(recipes);
+    const driveGoogleIds = await getGapiGoogleIds();
+  } else {
+    // TODO
   }
-  // Flatten to string to display
-  const output = files.reduce(
-    (str: any, file: any) => `${str}${file.name} (${file.id})\n`,
-    'Files:\n'
-  );
-  console.log(output);
 }
 
 /**
  *  Sign in the user upon button click.
  */
-function handleAuthClick() {
+function handleAuthClick(
+  db: Database | undefined,
+  recipes: Recipes | undefined
+) {
+  // Get a list of all the IDs in the All recipe folder
+
   tokenClient.callback = async (resp: any) => {
     if (resp.error !== undefined) {
       throw resp;
     }
-    await listFiles();
+    await manageAuthClickCallback(db, recipes);
   };
 
   if (gapi.client.getToken() === null) {
@@ -94,7 +147,13 @@ function gisLoaded() {
   });
 }
 
-export function RefreshDbButton() {
+export function RefreshDbButton({
+  db,
+  recipes,
+}: {
+  db: Database | undefined;
+  recipes: Recipes | undefined;
+}) {
   useEffect(() => {
     const gapiScript = document.createElement('script');
     gapiScript.src = 'https://apis.google.com/js/api.js';
@@ -109,5 +168,9 @@ export function RefreshDbButton() {
     document.head.appendChild(gsiScript);
   }, []);
 
-  return <button onClick={handleAuthClick}>Refresh DB</button>;
+  const onButtonClick = () => {
+    handleAuthClick(db, recipes);
+  };
+
+  return <button onClick={onButtonClick}>Refresh DB</button>;
 }

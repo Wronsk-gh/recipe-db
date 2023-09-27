@@ -8,10 +8,10 @@ import {
   set,
   get,
   push,
-  update
+  update,
 } from 'firebase/database';
 
-import { Months, Ingredients, Ingredient } from './db-types';
+import { Months, Ingredients, Recipes, Ingredient } from './db-types';
 
 export async function getDb(): Promise<Database> {
   // Your web app's Firebase configuration
@@ -104,4 +104,8 @@ export async function fetchMonths(db: Database | undefined) {
 
 export async function fetchIngredients(db: Database | undefined) {
   return await fetchFromDb<Ingredients>(db, 'ingredients');
+}
+
+export async function fetchRecipes(db: Database | undefined) {
+  return await fetchFromDb<Recipes>(db, 'recipes');
 }
