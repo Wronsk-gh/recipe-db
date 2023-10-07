@@ -1,6 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { Database } from 'firebase/database';
 import { Recipes } from '../db-types';
+
+import { RtdbContext } from './RtdbContext';
 
 // TODO(developer): Set to client ID and API key from the Developer Console
 const CLIENT_ID =
@@ -147,13 +149,10 @@ function gisLoaded() {
   });
 }
 
-export function RefreshDbButton({
-  db,
-  recipes,
-}: {
-  db: Database | undefined;
-  recipes: Recipes | undefined;
-}) {
+export function RefreshDbButton({ recipes }: { recipes: Recipes | undefined }) {
+  // Get the Rtdb from the context
+  const db = useContext(RtdbContext);
+
   useEffect(() => {
     const gapiScript = document.createElement('script');
     gapiScript.src = 'https://apis.google.com/js/api.js';

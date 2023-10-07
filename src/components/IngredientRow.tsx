@@ -1,19 +1,18 @@
 import { Database } from 'firebase/database';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import _ from 'lodash';
 
 import { updateIngredientDb, updateIngredientNameDb } from '../rtdb';
 import { Months, Ingredient } from '../db-types';
 
 import { CallbackButton } from './CallbackButton';
+import { RtdbContext } from './RtdbContext';
 
 export function IngredientRow({
-  db,
   months,
   ingredient,
 }: {
-  db: Database | undefined;
   months: Months | undefined;
   ingredient: Ingredient | undefined;
 }) {
@@ -24,6 +23,8 @@ export function IngredientRow({
   const [previousIngredient, setPreviousIngredient] = useState<
     Ingredient | undefined
   >(undefined);
+  // Get the Rtdb from the context
+  const db = useContext(RtdbContext);
 
   useEffect(() => {
     if (displayedIngredient === undefined) {

@@ -4,12 +4,10 @@ import { SearchBar } from './SearchBar';
 import { RecipeTable } from './RecipeTable';
 
 export function FilterableRecipeTable({
-  db,
   months,
   ingredients,
   recipes,
 }: {
-  db: Database | undefined;
   months: Months | undefined;
   ingredients: Ingredients | undefined;
   recipes: Recipes | undefined;
@@ -18,7 +16,6 @@ export function FilterableRecipeTable({
     <div>
       <SearchBar />
       <RecipeTable
-        db={db}
         months={months}
         ingredients={ingredients}
         recipes={recipes}

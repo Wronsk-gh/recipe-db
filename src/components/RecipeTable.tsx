@@ -1,18 +1,48 @@
 import '../App.css';
 import { Database } from 'firebase/database';
-import { Months, Ingredients, Recipes } from '../db-types';
+import { Months, Ingredients, Recipes, Recipe } from '../db-types';
 import { RecipeRow } from './RecipeRow';
 
 export function RecipeTable({
-  db,
   months,
   ingredients,
   recipes,
 }: {
-  db: Database | undefined;
   months: Months | undefined;
   ingredients: Ingredients | undefined;
   recipes: Recipes | undefined;
 }) {
-  return <div></div>;
+  const rows = [];
+  const headers = [];
+
+  headers.push(<th key="name">Recipes</th>);
+  headers.push(<th key="ingredients">Ingredients</th>);
+  headers.push(<th key="months">Months</th>);
+
+  for (const recipeId in recipes) {
+    const recipe: Recipe = {
+      ...recipes[recipeId],
+      recipeId: recipeId,
+    };
+    rows.push(
+      <RecipeRow
+        key={recipeId}
+        months={months}
+        ingredients={ingredients}
+        recipe={recipe}
+      />
+    );
+    //break;
+  }
+
+  return (
+    <div>
+      <table>
+        <thead>
+          <tr>{headers}</tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </div>
+  );
 }

@@ -5,9 +5,11 @@ import { useQuery } from '@tanstack/react-query';
 import { getDb, fetchMonths, fetchIngredients, fetchRecipes } from '../rtdb';
 
 import { FilterableIngredientTable } from './FilterableIngredientTable';
+import { FilterableRecipeTable } from './FilterableRecipeTable';
 import { RefreshDbButton } from './RefreshDbButton';
 import { ConnectDbButton } from './ConnectDbButton';
 import { CallbackButton } from './CallbackButton';
+import { RtdbContext } from './RtdbContext';
 
 export function RecipeManager() {
   const [db, setDb] = useState<Database | undefined>(undefined);
@@ -53,17 +55,22 @@ export function RecipeManager() {
   }
 
   return (
-    <div>
-      <RefreshDbButton db={db} recipes={recipesData} />
+    <RtdbContext.Provider value={db}>
+      <RefreshDbButton recipes={recipesData} />
       <ConnectDbButton onButtonClick={getDbSingleton} />
       <div>
         <br />
       </div>
+      <FilterableRecipeTable
+        months={monthsData}
+        ingredients={ingredientsData}
+        recipes={recipesData}
+      />
+      <br />
       <FilterableIngredientTable
-        db={db}
         months={monthsData}
         ingredients={ingredientsData}
       />
-    </div>
+    </RtdbContext.Provider>
   );
 }

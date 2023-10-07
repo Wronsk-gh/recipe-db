@@ -2,11 +2,14 @@ import { Database } from 'firebase/database';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createIngredientDb } from '../rtdb';
 
-// import { useState } from "react";
+import { useContext } from 'react';
+import { RtdbContext } from './RtdbContext';
 
-export function AddIngredientButton({ db }: { db: Database | undefined }) {
+export function AddIngredientButton() {
   // Get QueryClient from the context
   const queryClient = useQueryClient();
+  // Get the Rtdb from the context
+  const db = useContext(RtdbContext);
 
   const newIngredientMutation = useMutation({
     mutationFn: async () => {
