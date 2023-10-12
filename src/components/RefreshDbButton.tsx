@@ -37,13 +37,6 @@ function gapiLoaded() {
   gapi.load('client', initializeGapiClient);
 }
 
-/**
- * Print metadata for first 10 files.
- */
-async function listFiles() {
-  await getGapiGoogleIds();
-}
-
 function getDbGoogleIds(recipes: Recipes): { [id: string]: boolean } {
   const googleIdsList: { [id: string]: boolean } = {};
   for (const recipeId in recipes) {
