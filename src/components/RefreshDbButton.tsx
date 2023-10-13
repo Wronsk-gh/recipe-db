@@ -1,6 +1,12 @@
 import { useEffect, useContext } from 'react';
+import { initializeApp } from 'firebase/app';
 import { Database } from 'firebase/database';
 import { Recipes } from '../db-types';
+import {
+  GoogleAuthProvider,
+  signInWithCredential,
+  getAuth,
+} from 'firebase/auth';
 
 import { RtdbContext } from './RtdbContext';
 
@@ -97,9 +103,11 @@ async function manageAuthClickCallback(
   db: Database | undefined,
   recipes: Recipes | undefined
 ) {
+  const driveGoogleIds = await getGapiGoogleIds();
+  console.log(driveGoogleIds);
   if (recipes !== undefined) {
     const dbGoogleIds = getDbGoogleIds(recipes);
-    const driveGoogleIds = await getGapiGoogleIds();
+    console.log(dbGoogleIds);
   } else {
     // TODO
   }
@@ -112,13 +120,35 @@ function handleAuthClick(
   db: Database | undefined,
   recipes: Recipes | undefined
 ) {
-  // Get a list of all the IDs in the All recipe folder
+  const firebaseConfig = {
+    apiKey: 'AIzaSyA1kUO5D0N0KAyNP4QVruujJocM7YM6IQc',
+    authDomain: 'oca-drive-manage.firebaseapp.com',
+    databaseURL:
+      'https://oca-drive-manage-default-rtdb.europe-west1.firebasedatabase.app',
+    projectId: 'oca-drive-manage',
+    storageBucket: 'oca-drive-manage.appspot.com',
+    messagingSenderId: '387763281186',
+    appId: '1:387763281186:web:73ee9da15e8db71629997b',
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-  tokenClient.callback = async (resp: any) => {
-    if (resp.error !== undefined) {
-      throw resp;
+  tokenClient.callback = async (tokenResponse: any) => {
+    // tokenResponse is of type TokenResponse
+    if (tokenResponse.error !== undefined) {
+      throw tokenResponse;
     }
+    console.log(tokenResponse);
+    console.log(tokenResponse.access_token);
+    const credential = GoogleAuthProvider.credential(
+      null,
+      tokenResponse.access_token
+    );
+    // gapi.client.getToken().access_token
+    const result = await signInWithCredential(auth, credential);
+
     await manageAuthClickCallback(db, recipes);
+    // await listFiles();
   };
 
   if (gapi.client.getToken() === null) {
