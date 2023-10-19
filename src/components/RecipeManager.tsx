@@ -10,6 +10,8 @@ import { RefreshDbButton } from './RefreshDbButton';
 import { ConnectDbButton } from './ConnectDbButton';
 import { CallbackButton } from './CallbackButton';
 import { RtdbContext } from './RtdbContext';
+import { Auth } from './Auth';
+// import { firebaseDb } from '../auth';
 
 export function RecipeManager() {
   const [db, setDb] = useState<Database | undefined>(undefined);
@@ -50,14 +52,16 @@ export function RecipeManager() {
     enabled: !!db,
   });
 
-  async function getDbSingleton() {
-    setDb(await getDb());
-  }
+  // async function getDbSingleton() {
+  //   setDb(await getDb());
+  // }
 
+  console.log('rendering RecipeManager !');
   return (
     <RtdbContext.Provider value={db}>
-      <RefreshDbButton recipes={recipesData} />
-      <ConnectDbButton onButtonClick={getDbSingleton} />
+      <Auth setDb={setDb} />
+      {/* <RefreshDbButton recipes={recipesData} /> */}
+      {/* <ConnectDbButton onButtonClick={getDbSingleton} /> */}
       <div>
         <br />
       </div>
