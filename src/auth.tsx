@@ -31,10 +31,6 @@ const FIREBASE_CONFIG = {
 
 let googleTokenClient: any;
 
-// export let gapiLoadOkay: (value: any) => void;
-// export let gapiLoadFail: (reason?: any) => void;
-// export let gisLoadOkay: (value: any) => void;
-// export let gisLoadFail: (reason?: any) => void;
 export let gapiLoadOkay: () => void;
 export let gapiLoadFail: (reason?: any) => void;
 export let gisLoadOkay: () => void;
