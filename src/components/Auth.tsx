@@ -13,15 +13,23 @@ export function Auth({ setDb }: { setDb: (db: Database | undefined) => void }) {
     const gapiScript = document.createElement('script');
     gapiScript.src = 'https://apis.google.com/js/api.js';
     gapiScript.async = true;
-    gapiScript.onload = gapiLoadOkay();
-    gapiScript.onerror = gapiLoadFail(event);
+    gapiScript.onload = (event) => {
+      gapiLoadOkay();
+    };
+    gapiScript.onerror = (event) => {
+      gapiLoadFail(event);
+    };
     document.head.appendChild(gapiScript);
 
     const gsiScript = document.createElement('script');
     gsiScript.src = 'https://accounts.google.com/gsi/client';
     gsiScript.async = true;
-    gsiScript.onload = gisLoadOkay();
-    gsiScript.onerror = gisLoadFail(event);
+    gsiScript.onload = (event) => {
+      gisLoadOkay();
+    };
+    gsiScript.onerror = (event) => {
+      gisLoadFail(event);
+    };
     document.head.appendChild(gsiScript);
   }, []);
 

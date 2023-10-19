@@ -36,9 +36,9 @@ let googleTokenClient: any;
 // export let gisLoadOkay: (value: any) => void;
 // export let gisLoadFail: (reason?: any) => void;
 export let gapiLoadOkay: () => void;
-export let gapiLoadFail: any;
-export let gisLoadOkay: any;
-export let gisLoadFail: any;
+export let gapiLoadFail: (reason?: any) => void;
+export let gisLoadOkay: () => void;
+export let gisLoadFail: (reason?: any) => void;
 
 export let firebaseDb: Database | undefined = undefined;
 
