@@ -1,4 +1,3 @@
-import { Database } from 'firebase/database';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect, useContext } from 'react';
 import _ from 'lodash';
@@ -13,8 +12,8 @@ export function IngredientRow({
   months,
   ingredient,
 }: {
-  months: Months | undefined;
-  ingredient: Ingredient | undefined;
+  months: Months;
+  ingredient: Ingredient;
 }) {
   const [displayedIngredient, setDisplayedIngredient] = useState<
     Ingredient | undefined
@@ -28,11 +27,9 @@ export function IngredientRow({
 
   useEffect(() => {
     if (displayedIngredient === undefined) {
-      // initialise the display variable if possible
-      if (ingredient !== undefined) {
-        setDisplayedIngredient(copyIngredient(ingredient));
-        setPreviousIngredient(copyIngredient(ingredient));
-      }
+      // initialise the display variable
+      setDisplayedIngredient(copyIngredient(ingredient));
+      setPreviousIngredient(copyIngredient(ingredient));
     }
   }, [ingredient]);
 
@@ -72,25 +69,11 @@ export function IngredientRow({
   });
 
   // Helper function to check if the displayed ingredient is desync
-  function isIngredientDesync(): boolean {
+  function isIngredientDesync() {
     // The condition is that the prop data that was used to init the display has changed
     // and the display doesn't match with the new prop data
     return !areIngredientsEqual(ingredient, previousIngredient);
   }
-
-  // Return an empty div in case there's no data to display
-  // if ((months === undefined) || (displayedIngredient === undefined)) {
-  //   return <div />
-  // }
-  // if (months === undefined) {
-  //   // On td for ingredient name, update button and resync button
-  //   return
-  //     <tr>
-  //       <td></td>
-  //       <td></td>
-  //       <td></td>
-  //     </tr>
-  // }
 
   // Evaluate if ingredient's data is out of sync to apply a specific style if it's the case
   const rowStyle = { color: isIngredientDesync() ? 'red' : 'black' };

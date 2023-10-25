@@ -1,4 +1,3 @@
-import { Database } from 'firebase/database';
 import { useState } from 'react';
 import { Months, Ingredients, Recipes } from '../db-types';
 import { SearchBar } from './SearchBar';

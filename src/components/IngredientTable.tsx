@@ -9,8 +9,8 @@ export function IngredientTable({
   months,
   ingredients,
 }: {
-  months: Months | undefined;
-  ingredients: Ingredients | undefined;
+  months: Months;
+  ingredients: Ingredients;
 }) {
   const rows = [];
   const headers1 = [];

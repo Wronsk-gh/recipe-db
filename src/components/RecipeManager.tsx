@@ -11,7 +11,6 @@ import { ConnectDbButton } from './ConnectDbButton';
 import { CallbackButton } from './CallbackButton';
 import { RtdbContext } from './RtdbContext';
 import { Auth } from './Auth';
-// import { firebaseDb } from '../auth';
 
 export function RecipeManager() {
   const [db, setDb] = useState<Database | undefined>(undefined);
@@ -52,10 +51,6 @@ export function RecipeManager() {
     enabled: !!db,
   });
 
-  // async function getDbSingleton() {
-  //   setDb(await getDb());
-  // }
-
   console.log('rendering RecipeManager !');
   if (
     monthsData !== undefined &&
@@ -81,6 +76,11 @@ export function RecipeManager() {
       </RtdbContext.Provider>
     );
   } else {
-    return <div> Loading... </div>;
+    return (
+      <>
+        <Auth setDb={setDb} />
+        <p>Loading...</p>
+      </>
+    );
   }
 }
