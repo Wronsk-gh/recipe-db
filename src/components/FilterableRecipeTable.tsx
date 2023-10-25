@@ -1,4 +1,5 @@
 import { Database } from 'firebase/database';
+import { useState } from 'react';
 import { Months, Ingredients, Recipes } from '../db-types';
 import { SearchBar } from './SearchBar';
 import { RecipeTable } from './RecipeTable';
@@ -8,17 +9,20 @@ export function FilterableRecipeTable({
   ingredients,
   recipes,
 }: {
-  months: Months | undefined;
-  ingredients: Ingredients | undefined;
-  recipes: Recipes | undefined;
+  months: Months;
+  ingredients: Ingredients;
+  recipes: Recipes;
 }) {
+  const [filterText, setFilterText] = useState('');
+
   return (
     <div>
-      <SearchBar />
+      <SearchBar filterText={filterText} onFilterTextChange={setFilterText} />
       <RecipeTable
         months={months}
         ingredients={ingredients}
         recipes={recipes}
+        filterText={filterText}
       />
     </div>
   );

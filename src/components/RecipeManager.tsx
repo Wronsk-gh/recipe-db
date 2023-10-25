@@ -57,24 +57,30 @@ export function RecipeManager() {
   // }
 
   console.log('rendering RecipeManager !');
-  return (
-    <RtdbContext.Provider value={db}>
-      <Auth setDb={setDb} />
-      {/* <RefreshDbButton recipes={recipesData} /> */}
-      {/* <ConnectDbButton onButtonClick={getDbSingleton} /> */}
-      <div>
+  if (
+    monthsData !== undefined &&
+    ingredientsData !== undefined &&
+    recipesData !== undefined
+  ) {
+    return (
+      <RtdbContext.Provider value={db}>
+        <Auth setDb={setDb} />
+        <div>
+          <br />
+        </div>
+        <FilterableRecipeTable
+          months={monthsData}
+          ingredients={ingredientsData}
+          recipes={recipesData}
+        />
         <br />
-      </div>
-      <FilterableRecipeTable
-        months={monthsData}
-        ingredients={ingredientsData}
-        recipes={recipesData}
-      />
-      <br />
-      <FilterableIngredientTable
-        months={monthsData}
-        ingredients={ingredientsData}
-      />
-    </RtdbContext.Provider>
-  );
+        <FilterableIngredientTable
+          months={monthsData}
+          ingredients={ingredientsData}
+        />
+      </RtdbContext.Provider>
+    );
+  } else {
+    return <div> Loading... </div>;
+  }
 }

@@ -18,10 +18,59 @@ export function RecipeRow({
   ingredients: Ingredients | undefined;
   recipe: Recipe | undefined;
 }) {
+  let imageUrl = '';
   // Get the Rtdb from the context
   const db = useContext(RtdbContext);
+  const [thumbnailLink, setThumbnailLink] = useState('');
+  useEffect(() => {
+    const getThumbnailLink = async () => {
+      // Send the request to gdrive api
+      const response = await gapi.client.drive.files.get({
+        fileId: recipe!.google_id,
+        fields: 'id, name, thumbnailLink',
+      });
+      console.log(response.result.thumbnailLink);
+      // fetch(response.result.thumbnailLink);
+      if (response.result.thumbnailLink !== undefined) {
+        const thumbnailResult = await fetch(
+          response.result.thumbnailLink +
+            '&access_token=' +
+            gapi.client.getToken().access_token
+        );
+        const blob = await thumbnailResult.blob();
+        imageUrl = URL.createObjectURL(blob);
+        setThumbnailLink(imageUrl);
+        // let xhr = new XMLHttpRequest();
+        // xhr.open(
+        //   'GET',
+        //   response.result.thumbnailLink +
+        //     '&access_token=' +
+        //     gapi.client.getToken().access_token
+        // );
+        // xhr.setRequestHeader(
+        //   'Authorization',
+        //   'Bearer ' + gapi.client.getToken().access_token
+        // );
+        // xhr.send();
+        // gapi.client
+        //   .request({
+        //     path: response.result.thumbnailLink,
+        //     // method: 'GET',
+        //     // headers: {
+        //     //   Authorization: 'Bearer ' + gapi.client.getToken().access_token,
+        //     // },
+        //   })
+        //   .execute(() => {});
+      }
+    };
+
+    if (recipe !== undefined) {
+      getThumbnailLink();
+    }
+  }, [recipe]);
 
   const cells = [];
+  let thumbnail = <></>;
   let nameCell = <td key="name"></td>;
   let ingredientsCell = <td key="ingredients"></td>;
   let monthsCell = <td key="months"></td>;
@@ -33,6 +82,7 @@ export function RecipeRow({
 
   if (recipe !== undefined) {
     // recipe is defined
+    thumbnail = <img src={thumbnailLink} alt="Loading..." />;
     nameCell = <td key="name">{recipe.name}</td>;
     nameCell = (
       <td key="name">
@@ -42,6 +92,8 @@ export function RecipeRow({
         >
           {recipe.name}
         </a>
+        <br />
+        {thumbnail}
       </td>
     );
     if (ingredients !== undefined) {

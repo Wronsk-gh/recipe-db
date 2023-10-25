@@ -13,10 +13,13 @@ const DRIVE_API_KEY = 'AIzaSyA1kUO5D0N0KAyNP4QVruujJocM7YM6IQc';
 // Discovery doc URL for APIs used by the quickstart
 const DRIVE_DISCOVERY_DOC =
   'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
+const DOCS_DISCOVERY_DOC =
+  'https://docs.googleapis.com/$discovery/rest?version=v1';
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
 const DRIVE_SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
+const DOCS_SCOPES = 'https://www.googleapis.com/auth/documents.readonly';
 
 const FIREBASE_CONFIG = {
   apiKey: 'AIzaSyA1kUO5D0N0KAyNP4QVruujJocM7YM6IQc',
@@ -59,7 +62,7 @@ export async function handleAuthClick() {
   });
   await gapi.client.init({
     apiKey: DRIVE_API_KEY,
-    discoveryDocs: [DRIVE_DISCOVERY_DOC],
+    discoveryDocs: [DRIVE_DISCOVERY_DOC, DOCS_DISCOVERY_DOC],
   });
   // .then(function () {
   //   // Load the Drive API discovery document.
@@ -73,7 +76,7 @@ export async function handleAuthClick() {
     try {
       googleTokenClient = google.accounts.oauth2.initTokenClient({
         client_id: DRIVE_CLIENT_ID,
-        scope: DRIVE_SCOPES,
+        scope: DRIVE_SCOPES + ' ' + DOCS_SCOPES,
         callback: '' as any, // defined later
       });
       resolve();
@@ -94,6 +97,10 @@ export async function handleAuthClick() {
         console.log(
           'gapi.client access token: ' + JSON.stringify(gapi.client.getToken())
         );
+        console.log(
+          'access_token from gapi client : ' +
+            gapi.client.getToken().access_token
+        );
         resolve(resp);
       };
       if (gapi.client.getToken() === null) {
@@ -109,6 +116,7 @@ export async function handleAuthClick() {
     }
   });
 
+  console.log('access_token : ' + tokenResponse.access_token);
   await handleFirebaseAuth(tokenResponse.access_token);
   return firebaseDb;
 }
