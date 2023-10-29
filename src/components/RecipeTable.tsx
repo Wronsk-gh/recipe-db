@@ -18,9 +18,9 @@ export function RecipeTable({
   const rows = [];
   const headers = [];
   const fuseOptions = {
-    // isCaseSensitive: false,
+    isCaseSensitive: false,
     // includeScore: false,
-    // shouldSort: true,
+    shouldSort: true,
     // includeMatches: false,
     // findAllMatches: false,
     // minMatchCharLength: 1,
@@ -31,23 +31,28 @@ export function RecipeTable({
     // ignoreLocation: false,
     // ignoreFieldNorm: false,
     // fieldNormWeight: 1,
-    keys: ['title', 'author.firstName'],
+    keys: ['recipe.name'],
   };
 
   headers.push(<th key="name">Recipes</th>);
   headers.push(<th key="ingredients">Ingredients</th>);
   headers.push(<th key="months">Months</th>);
 
-  const fuse = new Fuse(Object.values(recipes), fuseOptions);
+  let recipesArray = Object.keys(recipes).map(function (key) {
+    return { id: key, recipe: recipes[key] };
+  });
 
-  for (const recipeId in recipes) {
+  const fuse = new Fuse(recipesArray, fuseOptions);
+  let filteredRecipes = fuse.search(filterText);
+
+  for (let i = 0; i < recipesArray.length; i++) {
     const recipe: Recipe = {
-      ...recipes[recipeId],
-      recipeId: recipeId,
+      ...filteredRecipes[i].item.recipe,
+      recipeId: filteredRecipes[i].item.id,
     };
     rows.push(
       <RecipeRow
-        key={recipeId}
+        key={recipe.recipeId}
         months={months}
         ingredients={ingredients}
         recipe={recipe}
@@ -55,6 +60,46 @@ export function RecipeTable({
     );
     // break;
   }
+  // if (filterText === '') {
+  //   for (const recipeId in recipes) {
+  //     const recipe: Recipe = {
+  //       ...recipes[recipeId],
+  //       recipeId: recipeId,
+  //     };
+  //     rows.push(
+  //       <RecipeRow
+  //         key={recipeId}
+  //         months={months}
+  //         ingredients={ingredients}
+  //         recipe={recipe}
+  //       />
+  //     );
+  //     // break;
+  //   }
+  // } else {
+  //   let recipesArray = Object.keys(recipes).map(function (key) {
+  //     return { id: key, recipe: recipes[key] };
+  //   });
+
+  //   const fuse = new Fuse(recipesArray, fuseOptions);
+  //   let filteredRecipes = fuse.search(filterText);
+
+  //   for (let i = 0; i < filteredRecipes.length; i++) {
+  //     const recipe: Recipe = {
+  //       ...filteredRecipes[i].item.recipe,
+  //       recipeId: filteredRecipes[i].item.id,
+  //     };
+  //     rows.push(
+  //       <RecipeRow
+  //         key={recipe.recipeId}
+  //         months={months}
+  //         ingredients={ingredients}
+  //         recipe={recipe}
+  //       />
+  //     );
+  //     // break;
+  //   }
+  // }
 
   return (
     <div>
