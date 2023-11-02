@@ -20,30 +20,31 @@ export function RecipeRow({
   let imageUrl = '';
   // Get the Rtdb from the context
   const db = useContext(RtdbContext);
-  const [thumbnailLink, setThumbnailLink] = useState('');
-  useEffect(() => {
-    const getThumbnailLink = async () => {
-      // Send the request to gdrive api
-      const response = await gapi.client.drive.files.get({
-        fileId: recipe!.google_id,
-        fields: 'id, name, thumbnailLink',
-      });
-      if (response.result.thumbnailLink !== undefined) {
-        const thumbnailResult = await fetch(
-          response.result.thumbnailLink +
-            '&access_token=' +
-            gapi.client.getToken().access_token
-        );
-        const blob = await thumbnailResult.blob();
-        imageUrl = URL.createObjectURL(blob);
-        setThumbnailLink(imageUrl);
-      }
-    };
+  // const [thumbnailLink, setThumbnailLink] = useState('');
+  // useEffect(() => {
+  //   const getThumbnailLink = async () => {
+  //     // Send the request to gdrive api
+  //     const response = await gapi.client.drive.files.get({
+  //       fileId: recipe!.google_id,
+  //       fields: 'id, name, thumbnailLink',
+  //     });
+  //     if (response.result.thumbnailLink !== undefined) {
+  //       const thumbnailResult = await fetch(
+  //         response.result.thumbnailLink +
+  //           '&access_token=' +
+  //           gapi.client.getToken().access_token
+  //       );
+  //       const blob = await thumbnailResult.blob();
+  //       imageUrl = URL.createObjectURL(blob);
+  //       setThumbnailLink(imageUrl);
+  //     }
+  //   };
 
-    getThumbnailLink();
-  }, [recipe]);
+  //   getThumbnailLink();
+  // }, [recipe]);
 
   const cells = [];
+  // TODO remove those let declaration for const with direct value
   let thumbnail = <></>;
   let nameCell = <td key="name"></td>;
   let ingredientsCell = <td key="ingredients"></td>;
@@ -55,7 +56,7 @@ export function RecipeRow({
   const recipeMonths = [];
 
   // Name cell content
-  thumbnail = <img src={thumbnailLink} alt="Loading..." />;
+  thumbnail = <img src={recipe.thumbnailLink} alt="Loading..." />;
   nameCell = <td key="name">{recipe.name}</td>;
   nameCell = (
     <td key="name">

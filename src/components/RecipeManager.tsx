@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { Database } from 'firebase/database';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueries } from '@tanstack/react-query';
 
-import { getDb, fetchMonths, fetchIngredients, fetchRecipes } from '../rtdb';
+import { fetchMonths, fetchIngredients, fetchRecipes } from '../rtdb';
+import { RecipesThumbnails } from '../db-types';
 
 import { FilterableIngredientTable } from './FilterableIngredientTable';
 import { FilterableRecipeTable } from './FilterableRecipeTable';
-import { RefreshDbButton } from './RefreshDbButton';
-import { ConnectDbButton } from './ConnectDbButton';
-import { CallbackButton } from './CallbackButton';
 import { RtdbContext } from './RtdbContext';
 import { Auth } from './Auth';
 
@@ -51,7 +49,87 @@ export function RecipeManager() {
     enabled: !!db,
   });
 
+  async function fetchThumbnail(googleId: string): Promise<string> {
+    const response = await gapi.client.drive.files.get({
+      fileId: googleId,
+      fields: 'id, name, thumbnailLink',
+    });
+    if (response.result.thumbnailLink !== undefined) {
+      const thumbnailResult = await fetch(
+        response.result.thumbnailLink +
+          '&access_token=' +
+          gapi.client.getToken().access_token
+      );
+      const blob = await thumbnailResult.blob();
+      const imageUrl = URL.createObjectURL(blob);
+      return imageUrl;
+    } else {
+      return '';
+    }
+  }
+
+  // const {
+  //   isLoading: isThumbnailsLoading,
+  //   isError: isThumbnailsError,
+  //   data: thumbnailsData,
+  //   error: thumbnailsError,
+  // } = useQuery({
+  //   queryKey: ['thumbnails'],
+  //   queryFn: async () => {
+  //     console.log('fetching thumbnails');
+  //     const data: RecipesThumbnails = {};
+  //     for (const recipeId in recipesData) {
+  //       console.log('fetching thumbnail for ' + recipeId);
+  //       data[recipeId] = await fetchThumbnail(recipesData[recipeId].google_id);
+  //     }
+  //     return data;
+  //   },
+  //   enabled: !!recipesData,
+  // });
+
+  // const thumbnailsQueries = useQueries({
+  //   queries: (Object.keys(recipesData || {}) || []).map((recipeId) => {
+  //     return {
+  //       queryKey: ['thumbnail', recipesData?.recipeId?.google_id],
+  //       queryFn: async () => {
+  //         const recipeIdThumbnail: RecipesThumbnails = {};
+  //         recipeIdThumbnail[recipeId] = await fetchThumbnail(
+  //           recipesData!.recipeId.google_id
+  //         );
+  //         return recipeIdThumbnail;
+  //       },
+  //       enabled: !!recipesData,
+  //     };
+  //   }),
+  // });
+  const thumbnailsQueries = useQueries({
+    queries: (Object.entries(recipesData || {}) || []).map(
+      ([recipeId, recipe]) => {
+        return {
+          queryKey: ['thumbnail', recipe.google_id],
+          queryFn: async () => {
+            const recipeIdThumbnail: RecipesThumbnails = {};
+            recipeIdThumbnail[recipeId] = await fetchThumbnail(
+              recipe.google_id
+            );
+            return recipeIdThumbnail;
+          },
+          enabled: !!recipesData,
+        };
+      }
+    ),
+  });
+
+  const thumbnails: RecipesThumbnails = {};
+
+  thumbnailsQueries.map((query) => {
+    if (query.data !== undefined) {
+      Object.assign(thumbnails, query.data);
+    }
+  });
+
   console.log('rendering RecipeManager !');
+
   if (
     monthsData !== undefined &&
     ingredientsData !== undefined &&
@@ -67,6 +145,7 @@ export function RecipeManager() {
           months={monthsData}
           ingredients={ingredientsData}
           recipes={recipesData}
+          recipesThumbnails={thumbnails}
         />
         <br />
         <FilterableIngredientTable

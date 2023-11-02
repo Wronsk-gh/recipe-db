@@ -1,17 +1,24 @@
 import '../App.css';
-import { Database } from 'firebase/database';
-import { Months, Ingredients, Recipes, Recipe } from '../db-types';
+import {
+  Months,
+  Ingredients,
+  Recipes,
+  Recipe,
+  RecipesThumbnails,
+} from '../db-types';
 import { RecipeRow } from './RecipeRow';
 
 export function RecipeTable({
   months,
   ingredients,
   recipes,
+  recipesThumbnails,
   filterText,
 }: {
   months: Months;
   ingredients: Ingredients;
   recipes: Recipes;
+  recipesThumbnails: RecipesThumbnails;
   filterText: string;
 }) {
   const rows = [];
@@ -38,9 +45,14 @@ export function RecipeTable({
   headers.push(<th key="months">Months</th>);
 
   for (const recipeId in recipes) {
+    const thumbnailLink =
+      recipesThumbnails[recipeId] !== undefined
+        ? recipesThumbnails[recipeId]
+        : '';
     const recipe: Recipe = {
       ...recipes[recipeId],
       recipeId: recipeId,
+      thumbnailLink: thumbnailLink,
     };
     rows.push(
       <RecipeRow

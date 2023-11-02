@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Months, Ingredients, Recipes } from '../db-types';
+import { Months, Ingredients, Recipes, RecipesThumbnails } from '../db-types';
 import { SearchBar } from './SearchBar';
 import { RecipeTable } from './RecipeTable';
 
@@ -7,10 +7,12 @@ export function FilterableRecipeTable({
   months,
   ingredients,
   recipes,
+  recipesThumbnails,
 }: {
   months: Months;
   ingredients: Ingredients;
   recipes: Recipes;
+  recipesThumbnails: RecipesThumbnails;
 }) {
   const [filterText, setFilterText] = useState('');
 
@@ -21,6 +23,7 @@ export function FilterableRecipeTable({
         months={months}
         ingredients={ingredients}
         recipes={recipes}
+        recipesThumbnails={recipesThumbnails}
         filterText={filterText}
       />
     </div>

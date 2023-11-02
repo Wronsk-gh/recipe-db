@@ -23,6 +23,10 @@ export interface Recipes {
   };
 }
 
+export interface RecipesThumbnails {
+  [recipeId: string]: string;
+}
+
 export interface Ingredient {
   ingredientId: string;
   months?: {
@@ -38,4 +42,5 @@ export interface Recipe {
   };
   name: string;
   google_id: string;
+  thumbnailLink: string;
 }
