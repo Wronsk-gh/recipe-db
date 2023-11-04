@@ -10,8 +10,16 @@ import { FilterableRecipeTable } from './FilterableRecipeTable';
 import { RtdbContext } from './RtdbContext';
 import { Auth } from './Auth';
 
+enum CurrentView {
+  recipes,
+  ingredients,
+}
+
 export function RecipeManager() {
   const [db, setDb] = useState<Database | undefined>(undefined);
+  const [currentView, setCurrentView] = useState<CurrentView>(
+    CurrentView.recipes
+  );
   const {
     isLoading: isMonthsLoading,
     isError: isMonthsError,
@@ -115,6 +123,7 @@ export function RecipeManager() {
             return recipeIdThumbnail;
           },
           enabled: !!recipesData,
+          staleTime: 10 * 60 * 1000, // 10 minute
         };
       }
     ),
@@ -135,24 +144,52 @@ export function RecipeManager() {
     ingredientsData !== undefined &&
     recipesData !== undefined
   ) {
-    return (
-      <RtdbContext.Provider value={db}>
-        <Auth setDb={setDb} />
-        <div>
-          <br />
-        </div>
+    // See which view to display
+    let view = <></>;
+    if (currentView === CurrentView.recipes) {
+      view = (
         <FilterableRecipeTable
           months={monthsData}
           ingredients={ingredientsData}
           recipes={recipesData}
           recipesThumbnails={thumbnails}
         />
-        <br />
+      );
+    } else if (currentView === CurrentView.ingredients) {
+      view = (
         <FilterableIngredientTable
           months={monthsData}
           ingredients={ingredientsData}
         />
-      </RtdbContext.Provider>
+      );
+    }
+
+    return (
+      <>
+        <Auth setDb={setDb} />
+        <br />
+        <br />
+        <button
+          onClick={() => {
+            setCurrentView(CurrentView.recipes);
+          }}
+        >
+          Recipes
+        </button>
+        <button
+          onClick={() => {
+            setCurrentView(CurrentView.ingredients);
+          }}
+        >
+          Ingredients
+        </button>
+        <RtdbContext.Provider value={db}>
+          <div>
+            <br />
+          </div>
+          {view}
+        </RtdbContext.Provider>
+      </>
     );
   } else {
     return (
