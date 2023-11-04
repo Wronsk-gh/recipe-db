@@ -184,9 +184,7 @@ export function RecipeManager() {
           Ingredients
         </button>
         <RtdbContext.Provider value={db}>
-          <div>
-            <br />
-          </div>
+          <br />
           {view}
         </RtdbContext.Provider>
       </>
