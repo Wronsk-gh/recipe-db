@@ -5,43 +5,23 @@ import _ from 'lodash';
 import { updateIngredientDb, updateIngredientNameDb } from '../rtdb';
 import { Months, Ingredients, Recipe } from '../db-types';
 
-import { CallbackButton } from './CallbackButton';
 import { RtdbContext } from './RtdbContext';
 
 export function RecipeRow({
   months,
   ingredients,
   recipe,
+  isEditable,
+  onEdit,
 }: {
   months: Months;
   ingredients: Ingredients;
   recipe: Recipe;
+  isEditable: Boolean;
+  onEdit: (recipeToEdit: Recipe) => void;
 }) {
-  let imageUrl = '';
   // Get the Rtdb from the context
   const db = useContext(RtdbContext);
-  // const [thumbnailLink, setThumbnailLink] = useState('');
-  // useEffect(() => {
-  //   const getThumbnailLink = async () => {
-  //     // Send the request to gdrive api
-  //     const response = await gapi.client.drive.files.get({
-  //       fileId: recipe!.google_id,
-  //       fields: 'id, name, thumbnailLink',
-  //     });
-  //     if (response.result.thumbnailLink !== undefined) {
-  //       const thumbnailResult = await fetch(
-  //         response.result.thumbnailLink +
-  //           '&access_token=' +
-  //           gapi.client.getToken().access_token
-  //       );
-  //       const blob = await thumbnailResult.blob();
-  //       imageUrl = URL.createObjectURL(blob);
-  //       setThumbnailLink(imageUrl);
-  //     }
-  //   };
-
-  //   getThumbnailLink();
-  // }, [recipe]);
 
   const cells = [];
   // TODO remove those let declaration for const with direct value
@@ -114,6 +94,17 @@ export function RecipeRow({
   cells.push(nameCell);
   cells.push(ingredientsCell);
   cells.push(monthsCell);
+  cells.push(
+    <td key="months">
+      <button
+        onClick={() => {
+          onEdit(recipe);
+        }}
+      >
+        Edit
+      </button>
+    </td>
+  );
 
   return <tr>{cells}</tr>;
 }

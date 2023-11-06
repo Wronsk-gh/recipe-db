@@ -1,4 +1,5 @@
 import '../App.css';
+import { useState } from 'react';
 import {
   Months,
   Ingredients,
@@ -7,6 +8,7 @@ import {
   RecipesThumbnails,
 } from '../db-types';
 import { RecipeRow } from './RecipeRow';
+import { RecipeEditorPopUp } from './RecipeEditorPopUp';
 
 export function RecipeTable({
   months,
@@ -21,28 +23,16 @@ export function RecipeTable({
   recipesThumbnails: RecipesThumbnails;
   filterText: string;
 }) {
+  const [editedRecipe, setEditedRecipe] = useState<Recipe | undefined>(
+    undefined
+  );
   const rows = [];
   const headers = [];
-  const fuseOptions = {
-    // isCaseSensitive: false,
-    // includeScore: false,
-    // shouldSort: true,
-    // includeMatches: false,
-    // findAllMatches: false,
-    // minMatchCharLength: 1,
-    // location: 0,
-    // threshold: 0.6,
-    // distance: 100,
-    // useExtendedSearch: false,
-    // ignoreLocation: false,
-    // ignoreFieldNorm: false,
-    // fieldNormWeight: 1,
-    keys: ['title', 'author.firstName'],
-  };
 
   headers.push(<th key="name">Recipes</th>);
   headers.push(<th key="ingredients">Ingredients</th>);
   headers.push(<th key="months">Months</th>);
+  headers.push(<th key="edit"></th>);
 
   for (const recipeId in recipes) {
     const thumbnailLink =
@@ -60,10 +50,26 @@ export function RecipeTable({
         months={months}
         ingredients={ingredients}
         recipe={recipe}
+        isEditable={editedRecipe === undefined}
+        onEdit={setEditedRecipe}
       />
     );
     // break;
   }
+
+  // Insert the recipe editor popup if needed
+  const recipeEditor =
+    editedRecipe !== undefined ? (
+      <RecipeEditorPopUp
+        recipe={editedRecipe}
+        ingredients={ingredients}
+        onEditEnd={() => {
+          setEditedRecipe(undefined);
+        }}
+      />
+    ) : (
+      <></>
+    );
 
   return (
     <div>
@@ -73,6 +79,7 @@ export function RecipeTable({
         </thead>
         <tbody>{rows}</tbody>
       </table>
+      {recipeEditor}
     </div>
   );
 }
