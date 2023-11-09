@@ -27,6 +27,11 @@ export interface RecipesThumbnails {
   [recipeId: string]: string;
 }
 
+export interface Tag {
+  id: string;
+  name: string;
+}
+
 export interface Ingredient {
   ingredientId: string;
   months?: {

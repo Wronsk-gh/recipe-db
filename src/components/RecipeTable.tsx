@@ -67,9 +67,7 @@ export function RecipeTable({
           setEditedRecipe(undefined);
         }}
       />
-    ) : (
-      <></>
-    );
+    ) : null;
 
   return (
     <div>

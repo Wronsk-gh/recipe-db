@@ -95,7 +95,7 @@ export function RecipeRow({
   cells.push(ingredientsCell);
   cells.push(monthsCell);
   cells.push(
-    <td key="months">
+    <td key="editButton">
       <button
         onClick={() => {
           onEdit(recipe);

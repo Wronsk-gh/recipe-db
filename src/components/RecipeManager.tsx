@@ -76,40 +76,6 @@ export function RecipeManager() {
     }
   }
 
-  // const {
-  //   isLoading: isThumbnailsLoading,
-  //   isError: isThumbnailsError,
-  //   data: thumbnailsData,
-  //   error: thumbnailsError,
-  // } = useQuery({
-  //   queryKey: ['thumbnails'],
-  //   queryFn: async () => {
-  //     console.log('fetching thumbnails');
-  //     const data: RecipesThumbnails = {};
-  //     for (const recipeId in recipesData) {
-  //       console.log('fetching thumbnail for ' + recipeId);
-  //       data[recipeId] = await fetchThumbnail(recipesData[recipeId].google_id);
-  //     }
-  //     return data;
-  //   },
-  //   enabled: !!recipesData,
-  // });
-
-  // const thumbnailsQueries = useQueries({
-  //   queries: (Object.keys(recipesData || {}) || []).map((recipeId) => {
-  //     return {
-  //       queryKey: ['thumbnail', recipesData?.recipeId?.google_id],
-  //       queryFn: async () => {
-  //         const recipeIdThumbnail: RecipesThumbnails = {};
-  //         recipeIdThumbnail[recipeId] = await fetchThumbnail(
-  //           recipesData!.recipeId.google_id
-  //         );
-  //         return recipeIdThumbnail;
-  //       },
-  //       enabled: !!recipesData,
-  //     };
-  //   }),
-  // });
   const thumbnailsQueries = useQueries({
     queries: (Object.entries(recipesData || {}) || []).map(
       ([recipeId, recipe]) => {
