@@ -103,14 +103,14 @@ export async function handleAuthClick() {
         );
         resolve(resp);
       };
-      if (gapi.client.getToken() === null) {
-        // Prompt the user to select a Google Account and ask for consent to share their data
-        // when establishing a new session.
-        googleTokenClient.requestAccessToken({ prompt: 'consent' });
-      } else {
-        // Skip display of account chooser and consent dialog for an existing session.
-        googleTokenClient.requestAccessToken({ prompt: '' });
-      }
+      googleTokenClient.requestAccessToken();
+      // if (gapi.client.getToken() === null) {
+      //   // Prompt the user to select a Google Account and ask for consent to share their data
+      //   // when establishing a new session.
+      // } else {
+      //   // Skip display of account chooser and consent dialog for an existing session.
+      //   googleTokenClient.requestAccessToken({ prompt: '' });
+      // }
     } catch (err) {
       console.log(err);
     }
