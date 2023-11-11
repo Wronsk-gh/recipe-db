@@ -48,11 +48,19 @@ export function RecipeEditorPopUp({
     queryClient.invalidateQueries({ queryKey: ['recipes'] });
   }
 
-  const options = Object.entries(ingredients).map(
-    ([ingredientId, ingredient]) => (
+  const options = Object.entries(ingredients)
+    .sort((a, b) => {
+      if (a[1].name > b[1].name) {
+        return 1;
+      }
+      if (b[1].name > a[1].name) {
+        return -1;
+      }
+      return 0;
+    })
+    .map(([ingredientId, ingredient]) => (
       <option value={ingredientId}>{ingredient.name}</option>
-    )
-  );
+    ));
 
   const ingredientsTags = Object.keys(
     displayedIngredients !== undefined ? displayedIngredients : {}
