@@ -61,7 +61,12 @@ export function RecipeTable({
   const recipeEditor =
     editedRecipe !== undefined ? (
       <RecipeEditorPopUp
-        recipe={editedRecipe}
+        recipeToEdit={editedRecipe}
+        listedRecipe={{
+          recipeId: editedRecipe.recipeId,
+          thumbnailLink: editedRecipe.thumbnailLink, // Link is not considered as important in baseline comparison
+          ...recipes[editedRecipe.recipeId],
+        }}
         ingredients={ingredients}
         onEditEnd={() => {
           setEditedRecipe(undefined);

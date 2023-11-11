@@ -11,7 +11,7 @@ import {
   update,
 } from 'firebase/database';
 
-import { Months, Ingredients, Recipes, Ingredient } from './db-types';
+import { Months, Ingredients, Recipes, Ingredient, Recipe } from './db-types';
 
 export async function getDb(): Promise<Database> {
   // Your web app's Firebase configuration
@@ -45,6 +45,22 @@ export async function getDb(): Promise<Database> {
     });
 
   return getDatabase(app);
+}
+
+export async function updateRecipeDb(
+  db: Database | undefined,
+  newRecipe: Recipe
+) {
+  if (db === undefined) {
+    throw new Error('No database connection available');
+  }
+  const recipeRef = ref(db, 'recipes/' + newRecipe.recipeId);
+  const {
+    recipeId: removedRecipeId,
+    thumbnailLink: removedThumbnailLink,
+    ...newDbRecipe
+  } = newRecipe;
+  await set(recipeRef, newDbRecipe);
 }
 
 export async function updateIngredientDb(

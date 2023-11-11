@@ -3,26 +3,50 @@ import { useState, useEffect, useContext } from 'react';
 import _ from 'lodash';
 import { TagBox } from './TagBox';
 
-import { updateIngredientDb, updateIngredientNameDb } from '../rtdb';
+import { updateRecipeDb } from '../rtdb';
 import { Months, Ingredients, Recipe, Tag } from '../db-types';
 
 import { RtdbContext } from './RtdbContext';
 
 export function RecipeEditorPopUp({
   ingredients,
-  recipe,
+  recipeToEdit,
+  listedRecipe, // present for verification of whether or no the recipe was modified by another user
   onEditEnd,
 }: {
   ingredients: Ingredients;
-  recipe: Recipe;
+  recipeToEdit: Recipe;
+  listedRecipe: Recipe | undefined;
   onEditEnd: () => void;
 }) {
   // Get the Rtdb from the context
   const db = useContext(RtdbContext);
 
+  const [selectedIngredient, setSelectedIngredient] = useState<string>('');
   const [displayedIngredients, setDisplayedIngredients] = useState({
-    ...recipe.ingredients,
+    ...recipeToEdit.ingredients,
   });
+
+  const recipeIngredientsMutation = useMutation({
+    mutationFn: async (newRecipe: Recipe) => {
+      await updateRecipeDb(db, newRecipe);
+    },
+    onError: () => {
+      window.alert('Could not update...');
+    },
+    onSuccess: onRecipeIngredientsMutationSuccess,
+    onSettled: () => {
+      recipeIngredientsMutation.reset();
+    },
+  });
+
+  // Get QueryClient from the context
+  const queryClient = useQueryClient();
+
+  function onRecipeIngredientsMutationSuccess() {
+    // Force an update of the recipes
+    queryClient.invalidateQueries({ queryKey: ['recipes'] });
+  }
 
   const options = Object.entries(ingredients).map(
     ([ingredientId, ingredient]) => (
@@ -52,13 +76,55 @@ export function RecipeEditorPopUp({
   return (
     <div className="popup">
       <div className="popup-inner">
-        {recipe.name}
+        {recipeToEdit.name}
         <form>
           <label htmlFor="ingredients">Choose an ingredient:</label>
-          <select name="ingredients">{options}</select>
+          <select
+            name="ingredients"
+            onChange={(newValue) =>
+              setSelectedIngredient(newValue.target.value)
+            }
+          >
+            <option value={''}>{'-'}</option>
+            {options}
+          </select>
         </form>
         {ingredientsTags}
+        <button
+          onClick={() => {
+            if (selectedIngredient !== '') {
+              if (displayedIngredients[selectedIngredient] === undefined) {
+                setDisplayedIngredients({
+                  [selectedIngredient]: true,
+                  ...displayedIngredients,
+                });
+              }
+            }
+          }}
+        >
+          Add
+        </button>
         <button onClick={onEditEnd}>Cancel edit</button>
+        <button
+          onClick={() => {
+            // Check that the displayed recipe is still identical to the one at the pup-up creation
+            if (!_.isEqual(recipeToEdit, listedRecipe)) {
+              alert('Recipe was modified by another user !!!');
+            } else {
+              if (recipeIngredientsMutation.isIdle) {
+                recipeIngredientsMutation.mutate({
+                  ...recipeToEdit,
+                  ingredients: displayedIngredients,
+                });
+                onEditEnd();
+              } else {
+                alert('Recipe is already being modified !!!');
+              }
+            }
+          }}
+        >
+          Submit
+        </button>
       </div>
     </div>
   );
