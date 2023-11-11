@@ -13,12 +13,16 @@ export function RecipeRow({
   recipe,
   isEditable,
   onEdit,
+  filterText,
+  monthFilter,
 }: {
   months: Months;
   ingredients: Ingredients;
   recipe: Recipe;
   isEditable: Boolean;
   onEdit: (recipeToEdit: Recipe) => void;
+  filterText: string;
+  monthFilter: string;
 }) {
   // Get the Rtdb from the context
   const db = useContext(RtdbContext);
@@ -106,5 +110,13 @@ export function RecipeRow({
     </td>
   );
 
-  return <tr>{cells}</tr>;
+  // See if filter allows display
+  if (
+    (monthFilter === '' || recipeMonthsId[monthFilter] === true) &&
+    recipe.name.toLowerCase().indexOf(filterText.toLowerCase()) !== -1
+  ) {
+    return <tr>{cells}</tr>;
+  } else {
+    return null;
+  }
 }

@@ -16,12 +16,14 @@ export function RecipeTable({
   recipes,
   recipesThumbnails,
   filterText,
+  monthFilter,
 }: {
   months: Months;
   ingredients: Ingredients;
   recipes: Recipes;
   recipesThumbnails: RecipesThumbnails;
   filterText: string;
+  monthFilter: string;
 }) {
   const [editedRecipe, setEditedRecipe] = useState<Recipe | undefined>(
     undefined
@@ -52,9 +54,11 @@ export function RecipeTable({
         recipe={recipe}
         isEditable={editedRecipe === undefined}
         onEdit={setEditedRecipe}
+        filterText={filterText}
+        monthFilter={monthFilter}
       />
     );
-    // break;
+    // break; // Uncomment to display only one recipe, for easier debugging
   }
 
   // Insert the recipe editor popup if needed
