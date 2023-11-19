@@ -3,9 +3,8 @@ import { Database } from 'firebase/database';
 import {
   gapiLoadOkay,
   gapiLoadFail,
-  gisLoadOkay,
-  gisLoadFail,
   handleAuthClick,
+  handlePageLoad,
 } from '../auth';
 
 export function Auth({ setDb }: { setDb: (db: Database | undefined) => void }) {
@@ -21,20 +20,19 @@ export function Auth({ setDb }: { setDb: (db: Database | undefined) => void }) {
     };
     document.head.appendChild(gapiScript);
 
-    const gsiScript = document.createElement('script');
-    gsiScript.src = 'https://accounts.google.com/gsi/client';
-    gsiScript.async = true;
-    gsiScript.onload = (event) => {
-      gisLoadOkay();
+    const onHandlePageLoad = async () => {
+      const db = await handlePageLoad();
+      if (db !== null) {
+        setDb(db);
+      }
     };
-    gsiScript.onerror = (event) => {
-      gisLoadFail(event);
-    };
-    document.head.appendChild(gsiScript);
+    onHandlePageLoad().catch((error) => {
+      console.error(error);
+    });
   }, []);
 
   async function onButtonClick() {
-    setDb(await handleAuthClick());
+    await handleAuthClick();
   }
 
   return <button onClick={onButtonClick}>Auth</button>;

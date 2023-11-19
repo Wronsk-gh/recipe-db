@@ -4,6 +4,9 @@ import {
   GoogleAuthProvider,
   signInWithCredential,
   getAuth,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
 } from 'firebase/auth';
 
 const DRIVE_CLIENT_ID =
@@ -18,8 +21,8 @@ const DOCS_DISCOVERY_DOC =
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-const DRIVE_SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
 const DOCS_SCOPES = 'https://www.googleapis.com/auth/documents.readonly';
+const DRIVE_SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
 
 const FIREBASE_CONFIG = {
   apiKey: 'AIzaSyA1kUO5D0N0KAyNP4QVruujJocM7YM6IQc',
@@ -36,24 +39,21 @@ let googleTokenClient: any;
 
 export let gapiLoadOkay: () => void;
 export let gapiLoadFail: (reason?: any) => void;
-export let gisLoadOkay: () => void;
-export let gisLoadFail: (reason?: any) => void;
+// export let gisLoadOkay: () => void;
+// export let gisLoadFail: (reason?: any) => void;
 
-export let firebaseDb: Database | undefined = undefined;
+let firebaseDb: Database | null = null;
 
 const gapiLoadPromise = new Promise<void>((resolve, reject) => {
   gapiLoadOkay = resolve;
   gapiLoadFail = reject;
 });
-const gisLoadPromise = new Promise<void>((resolve, reject) => {
-  gisLoadOkay = resolve;
-  gisLoadFail = reject;
-});
+// const gisLoadPromise = new Promise<void>((resolve, reject) => {
+//   gisLoadOkay = resolve;
+//   gisLoadFail = reject;
+// });
 
-/**
- *  Sign in the user upon button click.
- */
-export async function handleAuthClick() {
+export async function handlePageLoad() {
   // First, load and initialize the gapi.client
   await gapiLoadPromise;
   await new Promise((resolve, reject) => {
@@ -70,71 +70,44 @@ export async function handleAuthClick() {
   //   // OCA Nothing to do here ?
   // });
 
-  // Now load the GIS client
-  await gisLoadPromise;
-  await new Promise<void>((resolve, reject) => {
-    try {
-      googleTokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: DRIVE_CLIENT_ID,
-        scope: DRIVE_SCOPES + ' ' + DOCS_SCOPES,
-        callback: '' as any, // defined later
-      });
-      resolve();
-    } catch (err) {
-      reject(err);
-    }
-  });
+  const firebaseApp = initializeApp(FIREBASE_CONFIG);
+  const firebaseAuth = getAuth(firebaseApp);
 
-  // The access token is missing, invalid, or expired, prompt for user consent to obtain one.
-  const tokenResponse: any = await new Promise((resolve, reject) => {
-    try {
-      // Settle this promise in the response callback for requestAccessToken()
-      googleTokenClient.callback = (resp: any) => {
-        if (resp.error !== undefined) {
-          reject(resp);
-        }
-        // GIS has automatically updated gapi.client with the newly issued access token.
-        console.log(
-          'gapi.client access token: ' + JSON.stringify(gapi.client.getToken())
-        );
-        console.log(
-          'access_token from gapi client : ' +
-            gapi.client.getToken().access_token
-        );
-        resolve(resp);
-      };
-      googleTokenClient.requestAccessToken();
-      // if (gapi.client.getToken() === null) {
-      //   // Prompt the user to select a Google Account and ask for consent to share their data
-      //   // when establishing a new session.
-      // } else {
-      //   // Skip display of account chooser and consent dialog for an existing session.
-      //   googleTokenClient.requestAccessToken({ prompt: '' });
-      // }
-    } catch (err) {
-      console.log(err);
+  // After returning from the redirect when your app initializes you can obtain the result
+  const userCred = await getRedirectResult(firebaseAuth);
+  console.log('this is the userCred from redirect result : ' + userCred);
+  if (userCred !== null) {
+    // This is the signed-in user
+    const user = userCred.user;
+    // This gives you a Google Access Token.
+    const credential = GoogleAuthProvider.credentialFromResult(userCred);
+    if (credential !== null) {
+      const token = credential.accessToken;
+      if (token !== undefined) {
+        console.log('I received a token !');
+        console.log(token);
+        gapi.client.setToken({ access_token: token });
+        firebaseDb = getDatabase(firebaseApp);
+      }
     }
-  });
+    // As this API can be used for sign-in, linking and reauthentication,
+    // check the operationType to determine what triggered this redirect
+    // operation.
+    const operationType = userCred.operationType;
+  }
 
-  console.log('access_token : ' + tokenResponse.access_token);
-  await handleFirebaseAuth(tokenResponse.access_token);
   return firebaseDb;
 }
 
-async function handleFirebaseAuth(googleAccessToken: any) {
-  if (firebaseDb === undefined) {
-    const firebaseApp = initializeApp(FIREBASE_CONFIG);
-    const firebaseAuth = getAuth(firebaseApp);
-
-    const firebaseCredential = GoogleAuthProvider.credential(
-      null,
-      googleAccessToken
-    );
-    const result = await signInWithCredential(firebaseAuth, firebaseCredential);
-    // TODO check the result
-    firebaseDb = getDatabase(firebaseApp);
-    console.log(firebaseDb);
-  } else {
-    console.log('firebase db is already init');
-  }
+/**
+ *  Sign in the user upon button click.
+ */
+export async function handleAuthClick() {
+  const firebaseApp = initializeApp(FIREBASE_CONFIG);
+  const firebaseAuth = getAuth(firebaseApp);
+  // const auth = getAuth();
+  const provider = new GoogleAuthProvider();
+  provider.addScope(DOCS_SCOPES);
+  provider.addScope(DRIVE_SCOPES);
+  signInWithRedirect(firebaseAuth, provider);
 }

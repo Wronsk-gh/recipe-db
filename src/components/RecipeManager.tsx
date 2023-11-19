@@ -103,8 +103,6 @@ export function RecipeManager() {
     }
   });
 
-  console.log('rendering RecipeManager !');
-
   if (
     monthsData !== undefined &&
     ingredientsData !== undefined &&
