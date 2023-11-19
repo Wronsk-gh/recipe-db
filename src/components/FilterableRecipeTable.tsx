@@ -18,7 +18,9 @@ export function FilterableRecipeTable({
   const [selectedMonth, setSelectedMonth] = useState<string>('');
 
   const options = Object.entries(months).map(([monthId, month]) => (
-    <option value={monthId}>{month.name}</option>
+    <option value={monthId} key={monthId}>
+      {month.name}
+    </option>
   ));
 
   return (
@@ -30,7 +32,9 @@ export function FilterableRecipeTable({
           name="month"
           onChange={(newValue) => setSelectedMonth(newValue.target.value)}
         >
-          <option value={''}>{'All'}</option>
+          <option value={''} key={''}>
+            {'All'}
+          </option>
           {options}
         </select>
       </form>

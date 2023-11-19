@@ -59,7 +59,9 @@ export function RecipeEditorPopUp({
       return 0;
     })
     .map(([ingredientId, ingredient]) => (
-      <option value={ingredientId}>{ingredient.name}</option>
+      <option value={ingredientId} key={ingredientId}>
+        {ingredient.name}
+      </option>
     ));
 
   const ingredientsTags = Object.keys(
@@ -93,7 +95,9 @@ export function RecipeEditorPopUp({
               setSelectedIngredient(newValue.target.value)
             }
           >
-            <option value={''}>{'-'}</option>
+            <option value={''} key={''}>
+              {'-'}
+            </option>
             {options}
           </select>
         </form>
