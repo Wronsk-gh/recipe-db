@@ -39,8 +39,6 @@ let googleTokenClient: any;
 
 export let gapiLoadOkay: () => void;
 export let gapiLoadFail: (reason?: any) => void;
-// export let gisLoadOkay: () => void;
-// export let gisLoadFail: (reason?: any) => void;
 
 let firebaseDb: Database | null = null;
 
@@ -48,10 +46,6 @@ const gapiLoadPromise = new Promise<void>((resolve, reject) => {
   gapiLoadOkay = resolve;
   gapiLoadFail = reject;
 });
-// const gisLoadPromise = new Promise<void>((resolve, reject) => {
-//   gisLoadOkay = resolve;
-//   gisLoadFail = reject;
-// });
 
 export async function handlePageLoad() {
   // First, load and initialize the gapi.client

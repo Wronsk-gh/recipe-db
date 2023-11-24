@@ -25,7 +25,7 @@ export function RecipeTable({
   filterText: string;
   monthFilter: string;
 }) {
-  const [editedRecipe, setEditedRecipe] = useState<Recipe | undefined>(
+  const [editedObject, setEditedObject] = useState<Recipe | undefined>(
     undefined
   );
   const rows = [];
@@ -52,8 +52,8 @@ export function RecipeTable({
         months={months}
         ingredients={ingredients}
         recipe={recipe}
-        isEditable={editedRecipe === undefined}
-        onEdit={setEditedRecipe}
+        isEditable={editedObject === undefined}
+        onEdit={setEditedObject}
         filterText={filterText}
         monthFilter={monthFilter}
       />
@@ -62,18 +62,18 @@ export function RecipeTable({
   }
 
   // Insert the recipe editor popup if needed
-  const recipeEditor =
-    editedRecipe !== undefined ? (
+  const objectEditor =
+    editedObject !== undefined ? (
       <RecipeEditorPopUp
-        recipeToEdit={editedRecipe}
+        recipeToEdit={editedObject}
         listedRecipe={{
-          recipeId: editedRecipe.recipeId,
-          thumbnailLink: editedRecipe.thumbnailLink, // Link is not considered as important in baseline comparison
-          ...recipes[editedRecipe.recipeId],
+          recipeId: editedObject.recipeId,
+          thumbnailLink: editedObject.thumbnailLink, // Link is not considered as important in baseline comparison
+          ...recipes[editedObject.recipeId],
         }}
         ingredients={ingredients}
         onEditEnd={() => {
-          setEditedRecipe(undefined);
+          setEditedObject(undefined);
         }}
       />
     ) : null;
@@ -86,7 +86,7 @@ export function RecipeTable({
         </thead>
         <tbody>{rows}</tbody>
       </table>
-      {recipeEditor}
+      {objectEditor}
     </div>
   );
 }

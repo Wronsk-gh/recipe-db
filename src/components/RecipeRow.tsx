@@ -11,7 +11,6 @@ export function RecipeRow({
   months,
   ingredients,
   recipe,
-  isEditable,
   onEdit,
   filterText,
   monthFilter,
@@ -19,15 +18,12 @@ export function RecipeRow({
   months: Months;
   ingredients: Ingredients;
   recipe: Recipe;
-  isEditable: Boolean;
   onEdit: (recipeToEdit: Recipe) => void;
   filterText: string;
   monthFilter: string;
 }) {
-  // Get the Rtdb from the context
-  const db = useContext(RtdbContext);
-
   const cells = [];
+
   // TODO remove those let declaration for const with direct value
   let thumbnail = <></>;
   let nameCell = <td key="name"></td>;

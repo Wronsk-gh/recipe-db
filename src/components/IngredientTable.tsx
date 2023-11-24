@@ -1,10 +1,10 @@
 import '../App.css';
-import { Database } from 'firebase/database';
+import { useState } from 'react';
 import { Months, Ingredients, Ingredient } from '../db-types';
 import { IngredientRow } from './IngredientRow';
 import { AddIngredientButton } from './AddIngredientButton';
+import { IngredientEditorPopUp } from './IngredientEditorPopUp';
 
-// export function IngredientTable({ months, loading }: { months: Months, loading: boolean }) {
 export function IngredientTable({
   months,
   ingredients,
@@ -12,22 +12,15 @@ export function IngredientTable({
   months: Months;
   ingredients: Ingredients;
 }) {
+  const [editedObject, setEditedObject] = useState<Ingredient | undefined>(
+    undefined
+  );
   const rows = [];
-  const headers1 = [];
-  const headers2 = [];
+  const headers = [];
 
-  headers1.push(<th key="header"></th>);
-  headers2.push(<th key="header">Ingredients</th>);
-  for (const monthId in months) {
-    headers1.push(<th key={monthId}>{months[monthId].name}</th>);
-    headers2.push(<th key={monthId}></th>);
-  }
-  headers1.push(<th key="resync"></th>);
-  headers2.push(<th key="resync"></th>);
-  headers1.push(<th key="update"></th>);
-  headers2.push(<th key="update"></th>);
-  headers1.push(<th key="rename"></th>);
-  headers2.push(<th key="rename"></th>);
+  headers.push(<th key="name">Ingredients</th>);
+  headers.push(<th key="months">Months</th>);
+  headers.push(<th key="edit"></th>);
 
   for (const ingredientId in ingredients) {
     const ingredient: Ingredient = {
@@ -39,20 +32,37 @@ export function IngredientTable({
         key={ingredientId}
         months={months}
         ingredient={ingredient}
+        onEdit={setEditedObject}
       />
     );
   }
+
+  // Insert the recipe editor popup if needed
+  const objectEditor =
+    editedObject !== undefined ? (
+      <IngredientEditorPopUp
+        ingredientToEdit={editedObject}
+        listedIngredient={{
+          ingredientId: editedObject.ingredientId,
+          ...ingredients[editedObject.ingredientId],
+        }}
+        months={months}
+        onEditEnd={() => {
+          setEditedObject(undefined);
+        }}
+      />
+    ) : null;
 
   return (
     <div>
       <table className="tableFixHead">
         <thead>
-          <tr>{headers1}</tr>
-          <tr>{headers2}</tr>
+          <tr>{headers}</tr>
         </thead>
         <tbody>{rows}</tbody>
       </table>
       <AddIngredientButton />
+      {objectEditor}
     </div>
   );
 }
