@@ -70,27 +70,26 @@ export async function updateIngredientDb(
   if (db === undefined) {
     throw new Error('No database connection available');
   }
-  // TODO while updating, need to flag it such that the ingredient is not marked as desynced
-  // TODO also, the checkboxes should not be updated while it is updating
+
   const ingredientRef = ref(db, 'ingredients/' + newIngredient.ingredientId);
   const { ingredientId: removed, ...newDbIngredient } = newIngredient;
   await set(ingredientRef, newDbIngredient);
 }
 
-export async function updateIngredientNameDb(
-  db: Database | undefined,
-  ingredientId: string,
-  newName: string
-) {
-  if (db === undefined) {
-    throw new Error('No database connection available');
-  }
-  // TODO while updating, need to flag it such that the ingredient is not marked as desynced
-  // TODO also, the checkboxes should not be updated while it is updating
-  const ingredientNameRef = ref(db, 'ingredients/' + ingredientId + '/name');
+// export async function updateIngredientNameDb(
+//   db: Database | undefined,
+//   ingredientId: string,
+//   newName: string
+// ) {
+//   if (db === undefined) {
+//     throw new Error('No database connection available');
+//   }
+//   // TODO while updating, need to flag it such that the ingredient is not marked as desynced
+//   // TODO also, the checkboxes should not be updated while it is updating
+//   const ingredientNameRef = ref(db, 'ingredients/' + ingredientId + '/name');
 
-  await set(ingredientNameRef, newName);
-}
+//   await set(ingredientNameRef, newName);
+// }
 
 export async function createIngredientDb(db: Database | undefined) {
   if (db === undefined) {

@@ -55,7 +55,7 @@ export function IngredientTable({
 
   return (
     <div>
-      <table className="tableFixHead">
+      <table>
         <thead>
           <tr>{headers}</tr>
         </thead>

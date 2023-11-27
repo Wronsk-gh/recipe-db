@@ -52,7 +52,6 @@ export function RecipeTable({
         months={months}
         ingredients={ingredients}
         recipe={recipe}
-        isEditable={editedObject === undefined}
         onEdit={setEditedObject}
         filterText={filterText}
         monthFilter={monthFilter}

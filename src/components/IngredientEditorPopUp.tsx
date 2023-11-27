@@ -5,41 +5,52 @@ import { TagBox } from './TagBox';
 import { updateIngredientDb, updateIngredientNameDb } from '../rtdb';
 
 import { updateRecipeDb } from '../rtdb';
-import { Months, Ingredients, Recipe, Tag } from '../db-types';
+import { Months, Ingredients, Recipe, Ingredient, Tag } from '../db-types';
 
 import { RtdbContext } from './RtdbContext';
 
 export function IngredientEditorPopUp({
-  ingredients,
-  recipeToEdit,
-  listedRecipe, // present for verification of whether or no the recipe was modified by another user
+  months,
+  ingredientToEdit,
+  listedIngredient, // present for verification of whether or no the recipe was modified by another user
   onEditEnd,
 }: {
-  ingredients: Ingredients;
-  recipeToEdit: Recipe;
-  listedRecipe: Recipe | undefined;
+  months: Months;
+  ingredientToEdit: Ingredient;
+  listedIngredient: Ingredient | undefined;
   onEditEnd: () => void;
 }) {
-  // // Get the Rtdb from the context
-  // const db = useContext(RtdbContext);
+  // Get the Rtdb from the context
+  const db = useContext(RtdbContext);
 
-  // const [selectedIngredient, setSelectedIngredient] = useState<string>('');
-  // const [displayedIngredients, setDisplayedIngredients] = useState({
-  //   ...recipeToEdit.ingredients,
-  // });
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
+  const [displayedMonths, setDisplayedMonths] = useState({
+    ...ingredientToEdit.months,
+  });
+  const [displayedName, setDisplayedName] = useState({
+    ...ingredientToEdit.name,
+  });
 
-  // const ingredientMonthsMutation = useMutation({
-  //   mutationFn: async (newIngredient: Ingredient) => {
-  //     await updateIngredientDb(db, newIngredient);
-  //   },
-  //   onError: () => {
-  //     window.alert('Could not update...');
-  //   },
-  //   onSuccess: onIngredientMonthsMutationSuccess,
-  //   onSettled: () => {
-  //     ingredientMonthsMutation.reset();
-  //   },
-  // });
+  const ingredientMutation = useMutation({
+    mutationFn: async (newIngredient: Ingredient) => {
+      await updateIngredientDb(db, newIngredient);
+    },
+    onError: () => {
+      window.alert('Could not update...');
+    },
+    onSuccess: onIngredientMutationSuccess,
+    onSettled: () => {
+      ingredientMutation.reset();
+    },
+  });
+
+  // Get QueryClient from the context
+  const queryClient = useQueryClient();
+  
+  function onIngredientMutationSuccess() {
+    // Force an update of the ingredients
+    queryClient.invalidateQueries({ queryKey: ['ingredients'] });
+  }
 
   // const ingredientNameMutation = useMutation({
   //   mutationFn: async ({
@@ -59,13 +70,6 @@ export function IngredientEditorPopUp({
   //     ingredientNameMutation.reset();
   //   },
   // });
-
-  // function onIngredientMonthsMutationSuccess() {
-  //   // Force an update of the ingredients
-  //   queryClient.invalidateQueries({ queryKey: ['ingredients'] });
-  //   // Update the new reference value of ingredient here
-  //   setPreviousIngredient(copyIngredient(displayedIngredient!));
-  // }
 
   // function onIngredientNameMutationSuccess(
   //   data: void,
@@ -100,60 +104,47 @@ export function IngredientEditorPopUp({
   //   },
   // });
 
-  // // Get QueryClient from the context
-  // const queryClient = useQueryClient();
-
   // function onRecipeIngredientsMutationSuccess() {
   //   // Force an update of the recipes
   //   queryClient.invalidateQueries({ queryKey: ['recipes'] });
   // }
 
-  // const options = Object.entries(ingredients)
-  //   .sort((a, b) => {
-  //     if (a[1].name > b[1].name) {
-  //       return 1;
-  //     }
-  //     if (b[1].name > a[1].name) {
-  //       return -1;
-  //     }
-  //     return 0;
-  //   })
-  //   .map(([ingredientId, ingredient]) => (
-  //     <option value={ingredientId} key={ingredientId}>
-  //       {ingredient.name}
-  //     </option>
-  //   ));
+  const options = Object.entries(months)
+    .map(([monthId, month]) => (
+      <option value={monthId} key={monthId}>
+        {month.name}
+      </option>
+    ));
 
-  // const ingredientsTags = Object.keys(
-  //   displayedIngredients !== undefined ? displayedIngredients : {}
-  // ).map((ingredientId: string) => {
-  //   if (ingredientId in ingredients) {
-  //     return (
-  //       <TagBox
-  //         tag={{ id: ingredientId, name: ingredients[ingredientId].name }}
-  //         onClose={(tag: Tag) => {
-  //           const { [tag.id]: removed, ...newIngredients } =
-  //             displayedIngredients;
-  //           setDisplayedIngredients(newIngredients);
-  //         }}
-  //       />
-  //     );
-  //   } else {
-  //     return null;
-  //   }
-  // });
+  const monthsTags = Object.keys(
+    displayedMonths !== undefined ? displayedMonths : {}
+  ).map((monthId: string) => {
+    if (monthId in months) {
+      return (
+        <TagBox
+          tag={{ id: monthId, name: months[monthId].name }}
+          onClose={(tag: Tag) => {
+            const { [tag.id]: removed, ...newMonths } =
+              displayedMonths;
+            setDisplayedMonths(newMonths);
+          }}
+        />
+      );
+    } else {
+      return null;
+    }
+  });
 
-  return <></>;
   return (
     <div className="popup">
       <div className="popup-inner">
-        {recipeToEdit.name}
+        {ingredientToEdit.name}
         <form>
-          <label htmlFor="ingredients">Choose an ingredient:</label>
+          <label htmlFor="months">Choose a month:</label>
           <select
-            name="ingredients"
+            name="months"
             onChange={(newValue) =>
-              setSelectedIngredient(newValue.target.value)
+              setSelectedMonth(newValue.target.value)
             }
           >
             <option value={''} key={''}>
@@ -162,14 +153,14 @@ export function IngredientEditorPopUp({
             {options}
           </select>
         </form>
-        {ingredientsTags}
+        {monthsTags}
         <button
           onClick={() => {
-            if (selectedIngredient !== '') {
-              if (displayedIngredients[selectedIngredient] === undefined) {
-                setDisplayedIngredients({
-                  [selectedIngredient]: true,
-                  ...displayedIngredients,
+            if (selectedMonth !== '') {
+              if (displayedMonths[selectedMonth] === undefined) {
+                setDisplayedMonths({
+                  [selectedMonth]: true,
+                  ...displayedMonths,
                 });
               }
             }
@@ -180,18 +171,19 @@ export function IngredientEditorPopUp({
         <button onClick={onEditEnd}>Cancel edit</button>
         <button
           onClick={() => {
-            // Check that the displayed recipe is still identical to the one at the pup-up creation
-            if (!_.isEqual(recipeToEdit, listedRecipe)) {
-              alert('Recipe was modified by another user !!!');
+            // Check that the displayed month is still identical to the one at the pup-up creation
+            if (!_.isEqual(monthToEdit, listedMonth)) {
+              alert('Month was modified by another user !!!');
             } else {
-              if (recipeIngredientsMutation.isIdle) {
-                recipeIngredientsMutation.mutate({
-                  ...recipeToEdit,
-                  ingredients: displayedIngredients,
+              if (ingredientMutation.isIdle) {
+                ingredientMutation.mutate({
+                  ...ingredientToEdit,
+                  name: displayedName,
+                  months: displayedMonths,
                 });
                 onEditEnd();
               } else {
-                alert('Recipe is already being modified !!!');
+                alert('Month is already being modified !!!');
               }
             }
           }}
@@ -201,18 +193,4 @@ export function IngredientEditorPopUp({
       </div>
     </div>
   );
-}
-
-function areIngredientsEqual(
-  in1: Ingredient | undefined,
-  in2: Ingredient | undefined
-): Boolean {
-  // Note: as of ECMA6, the keys of a JS object are officially ordered
-  // thus comparing with stringify means that the order would need to be the same.
-  // return JSON.stringify(in1) === JSON.stringify(in2);
-  return _.isEqual(in1, in2);
-}
-
-function copyIngredient(ingredient: Ingredient): Ingredient {
-  return JSON.parse(JSON.stringify(ingredient));
 }
