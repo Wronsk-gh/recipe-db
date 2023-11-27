@@ -1,11 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import _ from 'lodash';
 import { TagBox } from './TagBox';
-import { updateIngredientDb, updateIngredientNameDb } from '../rtdb';
-
-import { updateRecipeDb } from '../rtdb';
-import { Months, Ingredients, Recipe, Ingredient, Tag } from '../db-types';
+import { updateIngredientDb } from '../rtdb';
+import { Months, Ingredient, Tag } from '../db-types';
 
 import { RtdbContext } from './RtdbContext';
 
@@ -27,9 +25,7 @@ export function IngredientEditorPopUp({
   const [displayedMonths, setDisplayedMonths] = useState({
     ...ingredientToEdit.months,
   });
-  const [displayedName, setDisplayedName] = useState({
-    ...ingredientToEdit.name,
-  });
+  const [displayedName, setDisplayedName] = useState(ingredientToEdit.name);
 
   const ingredientMutation = useMutation({
     mutationFn: async (newIngredient: Ingredient) => {
@@ -46,7 +42,7 @@ export function IngredientEditorPopUp({
 
   // Get QueryClient from the context
   const queryClient = useQueryClient();
-  
+
   function onIngredientMutationSuccess() {
     // Force an update of the ingredients
     queryClient.invalidateQueries({ queryKey: ['ingredients'] });
@@ -109,12 +105,11 @@ export function IngredientEditorPopUp({
   //   queryClient.invalidateQueries({ queryKey: ['recipes'] });
   // }
 
-  const options = Object.entries(months)
-    .map(([monthId, month]) => (
-      <option value={monthId} key={monthId}>
-        {month.name}
-      </option>
-    ));
+  const options = Object.entries(months).map(([monthId, month]) => (
+    <option value={monthId} key={monthId}>
+      {month.name}
+    </option>
+  ));
 
   const monthsTags = Object.keys(
     displayedMonths !== undefined ? displayedMonths : {}
@@ -124,8 +119,7 @@ export function IngredientEditorPopUp({
         <TagBox
           tag={{ id: monthId, name: months[monthId].name }}
           onClose={(tag: Tag) => {
-            const { [tag.id]: removed, ...newMonths } =
-              displayedMonths;
+            const { [tag.id]: removed, ...newMonths } = displayedMonths;
             setDisplayedMonths(newMonths);
           }}
         />
@@ -143,9 +137,7 @@ export function IngredientEditorPopUp({
           <label htmlFor="months">Choose a month:</label>
           <select
             name="months"
-            onChange={(newValue) =>
-              setSelectedMonth(newValue.target.value)
-            }
+            onChange={(newValue) => setSelectedMonth(newValue.target.value)}
           >
             <option value={''} key={''}>
               {'-'}
@@ -171,8 +163,8 @@ export function IngredientEditorPopUp({
         <button onClick={onEditEnd}>Cancel edit</button>
         <button
           onClick={() => {
-            // Check that the displayed month is still identical to the one at the pup-up creation
-            if (!_.isEqual(monthToEdit, listedMonth)) {
+            // Check that the displayed ingredient is still identical to the one at the pup-up creation
+            if (!_.isEqual(ingredientToEdit, listedIngredient)) {
               alert('Month was modified by another user !!!');
             } else {
               if (ingredientMutation.isIdle) {
