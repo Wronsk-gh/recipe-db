@@ -48,63 +48,6 @@ export function IngredientEditorPopUp({
     queryClient.invalidateQueries({ queryKey: ['ingredients'] });
   }
 
-  // const ingredientNameMutation = useMutation({
-  //   mutationFn: async ({
-  //     ingredientId,
-  //     newName,
-  //   }: {
-  //     ingredientId: string;
-  //     newName: string;
-  //   }) => {
-  //     await updateIngredientNameDb(db, ingredientId, newName);
-  //   },
-  //   onError: () => {
-  //     window.alert('Could not update...');
-  //   },
-  //   onSuccess: onIngredientNameMutationSuccess,
-  //   onSettled: () => {
-  //     ingredientNameMutation.reset();
-  //   },
-  // });
-
-  // function onIngredientNameMutationSuccess(
-  //   data: void,
-  //   {
-  //     ingredientId,
-  //     newName,
-  //   }: {
-  //     ingredientId: string;
-  //     newName: string;
-  //   },
-  //   context: unknown
-  // ) {
-  //   // Force an update of the ingredients
-  //   queryClient.invalidateQueries({ queryKey: ['ingredients'] });
-  //   // Update the new reference value of ingredient here
-  //   const newIngredient = copyIngredient(displayedIngredient!);
-  //   newIngredient.name = newName;
-  //   setDisplayedIngredient(newIngredient);
-  //   setPreviousIngredient({ ...previousIngredient!, name: newName });
-  // }
-
-  // const recipeIngredientsMutation = useMutation({
-  //   mutationFn: async (newRecipe: Recipe) => {
-  //     await updateRecipeDb(db, newRecipe);
-  //   },
-  //   onError: () => {
-  //     window.alert('Could not update...');
-  //   },
-  //   onSuccess: onRecipeIngredientsMutationSuccess,
-  //   onSettled: () => {
-  //     recipeIngredientsMutation.reset();
-  //   },
-  // });
-
-  // function onRecipeIngredientsMutationSuccess() {
-  //   // Force an update of the recipes
-  //   queryClient.invalidateQueries({ queryKey: ['recipes'] });
-  // }
-
   const options = Object.entries(months).map(([monthId, month]) => (
     <option value={monthId} key={monthId}>
       {month.name}

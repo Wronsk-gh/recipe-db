@@ -49,3 +49,7 @@ export interface Recipe {
   google_id: string;
   thumbnailLink: string;
 }
+
+export interface NamedObject {
+  name: string;
+}

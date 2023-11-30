@@ -1,0 +1,82 @@
+import { useState, useContext } from 'react';
+import _ from 'lodash';
+import { TagBox } from './TagBox';
+import { Months, Ingredient, Tag } from '../db-types';
+
+import { RtdbContext } from './RtdbContext';
+
+export function IngredientEditorPopUp({
+  months,
+  displayedObject,
+  onDisplayedObjectChange,
+}: {
+  months: Months;
+  displayedObject: Ingredient;
+  onDisplayedObjectChange: (ingredient: Ingredient) => void;
+}) {
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
+
+  const options = Object.entries(months).map(([monthId, month]) => (
+    <option value={monthId} key={monthId}>
+      {month.name}
+    </option>
+  ));
+
+  const monthsTags = Object.keys(
+    displayedObject.months !== undefined ? displayedObject.months : {}
+  ).map((monthId: string) => {
+    if (monthId in months) {
+      return (
+        <TagBox
+          tag={{ id: monthId, name: months[monthId].name }}
+          onClose={(tag: Tag) => {
+            const { [tag.id]: removed, ...newMonths } = { ...displayedObject.months };
+            const newDisplayedObject = { ...displayedObject, months: newMonths };
+            onDisplayedObjectChange(newDisplayedObject);
+          }}
+        />
+      );
+    } else {
+      return null;
+    }
+  });
+
+  return (
+    <div>
+      <form>
+        <label htmlFor="months">Choose a month:</label>
+        <select
+          name="months"
+          onChange={(newValue) => setSelectedMonth(newValue.target.value)}
+        >
+          <option value={''} key={''}>
+            {'-'}
+          </option>
+          {options}
+        </select>
+      </form>
+      {monthsTags}
+      <button
+        onClick={() => {
+          if (selectedMonth !== '') {
+            if (displayedObject.months === undefined) {
+              displayedObject.months = {};
+            }
+            if (displayedObject.months[selectedMonth] === undefined) {
+              const newDisplayedObject = {
+                ...displayedObject,
+                months: {
+                  [selectedMonth]: true,
+                  ...displayedObject.months,
+                }
+              };
+              onDisplayedObjectChange(newDisplayedObject);
+            }
+          }
+        }}
+      >
+        Add
+      </button>
+    </div>
+  );
+}
