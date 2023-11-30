@@ -1,11 +1,9 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import _ from 'lodash';
 import { TagBox } from './TagBox';
 import { Months, Ingredient, Tag } from '../db-types';
 
-import { RtdbContext } from './RtdbContext';
-
-export function IngredientEditorPopUp({
+export function IngredientEditForm({
   months,
   displayedObject,
   onDisplayedObjectChange,
@@ -30,8 +28,13 @@ export function IngredientEditorPopUp({
         <TagBox
           tag={{ id: monthId, name: months[monthId].name }}
           onClose={(tag: Tag) => {
-            const { [tag.id]: removed, ...newMonths } = { ...displayedObject.months };
-            const newDisplayedObject = { ...displayedObject, months: newMonths };
+            const { [tag.id]: removed, ...newMonths } = {
+              ...displayedObject.months,
+            };
+            const newDisplayedObject = {
+              ...displayedObject,
+              months: newMonths,
+            };
             onDisplayedObjectChange(newDisplayedObject);
           }}
         />
@@ -44,6 +47,16 @@ export function IngredientEditorPopUp({
   return (
     <div>
       <form>
+        <input
+          value={displayedObject.name}
+          onChange={(newValue) =>
+            onDisplayedObjectChange({
+              ...displayedObject,
+              name: newValue.target.value,
+            })
+          }
+        />
+        <br />
         <label htmlFor="months">Choose a month:</label>
         <select
           name="months"
@@ -68,7 +81,7 @@ export function IngredientEditorPopUp({
                 months: {
                   [selectedMonth]: true,
                   ...displayedObject.months,
-                }
+                },
               };
               onDisplayedObjectChange(newDisplayedObject);
             }

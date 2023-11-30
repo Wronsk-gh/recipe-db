@@ -32,12 +32,12 @@ export interface Tag {
   name: string;
 }
 
-export interface Ingredient {
+export interface Ingredient extends NamedObject {
   ingredientId: string;
   months?: {
     [monthId: string]: boolean;
   };
-  name: string;
+  // name: string;
 }
 
 export interface Recipe {

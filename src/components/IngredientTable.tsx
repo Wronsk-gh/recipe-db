@@ -1,9 +1,14 @@
 import '../App.css';
-import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useContext } from 'react';
 import { Months, Ingredients, Ingredient } from '../db-types';
 import { IngredientRow } from './IngredientRow';
 import { AddIngredientButton } from './AddIngredientButton';
-import { IngredientEditorPopUp } from './IngredientEditorPopUp';
+import { updateIngredientDb } from '../rtdb';
+import { ObjectEditor } from './ObjectEditor';
+import { PopUp } from './PopUp';
+import { IngredientEditForm } from './IngredientEditForm';
+import { RtdbContext } from './RtdbContext';
 
 export function IngredientTable({
   months,
@@ -15,6 +20,29 @@ export function IngredientTable({
   const [editedObject, setEditedObject] = useState<Ingredient | undefined>(
     undefined
   );
+
+  // Get the Rtdb from the context
+  const db = useContext(RtdbContext);
+  // Get QueryClient from the context
+  const queryClient = useQueryClient();
+  const ingredientMutation = useMutation({
+    mutationFn: async (newIngredient: Ingredient) => {
+      await updateIngredientDb(db, newIngredient);
+    },
+    onError: () => {
+      window.alert('Could not update...');
+    },
+    onSuccess: onIngredientMutationSuccess,
+    onSettled: () => {
+      ingredientMutation.reset();
+    },
+  });
+
+  function onIngredientMutationSuccess() {
+    // Force an update of the ingredients
+    queryClient.invalidateQueries({ queryKey: ['ingredients'] });
+  }
+
   const rows = [];
   const headers = [];
 
@@ -40,17 +68,18 @@ export function IngredientTable({
   // Insert the recipe editor popup if needed
   const objectEditor =
     editedObject !== undefined ? (
-      <IngredientEditorPopUp
-        ingredientToEdit={editedObject}
-        listedIngredient={{
-          ingredientId: editedObject.ingredientId,
-          ...ingredients[editedObject.ingredientId],
-        }}
-        months={months}
-        onEditEnd={() => {
-          setEditedObject(undefined);
-        }}
-      />
+      <PopUp>
+        <ObjectEditor
+          objectToEdit={editedObject}
+          objectMutation={ingredientMutation}
+          renderEditForm={(props) => {
+            return <IngredientEditForm {...props} months={months} />;
+          }}
+          onEditEnd={() => {
+            setEditedObject(undefined);
+          }}
+        />
+      </PopUp>
     ) : null;
 
   return (
