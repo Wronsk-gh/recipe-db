@@ -1,25 +1,23 @@
 import { useState } from 'react';
 import { Database } from 'firebase/database';
 import { useQuery, useQueries } from '@tanstack/react-query';
+import { Outlet, Link } from 'react-router-dom';
 
 import { fetchMonths, fetchIngredients, fetchRecipes } from '../rtdb';
-import { RecipesThumbnails } from '../db-types';
+import { Months, Ingredients, Recipes, RecipesThumbnails } from '../db-types';
 
-import { FilterableIngredientTable } from './FilterableIngredientTable';
-import { FilterableRecipeTable } from './FilterableRecipeTable';
 import { RtdbContext } from './RtdbContext';
 import { Auth } from './Auth';
 
-enum CurrentView {
-  recipes,
-  ingredients,
+export interface RecipeManagerContext {
+  months: Months | undefined;
+  ingredients: Ingredients | undefined;
+  recipes: Recipes | undefined;
+  recipesThumbnails: RecipesThumbnails;
 }
 
 export function RecipeManager() {
   const [db, setDb] = useState<Database | undefined>(undefined);
-  const [currentView, setCurrentView] = useState<CurrentView>(
-    CurrentView.recipes
-  );
   const {
     isLoading: isMonthsLoading,
     isError: isMonthsError,
@@ -103,62 +101,67 @@ export function RecipeManager() {
     }
   });
 
-  if (
-    monthsData !== undefined &&
-    ingredientsData !== undefined &&
-    recipesData !== undefined
-  ) {
-    // See which view to display
-    let view = <></>;
-    if (currentView === CurrentView.recipes) {
-      view = (
-        <FilterableRecipeTable
-          months={monthsData}
-          ingredients={ingredientsData}
-          recipes={recipesData}
-          recipesThumbnails={thumbnails}
-        />
-      );
-    } else if (currentView === CurrentView.ingredients) {
-      view = (
-        <FilterableIngredientTable
-          months={monthsData}
-          ingredients={ingredientsData}
-        />
-      );
-    }
+  // // See which view to display
+  // let view = <></>;
+  // if (currentView === CurrentView.recipes) {
+  //   view = (
+  //     <FilterableRecipeTable
+  //       months={monthsData}
+  //       ingredients={ingredientsData}
+  //       recipes={recipesData}
+  //       recipesThumbnails={thumbnails}
+  //     />
+  //   );
+  // } else if (currentView === CurrentView.ingredients) {
+  //   view = (
+  //     <FilterableIngredientTable
+  //       months={monthsData}
+  //       ingredients={ingredientsData}
+  //     />
+  //   );
+  // }
 
-    return (
-      <>
-        <Auth setDb={setDb} />
+  return (
+    <>
+      <Auth setDb={setDb} />
+      <br />
+      <br />
+      {/* <button
+        onClick={() => {
+          setCurrentView(CurrentView.recipes);
+        }}
+      >
+      </button> */}
+      <Link to={'recipes'}>Recipes</Link>
+      {/* <button
+        onClick={() => {
+          setCurrentView(CurrentView.ingredients);
+        }}
+      >
+        Ingredients
+      </button> */}
+      <Link to={'ingredients'}>ingredients</Link>
+      <RtdbContext.Provider value={db}>
         <br />
-        <br />
-        <button
-          onClick={() => {
-            setCurrentView(CurrentView.recipes);
-          }}
-        >
-          Recipes
-        </button>
-        <button
-          onClick={() => {
-            setCurrentView(CurrentView.ingredients);
-          }}
-        >
-          Ingredients
-        </button>
-        <RtdbContext.Provider value={db}>
-          <br />
-          {view}
-        </RtdbContext.Provider>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <Auth setDb={setDb} />
-        <p>Loading...</p>
-      </>
-    );
-  }
+        <Outlet
+          context={
+            {
+              months: monthsData,
+              ingredients: ingredientsData,
+              recipes: recipesData,
+              recipesThumbnails: thumbnails,
+            } satisfies RecipeManagerContext
+          }
+        />
+      </RtdbContext.Provider>
+    </>
+  );
+  // } else {
+  //   return (
+  //     <>
+  //       <Auth setDb={setDb} />
+  //       <p>Loading...</p>
+  //     </>
+  //   );
+  // }
 }
