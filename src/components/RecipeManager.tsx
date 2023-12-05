@@ -2,12 +2,15 @@ import { useState } from 'react';
 import { Database } from 'firebase/database';
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { Outlet, Link } from 'react-router-dom';
-
 import { fetchMonths, fetchIngredients, fetchRecipes } from '../rtdb';
 import { Months, Ingredients, Recipes, RecipesThumbnails } from '../db-types';
 
 import { RtdbContext } from './RtdbContext';
 import { Auth } from './Auth';
+
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
 
 export interface RecipeManagerContext {
   months: Months | undefined;
@@ -101,46 +104,30 @@ export function RecipeManager() {
     }
   });
 
-  // // See which view to display
-  // let view = <></>;
-  // if (currentView === CurrentView.recipes) {
-  //   view = (
-  //     <FilterableRecipeTable
-  //       months={monthsData}
-  //       ingredients={ingredientsData}
-  //       recipes={recipesData}
-  //       recipesThumbnails={thumbnails}
-  //     />
-  //   );
-  // } else if (currentView === CurrentView.ingredients) {
-  //   view = (
-  //     <FilterableIngredientTable
-  //       months={monthsData}
-  //       ingredients={ingredientsData}
-  //     />
-  //   );
-  // }
-
   return (
     <>
+      <Navbar expand="lg" className="bg-body-tertiary">
+        {/* <Container> */}
+        <Navbar.Brand>React-Bootstrap</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link as={Link} to="recipes">
+              Recipes
+            </Nav.Link>
+            <Nav.Link as={Link} to="ingredients">
+              ingredients
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+        {/* </Container> */}
+      </Navbar>
+
+      {/* <Link to={'recipes'}>Recipes</Link>
+      <Link to={'ingredients'}>ingredients</Link> */}
       <Auth setDb={setDb} />
       <br />
       <br />
-      {/* <button
-        onClick={() => {
-          setCurrentView(CurrentView.recipes);
-        }}
-      >
-      </button> */}
-      <Link to={'recipes'}>Recipes</Link>
-      {/* <button
-        onClick={() => {
-          setCurrentView(CurrentView.ingredients);
-        }}
-      >
-        Ingredients
-      </button> */}
-      <Link to={'ingredients'}>ingredients</Link>
       <RtdbContext.Provider value={db}>
         <br />
         <Outlet

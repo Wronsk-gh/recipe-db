@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import App from './App';
 import { RecipeManager } from './components/RecipeManager';
 import { FilterableIngredientTable } from './components/FilterableIngredientTable';
 import { FilterableRecipeTable } from './components/FilterableRecipeTable';
@@ -10,9 +9,13 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 const rootElement = document.getElementById('root')!;
 const root = ReactDOM.createRoot(rootElement);
 
-// Create a client
+// Importing the Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+// Create a client for react-query
 const queryClient = new QueryClient();
 
+// Define the routes
 const router = createBrowserRouter([
   {
     path: '/',
@@ -28,10 +31,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-  // {
-  //   path: 'recipes',
-  //   element: <Contact />,
-  // },
 ]);
 
 root.render(
