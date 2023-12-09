@@ -64,10 +64,6 @@ export function RecipeManager() {
       fields: 'id, name, thumbnailLink',
     });
     if (response.result.thumbnailLink !== undefined) {
-      console.log('fetching thumbnail : ' + response.result.thumbnailLink);
-      console.log(response.result);
-      console.log(gapi.client.getToken().access_token);
-      console.log(encodeURIComponent(gapi.client.getToken().access_token));
       // const thumbnailResult = await fetch(
       //   response.result.thumbnailLink +
       //     '&access_token=' +

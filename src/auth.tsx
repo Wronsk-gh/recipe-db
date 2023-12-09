@@ -73,6 +73,7 @@ export async function handlePageLoad() {
   if (userCred !== null) {
     // This is the signed-in user
     const user = userCred.user;
+    console.log(user.uid);
     // This gives you a Google Access Token.
     const credential = GoogleAuthProvider.credentialFromResult(userCred);
     if (credential !== null) {
@@ -82,6 +83,7 @@ export async function handlePageLoad() {
         console.log(token);
         gapi.client.setToken({ access_token: token });
         firebaseDb = getDatabase(firebaseApp);
+        console.log(firebaseDb);
       }
     }
     // As this API can be used for sign-in, linking and reauthentication,
