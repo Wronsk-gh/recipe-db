@@ -15,6 +15,11 @@ import { RecipeEditForm } from './RecipeEditForm';
 import { RtdbContext } from './RtdbContext';
 import { updateRecipeDb } from '../rtdb';
 
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Stack from 'react-bootstrap/Stack';
+
 export function RecipeTable({
   months,
   ingredients,
@@ -60,10 +65,10 @@ export function RecipeTable({
   const rows = [];
   const headers = [];
 
-  headers.push(<th key="name">Recipes</th>);
-  headers.push(<th key="ingredients">Ingredients</th>);
-  headers.push(<th key="months">Months</th>);
-  headers.push(<th key="edit"></th>);
+  headers.push(<Col key="name">Recipes</Col>);
+  headers.push(<Col key="ingredients">Ingredients</Col>);
+  headers.push(<Col key="months">Months</Col>);
+  headers.push(<Col key="edit"></Col>);
 
   for (const recipeId in recipes) {
     const thumbnailLink =
@@ -108,12 +113,18 @@ export function RecipeTable({
 
   return (
     <div>
-      <table>
-        <thead>
-          <tr>{headers}</tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </table>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          columnGap: '10px',
+          rowGap: '10px',
+          justifyContent: 'left',
+        }}
+      >
+        {rows}
+      </div>
       {objectEditor}
     </div>
   );

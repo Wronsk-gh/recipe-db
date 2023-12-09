@@ -14,7 +14,16 @@ export function IngredientRow({
   const cells = [];
 
   const nameCell = <td key="name">{ingredient.name}</td>;
-  const monthsCell = ingredient.months !== undefined ? (<td key="months">{Object.keys(ingredient.months).map((monthId) => {return <li key={monthId}>{months[monthId].name}</li>})}</td>) : (<td key="months"></td>);
+  const monthsCell =
+    ingredient.months !== undefined ? (
+      <td key="months">
+        {Object.keys(ingredient.months).map((monthId) => {
+          return <li key={monthId}>{months[monthId].name}</li>;
+        })}
+      </td>
+    ) : (
+      <td key="months"></td>
+    );
 
   cells.push(nameCell);
   cells.push(monthsCell);

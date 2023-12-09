@@ -25,42 +25,24 @@
   width: 40%;
 }
 
-.tableFixHead {
-  /* make the table scrollable if height is more than 200 px */
-  overflow-y: auto;
-  overflow-x: auto;
-  /* gives an initial height of 200px to the table */
-  height: 200;
-}
-/* This is for all the the "th" elements in the first child row */
-.tableFixHead thead > :first-child th {
-  /* make the table heads sticky */
-  position: sticky;
-  /* table head will be placed from the top of the table and sticks to it */
-  top: 0px;
-  height: 30px;
-}
-/* This is for all the the "th" elements in the second row, (in this casa is the last child element into the thead) */
-.tableFixHead thead > :last-child th {
-  /* make the table heads sticky */
-  position: sticky;
-  /* table head will be placed from the top of the table and sticks to it */
-  top: 40px;
-}
-
-table {
-  /* make the table borders collapse to each other */
-  border-collapse: collapse;
-  width: 100%;
-}
-th,
-td {
-  padding: 5px 16px;
-  border: 1px solid #ccc;
-}
-th {
+.row-item {
   background: #eee;
+  /* padding: 20px; */
 }
+.month-bar {
+  overflow: visible;
+  width: 26px;
+  height: 26px;
+  text-align: center;
+  /* background: blue; */
+}
+/* .tag {
+  background-color: 'hsl(54, 100%, 81%)' !important;
+  border: 'solid 1px black' !important;
+  margin: '2px' !important;
+  border-radius: '3px' !important;
+  max-width: '150px' !important;
+} */
 
 /* This is for all the the "th" elements in the second row, (in this casa is the last child element into the thead) */
 /* thead > :last-child th

@@ -1,4 +1,11 @@
 import { Months, Ingredients, Recipe } from '../db-types';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Badge from 'react-bootstrap/Badge';
+import Stack from 'react-bootstrap/Stack';
+import Container from 'react-bootstrap/Container';
+import Card from 'react-bootstrap/Card';
+import { MonthBar } from './MonthBar';
 
 export function RecipeRow({
   months,
@@ -19,37 +26,23 @@ export function RecipeRow({
 
   // TODO remove those let declaration for const with direct value
   let thumbnail = <></>;
-  let nameCell = <td key="name"></td>;
-  let ingredientsCell = <td key="ingredients"></td>;
-  let monthsCell = <td key="months"></td>;
+  // let nameCell = <Col key="name"></Col>;
+  let ingredientsCell = <Col key="ingredients"></Col>;
+  let monthsCell = <Col key="months"></Col>;
   const recipeIngredients = [];
   const recipeMonthsId: {
     [monthId: string]: boolean;
   } = {};
   const recipeMonths = [];
 
-  // Name cell content
-  thumbnail = <img src={recipe.thumbnailLink} alt="Loading..." />;
-  nameCell = <td key="name">{recipe.name}</td>;
-  nameCell = (
-    <td key="name">
-      <a
-        href={'https://docs.google.com/document/d/' + recipe.google_id}
-        target="_blank"
-      >
-        {recipe.name}
-      </a>
-      <br />
-      {thumbnail}
-    </td>
-  );
-
   // Ingredients cell content
   // create the list of ingredient name
   for (const ingredientId in recipe.ingredients) {
     if (ingredients[ingredientId] !== undefined) {
       recipeIngredients.push(
-        <li key={ingredientId}>{ingredients[ingredientId].name}</li>
+        <Badge pill bg="primary">
+          {ingredients[ingredientId].name}
+        </Badge>
       );
     } else {
       console.error(
@@ -57,7 +50,11 @@ export function RecipeRow({
       );
     }
   }
-  ingredientsCell = <td key="ingredients">{recipeIngredients}</td>;
+  // ingredientsCell = (
+  //   <Col key="ingredients">
+  //     <Stack gap={3}>{recipeIngredients}</Stack>
+  //   </Col>
+  // );
 
   // Months cell content
   // Intersect all monthsId
@@ -74,29 +71,60 @@ export function RecipeRow({
       }
     }
   }
-  // Build the list of months
-  // Cycle from the months definition to keep the order
-  for (const monthId in months) {
-    if (recipeMonthsId[monthId] === true) {
-      recipeMonths.push(<li key={monthId}>{months[monthId].name}</li>);
-    }
-  }
-  monthsCell = <td key="months">{recipeMonths}</td>;
+  // // Build the list of months
+  // // Cycle from the months definition to keep the order
+  // for (const monthId in months) {
+  //   if (recipeMonthsId[monthId] === true) {
+  //     recipeMonths.push(<li key={monthId}>{months[monthId].name}</li>);
+  //   }
+  // }
+  // monthsCell = <Col key="months">{recipeMonths}</Col>;
 
   // Push all the cells into the row
-  cells.push(nameCell);
-  cells.push(ingredientsCell);
-  cells.push(monthsCell);
-  cells.push(
-    <td key="editButton">
-      <button
-        onClick={() => {
-          onEdit(recipe);
-        }}
-      >
-        Edit
-      </button>
-    </td>
+  // cells.push(nameCell);
+  // cells.push(ingredientsCell);
+  // cells.push(monthsCell);
+  const editButton = (
+    <button
+      onClick={() => {
+        onEdit(recipe);
+      }}
+    >
+      Edit
+    </button>
+  );
+  // cells.push(<Col key="editButton"></Col>);
+
+  // Name cell content
+  // thumbnail = <img src={recipe.thumbnailLink} width="150px" alt="Loading..." />;
+  const recipeCard = (
+    <Card style={{ width: '22rem' }} bg="light">
+      <Card.Body>
+        <h5 className="card-title mb-3">
+          <a
+            href={'https://docs.google.com/document/d/' + recipe.google_id}
+            target="_blank"
+            style={{ color: 'black', textDecoration: 'none' }}
+          >
+            {recipe.name}
+          </a>
+        </h5>
+        <div className="mb-2 text-center">
+          <MonthBar months={months} recipeMonthsId={recipeMonthsId} />
+        </div>
+        {recipeIngredients}
+        <Card.Text></Card.Text>
+        {editButton}
+      </Card.Body>
+      <div className="text-center">
+        <img
+          src={recipe.thumbnailLink}
+          className="card-img-bottom"
+          alt="Loading..."
+          style={{ objectFit: 'cover', width: '200px' }}
+        />
+      </div>
+    </Card>
   );
 
   // See if filter allows display
@@ -104,7 +132,7 @@ export function RecipeRow({
     (monthFilter === '' || recipeMonthsId[monthFilter] === true) &&
     recipe.name.toLowerCase().indexOf(filterText.toLowerCase()) !== -1
   ) {
-    return <tr>{cells}</tr>;
+    return recipeCard;
   } else {
     return null;
   }

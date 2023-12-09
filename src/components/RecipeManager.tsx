@@ -64,11 +64,21 @@ export function RecipeManager() {
       fields: 'id, name, thumbnailLink',
     });
     if (response.result.thumbnailLink !== undefined) {
-      const thumbnailResult = await fetch(
-        response.result.thumbnailLink +
-          '&access_token=' +
-          gapi.client.getToken().access_token
-      );
+      console.log('fetching thumbnail : ' + response.result.thumbnailLink);
+      console.log(response.result);
+      console.log(gapi.client.getToken().access_token);
+      console.log(encodeURIComponent(gapi.client.getToken().access_token));
+      // const thumbnailResult = await fetch(
+      //   response.result.thumbnailLink +
+      //     '&access_token=' +
+      //     gapi.client.getToken().access_token
+      // );
+      const thumbnailResult = await fetch(response.result.thumbnailLink);
+      // const thumbnailResult = await fetch(response.result.thumbnailLink, {
+      //   headers: {
+      //     Authorization: `Bearer {gapi.client.getToken().access_token}`,
+      //   },
+      // });
       const blob = await thumbnailResult.blob();
       const imageUrl = URL.createObjectURL(blob);
       return imageUrl;
