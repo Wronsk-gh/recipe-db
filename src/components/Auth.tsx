@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { RtdbCred } from '../rtdb';
+import { RtdbCred, fetchDisplay } from '../rtdb';
 import {
   gapiLoadOkay,
   gapiLoadFail,
@@ -7,7 +7,12 @@ import {
   handlePageLoad,
 } from '../auth';
 
-export function Auth({ setRtdbCred }: { setRtdbCred: (db: RtdbCred) => void }) {
+export function Auth({
+  setRtdbCred,
+}: {
+  setRtdbCred: (rtdbCred: RtdbCred) => void;
+}) {
+  // An effect triggered at page load is needed to act after the redirect
   useEffect(() => {
     const gapiScript = document.createElement('script');
     gapiScript.src = 'https://apis.google.com/js/api.js';
@@ -22,8 +27,19 @@ export function Auth({ setRtdbCred }: { setRtdbCred: (db: RtdbCred) => void }) {
 
     const onHandlePageLoad = async () => {
       const [user, db] = await handlePageLoad();
+      const rtdbCred: RtdbCred = { user: user, db: db, displayUserId: null };
+      console.log('user :');
+      console.log(user);
+      console.log('db :');
+      console.log(db);
+      console.log('rtdbCred :');
+      console.log(rtdbCred);
+      if (db !== null) {
+        rtdbCred.displayUserId = await fetchDisplay(rtdbCred);
+        console.log();
+      }
+      setRtdbCred(rtdbCred);
       // const rtdbCred = { user: user, db: db };
-      setRtdbCred({ user: user, db: db });
       // if (db !== null) {
       //   rtdbCred.db = db;
       // }

@@ -21,7 +21,12 @@ export interface RecipeManagerContext {
 }
 
 export function RecipeManager() {
-  const [rtdbCred, setRtdbCred] = useState<RtdbCred>({ user: null, db: null });
+  const [rtdbCred, setRtdbCred] = useState<RtdbCred>({
+    user: null,
+    db: null,
+    displayUserId: null,
+  });
+
   const {
     isLoading: isMonthsLoading,
     isError: isMonthsError,
@@ -30,6 +35,8 @@ export function RecipeManager() {
   } = useQuery({
     queryKey: ['months'],
     queryFn: async () => {
+      console.log('HERRRRRRRRRRRRRE');
+      console.log(rtdbCred);
       return await fetchMonths(rtdbCred);
     },
     enabled: !!rtdbCred.db,

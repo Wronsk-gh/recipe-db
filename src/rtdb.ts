@@ -6,6 +6,7 @@ import { Months, Ingredients, Recipes, Ingredient, Recipe } from './db-types';
 export interface RtdbCred {
   user: User | null;
   db: Database | null;
+  displayUserId: string | null;
 }
 
 // export async function getDb(): Promise<Database> {
@@ -114,6 +115,28 @@ async function fetchFromUserDb<DataType>(
   return dbData;
 }
 
+async function fetchFromDisplayUserDb<DataType>(
+  rtdbCred: RtdbCred,
+  dataName: string
+): Promise<DataType> {
+  if (rtdbCred.db === null || rtdbCred.user === null) {
+    throw new Error('No database connection available');
+  }
+  const uid =
+    rtdbCred.displayUserId !== null
+      ? rtdbCred.displayUserId
+      : rtdbCred.user.uid;
+  console.log('rtdbCred.displayUserId');
+  console.log(rtdbCred.displayUserId);
+  console.log('rtdbCred.user.uid');
+  console.log(rtdbCred.user.uid);
+  console.log('uid');
+  console.log(uid);
+  const dbRef = ref(rtdbCred.db, `users/${uid}`);
+  const dbData: DataType = (await get(child(dbRef, dataName))).val();
+  return dbData;
+}
+
 async function fetchFromRootDb<DataType>(
   rtdbCred: RtdbCred,
   dataName: string
@@ -131,9 +154,14 @@ export async function fetchMonths(rtdbCred: RtdbCred) {
 }
 
 export async function fetchIngredients(rtdbCred: RtdbCred) {
-  return await fetchFromUserDb<Ingredients>(rtdbCred, 'ingredients');
+  return await fetchFromDisplayUserDb<Ingredients>(rtdbCred, 'ingredients');
 }
 
 export async function fetchRecipes(rtdbCred: RtdbCred) {
-  return await fetchFromUserDb<Recipes>(rtdbCred, 'recipes');
+  return await fetchFromDisplayUserDb<Recipes>(rtdbCred, 'recipes');
+}
+
+export async function fetchDisplay(rtdbCred: RtdbCred) {
+  // Note this will return null in case the key doesn't exist !
+  return await fetchFromUserDb<string>(rtdbCred, 'display');
 }
