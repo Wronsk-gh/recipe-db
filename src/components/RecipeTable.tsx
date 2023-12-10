@@ -15,11 +15,6 @@ import { RecipeEditForm } from './RecipeEditForm';
 import { RtdbContext } from './RtdbContext';
 import { updateRecipeDb } from '../rtdb';
 
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Stack from 'react-bootstrap/Stack';
-
 export function RecipeTable({
   months,
   ingredients,
@@ -40,13 +35,13 @@ export function RecipeTable({
   );
 
   // Get the Rtdb from the context
-  const db = useContext(RtdbContext);
+  const rtdbCred = useContext(RtdbContext);
   // Get QueryClient from the context
   const queryClient = useQueryClient();
 
   const recipeMutation = useMutation({
     mutationFn: async (newRecipe: Recipe) => {
-      await updateRecipeDb(db, newRecipe);
+      await updateRecipeDb(rtdbCred, newRecipe);
     },
     onError: () => {
       window.alert('Could not update...');
@@ -63,12 +58,6 @@ export function RecipeTable({
   }
 
   const rows = [];
-  const headers = [];
-
-  headers.push(<Col key="name">Recipes</Col>);
-  headers.push(<Col key="ingredients">Ingredients</Col>);
-  headers.push(<Col key="months">Months</Col>);
-  headers.push(<Col key="edit"></Col>);
 
   for (const recipeId in recipes) {
     const thumbnailLink =

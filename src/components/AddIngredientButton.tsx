@@ -1,4 +1,3 @@
-import { Database } from 'firebase/database';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createIngredientDb } from '../rtdb';
 
@@ -9,11 +8,11 @@ export function AddIngredientButton() {
   // Get QueryClient from the context
   const queryClient = useQueryClient();
   // Get the Rtdb from the context
-  const db = useContext(RtdbContext);
+  const rtdbCred = useContext(RtdbContext);
 
   const newIngredientMutation = useMutation({
     mutationFn: async () => {
-      await createIngredientDb(db);
+      await createIngredientDb(rtdbCred);
     },
     onError: () => {
       window.alert('Could not create new ingredient...');

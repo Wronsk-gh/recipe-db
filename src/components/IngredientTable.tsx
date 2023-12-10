@@ -22,12 +22,12 @@ export function IngredientTable({
   );
 
   // Get the Rtdb from the context
-  const db = useContext(RtdbContext);
+  const rtdbCred = useContext(RtdbContext);
   // Get QueryClient from the context
   const queryClient = useQueryClient();
   const ingredientMutation = useMutation({
     mutationFn: async (newIngredient: Ingredient) => {
-      await updateIngredientDb(db, newIngredient);
+      await updateIngredientDb(rtdbCred, newIngredient);
     },
     onError: () => {
       window.alert('Could not update...');

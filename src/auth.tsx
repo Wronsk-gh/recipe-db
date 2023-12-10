@@ -7,6 +7,7 @@ import {
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
+  User,
 } from 'firebase/auth';
 
 const DRIVE_CLIENT_ID =
@@ -41,13 +42,16 @@ export let gapiLoadOkay: () => void;
 export let gapiLoadFail: (reason?: any) => void;
 
 let firebaseDb: Database | null = null;
+let firebaseUser: User | null = null;
 
 const gapiLoadPromise = new Promise<void>((resolve, reject) => {
   gapiLoadOkay = resolve;
   gapiLoadFail = reject;
 });
 
-export async function handlePageLoad() {
+export async function handlePageLoad(): Promise<
+  [User | null, Database | null]
+> {
   // First, load and initialize the gapi.client
   await gapiLoadPromise;
   await new Promise((resolve, reject) => {
@@ -72,8 +76,7 @@ export async function handlePageLoad() {
   console.log('this is the userCred from redirect result : ' + userCred);
   if (userCred !== null) {
     // This is the signed-in user
-    const user = userCred.user;
-    console.log(user.uid);
+    firebaseUser = userCred.user;
     // This gives you a Google Access Token.
     const credential = GoogleAuthProvider.credentialFromResult(userCred);
     if (credential !== null) {
@@ -92,7 +95,7 @@ export async function handlePageLoad() {
     const operationType = userCred.operationType;
   }
 
-  return firebaseDb;
+  return [firebaseUser, firebaseDb];
 }
 
 /**

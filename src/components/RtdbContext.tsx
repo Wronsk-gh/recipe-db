@@ -1,4 +1,7 @@
 import { createContext } from 'react';
-import { Database } from 'firebase/database';
+import { RtdbCred } from '../rtdb';
 
-export const RtdbContext = createContext<Database | undefined>(undefined);
+export const RtdbContext = createContext<RtdbCred>({
+  user: null,
+  db: null,
+});

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Database } from 'firebase/database';
+import { User } from 'firebase/auth';
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { Outlet, Link } from 'react-router-dom';
-import { fetchMonths, fetchIngredients, fetchRecipes } from '../rtdb';
+import { RtdbCred, fetchMonths, fetchIngredients, fetchRecipes } from '../rtdb';
 import { Months, Ingredients, Recipes, RecipesThumbnails } from '../db-types';
 
 import { RtdbContext } from './RtdbContext';
@@ -20,7 +21,7 @@ export interface RecipeManagerContext {
 }
 
 export function RecipeManager() {
-  const [db, setDb] = useState<Database | undefined>(undefined);
+  const [rtdbCred, setRtdbCred] = useState<RtdbCred>({ user: null, db: null });
   const {
     isLoading: isMonthsLoading,
     isError: isMonthsError,
@@ -29,9 +30,9 @@ export function RecipeManager() {
   } = useQuery({
     queryKey: ['months'],
     queryFn: async () => {
-      return await fetchMonths(db);
+      return await fetchMonths(rtdbCred);
     },
-    enabled: !!db,
+    enabled: !!rtdbCred.db,
   });
   const {
     isLoading: isIngredientsLoading,
@@ -41,9 +42,9 @@ export function RecipeManager() {
   } = useQuery({
     queryKey: ['ingredients'],
     queryFn: async () => {
-      return await fetchIngredients(db);
+      return await fetchIngredients(rtdbCred);
     },
-    enabled: !!db,
+    enabled: !!rtdbCred.db,
   });
   const {
     isLoading: isRecipesLoading,
@@ -53,9 +54,9 @@ export function RecipeManager() {
   } = useQuery({
     queryKey: ['recipes'],
     queryFn: async () => {
-      return await fetchRecipes(db);
+      return await fetchRecipes(rtdbCred);
     },
-    enabled: !!db,
+    enabled: !!rtdbCred.db,
   });
 
   async function fetchThumbnail(googleId: string): Promise<string> {
@@ -131,10 +132,10 @@ export function RecipeManager() {
 
       {/* <Link to={'recipes'}>Recipes</Link>
       <Link to={'ingredients'}>ingredients</Link> */}
-      <Auth setDb={setDb} />
+      <Auth setRtdbCred={setRtdbCred} />
       <br />
       <br />
-      <RtdbContext.Provider value={db}>
+      <RtdbContext.Provider value={rtdbCred}>
         <br />
         <Outlet
           context={

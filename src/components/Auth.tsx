@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Database } from 'firebase/database';
+import { RtdbCred } from '../rtdb';
 import {
   gapiLoadOkay,
   gapiLoadFail,
@@ -7,7 +7,7 @@ import {
   handlePageLoad,
 } from '../auth';
 
-export function Auth({ setDb }: { setDb: (db: Database | undefined) => void }) {
+export function Auth({ setRtdbCred }: { setRtdbCred: (db: RtdbCred) => void }) {
   useEffect(() => {
     const gapiScript = document.createElement('script');
     gapiScript.src = 'https://apis.google.com/js/api.js';
@@ -21,10 +21,16 @@ export function Auth({ setDb }: { setDb: (db: Database | undefined) => void }) {
     document.head.appendChild(gapiScript);
 
     const onHandlePageLoad = async () => {
-      const db = await handlePageLoad();
-      if (db !== null) {
-        setDb(db);
-      }
+      const [user, db] = await handlePageLoad();
+      // const rtdbCred = { user: user, db: db };
+      setRtdbCred({ user: user, db: db });
+      // if (db !== null) {
+      //   rtdbCred.db = db;
+      // }
+      // if (user !== null) {
+      //   setUser(user);
+      //   console.log(user.uid);
+      // }
     };
     onHandlePageLoad().catch((error) => {
       console.error(error);
