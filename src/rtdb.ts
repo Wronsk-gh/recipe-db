@@ -133,8 +133,13 @@ async function fetchFromDisplayUserDb<DataType>(
   console.log('uid');
   console.log(uid);
   const dbRef = ref(rtdbCred.db, `users/${uid}`);
-  const dbData: DataType = (await get(child(dbRef, dataName))).val();
-  return dbData;
+  try {
+    const dbData: DataType = (await get(child(dbRef, dataName))).val();
+    return dbData;
+  } catch (error) {
+    console.log(error);
+    return null as DataType;
+  }
 }
 
 async function fetchFromRootDb<DataType>(
