@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createIngredientDb } from '../rtdb';
+import { createIngredientDisplayUserDb } from '../rtdb';
 
 import { useContext } from 'react';
 import { RtdbContext } from './RtdbContext';
@@ -12,7 +12,7 @@ export function AddIngredientButton() {
 
   const newIngredientMutation = useMutation({
     mutationFn: async () => {
-      await createIngredientDb(rtdbCred);
+      await createIngredientDisplayUserDb(rtdbCred);
     },
     onError: () => {
       window.alert('Could not create new ingredient...');

@@ -36,8 +36,6 @@ const FIREBASE_CONFIG = {
   appId: '1:387763281186:web:73ee9da15e8db71629997b',
 };
 
-let googleTokenClient: any;
-
 export let gapiLoadOkay: () => void;
 export let gapiLoadFail: (reason?: any) => void;
 

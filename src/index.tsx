@@ -4,7 +4,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecipeManager } from './components/RecipeManager';
 import { FilterableIngredientTable } from './components/FilterableIngredientTable';
 import { FilterableRecipeTable } from './components/FilterableRecipeTable';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from 'react-router-dom';
 
 const rootElement = document.getElementById('root')!;
 const root = ReactDOM.createRoot(rootElement);
@@ -30,6 +34,11 @@ const router = createBrowserRouter([
         element: <FilterableIngredientTable />,
       },
     ],
+  },
+  {
+    index: true,
+    // path: '*',
+    element: <Navigate to="recipes" />,
   },
 ]);
 

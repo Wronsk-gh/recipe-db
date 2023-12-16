@@ -40,7 +40,7 @@ export function RecipeRow({
   for (const ingredientId in recipe.ingredients) {
     if (ingredients[ingredientId] !== undefined) {
       recipeIngredients.push(
-        <Badge pill bg="primary">
+        <Badge pill bg="primary" key={ingredientId}>
           {ingredients[ingredientId].name}
         </Badge>
       );

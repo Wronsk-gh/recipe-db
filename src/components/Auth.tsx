@@ -32,6 +32,14 @@ export function Auth({
         rtdbCred.displayUserId = await fetchDisplay(rtdbCred);
       }
       setRtdbCred(rtdbCred);
+      console.log('user');
+      console.log(user);
+      console.log('db');
+      console.log(db);
+      // if (user === null) {
+      //   await handleAuthClick();
+      // }
+
       // const rtdbCred = { user: user, db: db };
       // if (db !== null) {
       //   rtdbCred.db = db;

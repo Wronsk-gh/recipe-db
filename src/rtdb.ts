@@ -90,17 +90,40 @@ export async function updateIngredientDb(
 //   await set(ingredientNameRef, newName);
 // }
 
-export async function createIngredientDb(rtdbCred: RtdbCred) {
+export async function createIngredientDisplayUserDb(rtdbCred: RtdbCred) {
   if (rtdbCred.db === null || rtdbCred.user === null) {
     throw new Error('No database connection available');
   }
+  const uid =
+    rtdbCred.displayUserId !== null
+      ? rtdbCred.displayUserId
+      : rtdbCred.user.uid;
   const defaultIngredientDb = {
     name: 'Nouvel Ingrédient',
   };
   await push(
-    child(ref(rtdbCred.db), `users/${rtdbCred.user.uid}/ingredients`),
+    child(ref(rtdbCred.db), `users/${uid}/ingredients`),
     defaultIngredientDb
   );
+}
+
+export async function createRecipeDisplayUserDb(
+  rtdbCred: RtdbCred,
+  google_id: string,
+  name: string
+) {
+  if (rtdbCred.db === null || rtdbCred.user === null) {
+    throw new Error('No database connection available');
+  }
+  const uid =
+    rtdbCred.displayUserId !== null
+      ? rtdbCred.displayUserId
+      : rtdbCred.user.uid;
+  const newRecipeDb = {
+    google_id: google_id,
+    name: name,
+  };
+  await push(child(ref(rtdbCred.db), `users/${uid}/recipes`), newRecipeDb);
 }
 
 async function fetchFromUserDb<DataType>(
@@ -126,12 +149,6 @@ async function fetchFromDisplayUserDb<DataType>(
     rtdbCred.displayUserId !== null
       ? rtdbCred.displayUserId
       : rtdbCred.user.uid;
-  console.log('rtdbCred.displayUserId');
-  console.log(rtdbCred.displayUserId);
-  console.log('rtdbCred.user.uid');
-  console.log(rtdbCred.user.uid);
-  console.log('uid');
-  console.log(uid);
   const dbRef = ref(rtdbCred.db, `users/${uid}`);
   try {
     const dbData: DataType = (await get(child(dbRef, dataName))).val();

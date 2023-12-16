@@ -47,6 +47,7 @@ export function RecipeEditForm({
             };
             onDisplayedObjectChange(newDisplayedObject);
           }}
+          key={ingredientId}
         />
       );
     } else {
@@ -72,7 +73,17 @@ export function RecipeEditForm({
       <button
         onClick={() => {
           if (selectedIngredient !== '') {
-            if (displayedObject.ingredients[selectedIngredient] === undefined) {
+            if (displayedObject.ingredients === undefined) {
+              const newDisplayedObject = {
+                ...displayedObject,
+                ingredients: {
+                  [selectedIngredient]: true,
+                },
+              };
+              onDisplayedObjectChange(newDisplayedObject);
+            } else if (
+              displayedObject.ingredients[selectedIngredient] === undefined
+            ) {
               const newDisplayedObject = {
                 ...displayedObject,
                 ingredients: {

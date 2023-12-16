@@ -1,15 +1,13 @@
 import { useState } from 'react';
-import { Database } from 'firebase/database';
-import { User } from 'firebase/auth';
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { Outlet, Link } from 'react-router-dom';
 import { RtdbCred, fetchMonths, fetchIngredients, fetchRecipes } from '../rtdb';
 import { Months, Ingredients, Recipes, RecipesThumbnails } from '../db-types';
+import { DriveSyncButton } from './DriveSyncButton';
 
 import { RtdbContext } from './RtdbContext';
 import { Auth } from './Auth';
 
-import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 
@@ -35,8 +33,6 @@ export function RecipeManager() {
   } = useQuery({
     queryKey: ['months'],
     queryFn: async () => {
-      console.log('HERRRRRRRRRRRRRE');
-      console.log(rtdbCred);
       return await fetchMonths(rtdbCred);
     },
     enabled: !!rtdbCred.db,
@@ -121,7 +117,6 @@ export function RecipeManager() {
   return (
     <>
       <Navbar expand="lg" className="bg-body-tertiary">
-        {/* <Container> */}
         <Navbar.Brand>React-Bootstrap</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
@@ -134,15 +129,13 @@ export function RecipeManager() {
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
-        {/* </Container> */}
       </Navbar>
 
-      {/* <Link to={'recipes'}>Recipes</Link>
-      <Link to={'ingredients'}>ingredients</Link> */}
       <Auth setRtdbCred={setRtdbCred} />
-      <br />
-      <br />
       <RtdbContext.Provider value={rtdbCred}>
+        <DriveSyncButton recipes={recipesData} />
+        <br />
+        <br />
         <br />
         <Outlet
           context={
@@ -157,12 +150,4 @@ export function RecipeManager() {
       </RtdbContext.Provider>
     </>
   );
-  // } else {
-  //   return (
-  //     <>
-  //       <Auth setDb={setDb} />
-  //       <p>Loading...</p>
-  //     </>
-  //   );
-  // }
 }
