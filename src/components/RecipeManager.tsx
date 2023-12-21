@@ -88,22 +88,23 @@ export function RecipeManager() {
   }
 
   const thumbnailsQueries = useQueries({
-    queries: (Object.entries(recipesData || {}) || []).map(
-      ([recipeId, recipe]) => {
-        return {
-          queryKey: ['thumbnail', recipe.google_id],
-          queryFn: async () => {
-            const recipeIdThumbnail: RecipesThumbnails = {};
-            recipeIdThumbnail[recipeId] = await fetchThumbnail(
-              recipe.google_id
-            );
-            return recipeIdThumbnail;
-          },
-          enabled: !!recipesData,
-          staleTime: 10 * 60 * 1000, // 10 minute
-        };
-      }
-    ),
+    queries:
+      recipesData && Object.entries(recipesData)
+        ? Object.entries(recipesData).map(([recipeId, recipe]) => {
+            return {
+              queryKey: ['thumbnail', recipe.google_id],
+              queryFn: async () => {
+                const recipeIdThumbnail: RecipesThumbnails = {};
+                recipeIdThumbnail[recipeId] = await fetchThumbnail(
+                  recipe.google_id
+                );
+                return recipeIdThumbnail;
+              },
+              enabled: !!recipesData,
+              staleTime: 10 * 60 * 1000, // 10 minute
+            };
+          })
+        : [], // if recipesData is undefined or entries in recipesData is null, an empty array is returned
   });
 
   const thumbnails: RecipesThumbnails = {};

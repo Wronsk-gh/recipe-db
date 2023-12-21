@@ -37,7 +37,6 @@ const router = createBrowserRouter([
   },
   {
     index: true,
-    // path: '*',
     element: <Navigate to="recipes" />,
   },
 ]);

@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Recipes } from '../db-types';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -6,6 +7,11 @@ import { createRecipeDisplayUserDb } from '../rtdb';
 import { useContext } from 'react';
 import { RtdbContext } from './RtdbContext';
 
+interface RecipeMutationData {
+  google_id: string;
+  name: string;
+}
+
 export function DriveSyncButton({ recipes }: { recipes: Recipes | undefined }) {
   const rtdbCred = useContext(RtdbContext);
   const [show, setShow] = useState<'nothing' | 'add' | 'remove'>('nothing');
@@ -13,6 +19,26 @@ export function DriveSyncButton({ recipes }: { recipes: Recipes | undefined }) {
   const [listToRemove, setListToRemove] = useState<{ [id: string]: string }>(
     {}
   );
+  // Get QueryClient from the context
+  const queryClient = useQueryClient();
+  const newRecipesMutation = useMutation({
+    mutationFn: async (data: RecipeMutationData[]) => {
+      if (data.length > 0) {
+        await createRecipeDisplayUserDb(
+          rtdbCred,
+          data[0].google_id,
+          data[0].name
+        );
+      }
+    },
+    onError: () => {
+      window.alert('Could not create new recipes...');
+    },
+    onSuccess: () => {},
+    onSettled: () => {
+      newRecipesMutation.reset();
+    },
+  });
 
   async function onButtonClick() {
     if (recipes === undefined) {
@@ -62,10 +88,15 @@ export function DriveSyncButton({ recipes }: { recipes: Recipes | undefined }) {
     }
   }
 
-  function handleAddAccept() {
-    Object.keys(listToAdd).forEach((key) => {
-      createRecipeDisplayUserDb(rtdbCred, key, listToAdd[key]); // TODO must use a mutation here !
-    });
+  async function handleAddAccept() {
+    for (const googleId in listToAdd) {
+      // I should have an 'await' here, as I don't want the next screen to be displayed before it is finished + a state to show it's loading + a refetch of recipes at the end
+      await createRecipeDisplayUserDb(rtdbCred, googleId, listToAdd[googleId]); // TODO must use a mutation here !
+    }
+    queryClient.invalidateQueries({ queryKey: ['recipes'] });
+    for (const googleId in listToAdd) {
+      queryClient.invalidateQueries({ queryKey: ['thumbnail', googleId] });
+    }
     handleAddClose();
   }
 
