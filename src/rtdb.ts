@@ -1,5 +1,13 @@
 import { User } from 'firebase/auth';
-import { Database, ref, child, set, get, push } from 'firebase/database';
+import {
+  Database,
+  ref,
+  child,
+  set,
+  get,
+  push,
+  remove,
+} from 'firebase/database';
 
 import { Months, Ingredients, Recipes, Ingredient, Recipe } from './db-types';
 
@@ -126,6 +134,20 @@ export async function createRecipeDisplayUserDb(
   await push(child(ref(rtdbCred.db), `users/${uid}/recipes`), newRecipeDb);
 }
 
+export async function deleteRecipeDisplayUserDb(
+  rtdbCred: RtdbCred,
+  recipeId: string
+) {
+  if (rtdbCred.db === null || rtdbCred.user === null) {
+    throw new Error('No database connection available');
+  }
+  const uid =
+    rtdbCred.displayUserId !== null
+      ? rtdbCred.displayUserId
+      : rtdbCred.user.uid;
+  await remove(ref(rtdbCred.db, `users/${uid}/recipes/${recipeId}`));
+}
+
 async function fetchFromUserDb<DataType>(
   rtdbCred: RtdbCred,
   dataName: string
@@ -181,6 +203,10 @@ export async function fetchIngredients(rtdbCred: RtdbCred) {
 
 export async function fetchRecipes(rtdbCred: RtdbCred) {
   return await fetchFromDisplayUserDb<Recipes>(rtdbCred, 'recipes');
+}
+
+export async function fetchDriveFolderId(rtdbCred: RtdbCred) {
+  return await fetchFromDisplayUserDb<string>(rtdbCred, 'driveFolder');
 }
 
 export async function fetchDisplay(rtdbCred: RtdbCred) {

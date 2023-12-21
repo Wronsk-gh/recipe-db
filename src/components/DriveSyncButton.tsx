@@ -3,7 +3,12 @@ import { Recipes } from '../db-types';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { useState } from 'react';
-import { createRecipeDisplayUserDb } from '../rtdb';
+import {
+  RtdbCred,
+  createRecipeDisplayUserDb,
+  deleteRecipeDisplayUserDb,
+  fetchDriveFolderId,
+} from '../rtdb';
 import { useContext } from 'react';
 import { RtdbContext } from './RtdbContext';
 
@@ -46,7 +51,7 @@ export function DriveSyncButton({ recipes }: { recipes: Recipes | undefined }) {
       return;
     }
     const rtdbIdsNames = getDbGoogleIdsNames(recipes);
-    const driveIdsNames = await getGapiGoogleIdsNames();
+    const driveIdsNames = await getGapiGoogleIdsNames(rtdbCred);
 
     const newIds = arrayDiff(
       Object.keys(driveIdsNames),
@@ -68,9 +73,6 @@ export function DriveSyncButton({ recipes }: { recipes: Recipes | undefined }) {
         return acc;
       }, {})
     );
-    // alert(
-    //   'new : ' + newIds.toString() + '\ndeleted : ' + deletedIds.toString()
-    // );
     if (newIds.length !== 0) {
       setShow('add');
     } else if (deletedIds.length !== 0) {
@@ -103,7 +105,21 @@ export function DriveSyncButton({ recipes }: { recipes: Recipes | undefined }) {
   function handleRemoveClose() {
     setShow('nothing');
   }
-  // return (<><br> {listToAdd[key]}</>);
+
+  async function handleRemoveAccept() {
+    if (recipes !== undefined) {
+      for (const recipeId in recipes) {
+        if (Object.keys(listToRemove).includes(recipes[recipeId].google_id)) {
+          await deleteRecipeDisplayUserDb(rtdbCred, recipeId);
+        }
+      }
+    }
+    queryClient.invalidateQueries({ queryKey: ['recipes'] });
+    for (const googleId in listToRemove) {
+      queryClient.invalidateQueries({ queryKey: ['thumbnail', googleId] });
+    }
+    handleRemoveClose();
+  }
 
   return (
     <>
@@ -153,7 +169,7 @@ export function DriveSyncButton({ recipes }: { recipes: Recipes | undefined }) {
           <Button variant="secondary" onClick={handleRemoveClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleRemoveClose}>
+          <Button variant="primary" onClick={handleRemoveAccept}>
             Remove
           </Button>
         </Modal.Footer>
@@ -171,12 +187,16 @@ function getDbGoogleIdsNames(recipes: Recipes): { [id: string]: string } {
   return idsNamesList;
 }
 
-async function getGapiGoogleIdsNames(): Promise<{ [id: string]: string }> {
+async function getGapiGoogleIdsNames(
+  rtdbCred: RtdbCred
+): Promise<{ [id: string]: string }> {
   let response;
   let page_token: string | undefined = '';
   const allFiles: gapi.client.drive.File[] = [];
   // Using an object with keys allow for setting duplicate entries as one
   const idsNamesList: { [id: string]: string } = {};
+
+  const driveFolderId = await fetchDriveFolderId(rtdbCred);
 
   try {
     while (true) {
@@ -184,7 +204,7 @@ async function getGapiGoogleIdsNames(): Promise<{ [id: string]: string }> {
       response = await gapi.client.drive.files.list({
         pageSize: 500,
         fields: 'nextPageToken,files(id, name)',
-        q: "'1-fJ3w31oxP6P1zrHnZXkuCl-f6ACzACI' in parents and trashed=false",
+        q: `'${driveFolderId}' in parents and trashed=false`,
         pageToken: page_token,
       });
 

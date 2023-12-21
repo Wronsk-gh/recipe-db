@@ -3,7 +3,7 @@ Created with CodeSandbox
 
 Backlog :
 ---------
-- [ ] prevent resyncing before the previous sync isn't finished (Also force a refetch of recipes after adding the ingredient -> use a mutation !!!)
+- [X] prevent resyncing before the previous sync isn't finished (Also force a refetch of recipes after adding the ingredient -> use a mutation !!!)
 - [ ] Allow a user to configure the visualisation to be based on another user content (how to give permission ?)
 - [ ] implement in the database a setting of the folder in drive to fetch pictures and new recipe from
 - [X] Implement a button to resync with the recipes from the folder
