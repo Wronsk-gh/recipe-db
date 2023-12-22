@@ -41,6 +41,7 @@ export function RecipeTable({
   const [editedObject, setEditedObject] = useState<Recipe | undefined>(
     undefined
   );
+  const [sorting, setSorting] = useState<SortingState>([])
 
   // Get the Rtdb from the context
   const rtdbCred = useContext(RtdbContext);
@@ -60,21 +61,15 @@ export function RecipeTable({
     },
   });
 
-  // const columns: ColumnDef<Recipe>[] = [
   const columns: ColumnDef<Recipe>[] = [
     {
-      accessorKey: 'firstName',
-      cell: (info) => info.getValue(),
-      footer: (props) => props.column.id,
-    },
-    {
-      accessorFn: (row) => row.lastName,
+      accessorFn: (recipe) => recipe.name,
       id: 'recipeName',
       cell: (info) => info.getValue(),
-      header: () => <span>Last Name</span>,
-      footer: (props) => props.column.id,
+      header: () => 'Name',
     },
   ];
+
 
   // const excolumns = React.useMemo<ColumnDef<Person>[]>(
   //   () => [
@@ -141,6 +136,7 @@ export function RecipeTable({
   }
 
   const rows = [];
+  const recipeArray = [];
 
   for (const recipeId in recipes) {
     const thumbnailLink =
@@ -152,6 +148,7 @@ export function RecipeTable({
       recipeId: recipeId,
       thumbnailLink: thumbnailLink,
     };
+    recipeArray.push(recipe);
     rows.push(
       <RecipeRow
         key={recipeId}
@@ -165,6 +162,18 @@ export function RecipeTable({
     );
     // break; // Uncomment to display only one recipe, for easier debugging
   }
+
+  const table = useReactTable({
+    data: recipeArray,
+    columns: columns,
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    debugTable: true,
+  })
 
   // Insert the recipe editor popup if needed
   const objectEditor =
