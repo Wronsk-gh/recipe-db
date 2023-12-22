@@ -50,7 +50,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "deploy": "firebase deploy --only hosting",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "pull-build-deploy": "git pull && react-scripts build && firebase deploy --only hosting"
   },
   "browserslist": [
     ">0.2%",
