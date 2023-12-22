@@ -4,7 +4,7 @@ import { useState, useContext } from 'react';
 import { Months, Ingredients, Ingredient } from '../db-types';
 import { IngredientRow } from './IngredientRow';
 import { AddIngredientButton } from './AddIngredientButton';
-import { updateIngredientDb } from '../rtdb';
+import { updateIngredientDisplayUserDb } from '../rtdb';
 import { ObjectEditor } from './ObjectEditor';
 import { PopUp } from './PopUp';
 import { IngredientEditForm } from './IngredientEditForm';
@@ -27,7 +27,7 @@ export function IngredientTable({
   const queryClient = useQueryClient();
   const ingredientMutation = useMutation({
     mutationFn: async (newIngredient: Ingredient) => {
-      await updateIngredientDb(rtdbCred, newIngredient);
+      await updateIngredientDisplayUserDb(rtdbCred, newIngredient);
     },
     onError: () => {
       window.alert('Could not update...');

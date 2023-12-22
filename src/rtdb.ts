@@ -51,13 +51,20 @@ export interface RtdbCred {
 //   return getDatabase(app);
 // }
 
-export async function updateRecipeDb(rtdbCred: RtdbCred, newRecipe: Recipe) {
+export async function updateRecipeDisplayUserDb(
+  rtdbCred: RtdbCred,
+  newRecipe: Recipe
+) {
   if (rtdbCred.db === null || rtdbCred.user === null) {
     throw new Error('No database connection available');
   }
+  const uid =
+    rtdbCred.displayUserId !== null
+      ? rtdbCred.displayUserId
+      : rtdbCred.user.uid;
   const recipeRef = ref(
     rtdbCred.db,
-    `users/${rtdbCred.user.uid}/recipes/${newRecipe.recipeId}`
+    `users/${uid}/recipes/${newRecipe.recipeId}`
   );
   const {
     recipeId: removedRecipeId,
@@ -67,20 +74,38 @@ export async function updateRecipeDb(rtdbCred: RtdbCred, newRecipe: Recipe) {
   await set(recipeRef, newDbRecipe);
 }
 
-export async function updateIngredientDb(
+export async function updateIngredientDisplayUserDb(
   rtdbCred: RtdbCred,
   newIngredient: Ingredient
 ) {
   if (rtdbCred.db === null || rtdbCred.user === null) {
     throw new Error('No database connection available');
   }
-
+  const uid =
+    rtdbCred.displayUserId !== null
+      ? rtdbCred.displayUserId
+      : rtdbCred.user.uid;
   const ingredientRef = ref(
     rtdbCred.db,
-    `users/${rtdbCred.user.uid}/ingredients/${newIngredient.ingredientId}`
+    `users/${uid}/ingredients/${newIngredient.ingredientId}`
   );
   const { ingredientId: removed, ...newDbIngredient } = newIngredient;
   await set(ingredientRef, newDbIngredient);
+}
+
+export async function updateDriveFolderIdDisplayUserDb(
+  rtdbCred: RtdbCred,
+  driveFolderId: string
+) {
+  if (rtdbCred.db === null || rtdbCred.user === null) {
+    throw new Error('No database connection available');
+  }
+  const uid =
+    rtdbCred.displayUserId !== null
+      ? rtdbCred.displayUserId
+      : rtdbCred.user.uid;
+  const driveFolderIdRef = ref(rtdbCred.db, `users/${uid}/driveFolder`);
+  await set(driveFolderIdRef, driveFolderId);
 }
 
 // export async function updateIngredientNameDb(

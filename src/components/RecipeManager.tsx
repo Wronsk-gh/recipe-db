@@ -4,6 +4,7 @@ import { Outlet, Link } from 'react-router-dom';
 import { RtdbCred, fetchMonths, fetchIngredients, fetchRecipes } from '../rtdb';
 import { Months, Ingredients, Recipes, RecipesThumbnails } from '../db-types';
 import { DriveSyncButton } from './DriveSyncButton';
+import { SettingsButton } from './SettingsButton';
 
 import { RtdbContext } from './RtdbContext';
 import { Auth } from './Auth';
@@ -118,7 +119,7 @@ export function RecipeManager() {
   return (
     <>
       <Navbar expand="lg" className="bg-body-tertiary">
-        <Navbar.Brand>React-Bootstrap</Navbar.Brand>
+        <Navbar.Brand>Drive Recipes</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
@@ -135,6 +136,7 @@ export function RecipeManager() {
       <Auth setRtdbCred={setRtdbCred} />
       <RtdbContext.Provider value={rtdbCred}>
         <DriveSyncButton recipes={recipesData} />
+        <SettingsButton />
         <br />
         <br />
         <br />

@@ -13,7 +13,15 @@ import { ObjectEditor } from './ObjectEditor';
 import { PopUp } from './PopUp';
 import { RecipeEditForm } from './RecipeEditForm';
 import { RtdbContext } from './RtdbContext';
-import { updateRecipeDb } from '../rtdb';
+import { updateRecipeDisplayUserDb } from '../rtdb';
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+} from '@tanstack/react-table';
 
 export function RecipeTable({
   months,
@@ -41,7 +49,7 @@ export function RecipeTable({
 
   const recipeMutation = useMutation({
     mutationFn: async (newRecipe: Recipe) => {
-      await updateRecipeDb(rtdbCred, newRecipe);
+      await updateRecipeDisplayUserDb(rtdbCred, newRecipe);
     },
     onError: () => {
       window.alert('Could not update...');
@@ -51,6 +59,81 @@ export function RecipeTable({
       recipeMutation.reset();
     },
   });
+
+  // const columns: ColumnDef<Recipe>[] = [
+  const columns: ColumnDef<Recipe>[] = [
+    {
+      accessorKey: 'firstName',
+      cell: (info) => info.getValue(),
+      footer: (props) => props.column.id,
+    },
+    {
+      accessorFn: (row) => row.lastName,
+      id: 'recipeName',
+      cell: (info) => info.getValue(),
+      header: () => <span>Last Name</span>,
+      footer: (props) => props.column.id,
+    },
+  ];
+
+  // const excolumns = React.useMemo<ColumnDef<Person>[]>(
+  //   () => [
+  //     {
+  //       header: 'Name',
+  //       footer: (props) => props.column.id,
+  //       columns: [
+  //         {
+  //           accessorKey: 'firstName',
+  //           cell: (info) => info.getValue(),
+  //           footer: (props) => props.column.id,
+  //         },
+  //         {
+  //           accessorFn: (row) => row.lastName,
+  //           id: 'lastName',
+  //           cell: (info) => info.getValue(),
+  //           header: () => <span>Last Name</span>,
+  //           footer: (props) => props.column.id,
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       header: 'Info',
+  //       footer: (props) => props.column.id,
+  //       columns: [
+  //         {
+  //           accessorKey: 'age',
+  //           header: () => 'Age',
+  //           footer: (props) => props.column.id,
+  //         },
+  //         {
+  //           header: 'More Info',
+  //           columns: [
+  //             {
+  //               accessorKey: 'visits',
+  //               header: () => <span>Visits</span>,
+  //               footer: (props) => props.column.id,
+  //             },
+  //             {
+  //               accessorKey: 'status',
+  //               header: 'Status',
+  //               footer: (props) => props.column.id,
+  //             },
+  //             {
+  //               accessorKey: 'progress',
+  //               header: 'Profile Progress',
+  //               footer: (props) => props.column.id,
+  //             },
+  //           ],
+  //         },
+  //         {
+  //           accessorKey: 'createdAt',
+  //           header: 'Created At',
+  //         },
+  //       ],
+  //     },
+  //   ],
+  //   []
+  // );
 
   function onRecipeMutationSuccess() {
     // Force an update of the recipes

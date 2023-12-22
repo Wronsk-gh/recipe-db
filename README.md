@@ -3,16 +3,20 @@ Created with CodeSandbox
 
 Backlog :
 ---------
+- [ ] Implement powerfull filtering and sorting capabilities based on tags, names, etc
+    * Probably need to use a library, but cannot find one...
 - [X] prevent resyncing before the previous sync isn't finished (Also force a refetch of recipes after adding the ingredient -> use a mutation !!!)
-- [ ] Allow a user to configure the visualisation to be based on another user content (how to give permission ?)
-- [ ] implement in the database a setting of the folder in drive to fetch pictures and new recipe from
+- [X] implement in the database a setting of the folder in drive to fetch pictures and new recipe from
 - [X] Implement a button to resync with the recipes from the folder
 - [X] use browser router
 - [X] see if possible to keep being logged in (see maatjes mail)
     * current idea would be to use the firebase authentication service (probably kind of acts as a proxy, thus allows for refreshable tokens ???, then use the function gapi.client.setToken({access_token:'.....'}) to authenticate the gapi as a user with authorisation)
 - [X] implement a responsive design via react bootstrap
+- [ ] Allow a user to configure the visualisation to be based on another user content (how to give permission ?)
+    * Implemented in DB (both data and access permission rules) but still need to add setting to edit it
 - [ ] use type : lol = 'pwet' | 'fart'
-- [ ] decide if using dedicated months for ingredients having both fresh or storage properties (or declare as 2 ingredients)
+- [X] decide if using dedicated months for ingredients having both fresh or storage properties (or declare as 2 ingredients)
+    * Decided (at least for now) to use two separate ingredients
 - [ ] implement custom tags for recipes
 - [ ] implement new filter for recipes (contains at least some fresh ingredients, contains a specific ingredient)
 - [ ] sort ingredients alphabetically
