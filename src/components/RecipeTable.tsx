@@ -1,5 +1,5 @@
 import '../App.css';
-import { useState, useContext } from 'react';
+import { useState, useContext, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Months,
@@ -41,7 +41,7 @@ export function RecipeTable({
   const [editedObject, setEditedObject] = useState<Recipe | undefined>(
     undefined
   );
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   // Get the Rtdb from the context
   const rtdbCred = useContext(RtdbContext);
@@ -61,15 +61,17 @@ export function RecipeTable({
     },
   });
 
-  const columns: ColumnDef<Recipe>[] = [
-    {
-      accessorFn: (recipe) => recipe.name,
-      id: 'recipeName',
-      cell: (info) => info.getValue(),
-      header: () => 'Name',
-    },
-  ];
-
+  const columns = useMemo<ColumnDef<Recipe>[]>(
+    () => [
+      {
+        accessorFn: (recipe) => recipe.name,
+        id: 'recipeName',
+        cell: (info) => info.getValue(),
+        header: () => 'Name',
+      },
+    ],
+    []
+  );
 
   // const excolumns = React.useMemo<ColumnDef<Person>[]>(
   //   () => [
@@ -135,7 +137,6 @@ export function RecipeTable({
     queryClient.invalidateQueries({ queryKey: ['recipes'] });
   }
 
-  const rows = [];
   const recipeArray = [];
 
   for (const recipeId in recipes) {
@@ -149,17 +150,6 @@ export function RecipeTable({
       thumbnailLink: thumbnailLink,
     };
     recipeArray.push(recipe);
-    rows.push(
-      <RecipeRow
-        key={recipeId}
-        months={months}
-        ingredients={ingredients}
-        recipe={recipe}
-        onEdit={setEditedObject}
-        filterText={filterText}
-        monthFilter={monthFilter}
-      />
-    );
     // break; // Uncomment to display only one recipe, for easier debugging
   }
 
@@ -173,7 +163,23 @@ export function RecipeTable({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     debugTable: true,
-  })
+  });
+
+  const rows = [];
+
+  for (const recipe of table.getRowModel().rows) {
+    rows.push(
+      <RecipeRow
+        key={recipe.original.recipeId}
+        months={months}
+        ingredients={ingredients}
+        recipe={recipe.original}
+        onEdit={setEditedObject}
+        filterText={filterText}
+        monthFilter={monthFilter}
+      />
+    );
+  }
 
   // Insert the recipe editor popup if needed
   const objectEditor =
@@ -194,6 +200,39 @@ export function RecipeTable({
 
   return (
     <div>
+      <table>
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <th key={header.id} colSpan={header.colSpan}>
+                    {header.isPlaceholder ? null : (
+                      <div
+                        {...{
+                          className: header.column.getCanSort()
+                            ? 'cursor-pointer select-none'
+                            : '',
+                          onClick: header.column.getToggleSortingHandler(),
+                        }}
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {{
+                          asc: ' 🔼',
+                          desc: ' 🔽',
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+                    )}
+                  </th>
+                );
+              })}
+            </tr>
+          ))}
+        </thead>
+      </table>
       <div
         style={{
           display: 'flex',
