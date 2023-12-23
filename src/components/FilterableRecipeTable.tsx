@@ -17,7 +17,7 @@ export function FilterableRecipeTable({} // months,
 }) {
   const [filterText, setFilterText] = useState('');
   const [selectedMonth, setSelectedMonth] = useState<string>('');
-  const { months, ingredients, recipes, recipesThumbnails } =
+  const { months, ingredients, recipes, recipesArray, recipesThumbnails } =
     useOutletContext<RecipeManagerContext>();
   if (
     months === undefined ||
@@ -51,8 +51,7 @@ export function FilterableRecipeTable({} // months,
       <RecipeTable
         months={months}
         ingredients={ingredients}
-        recipes={recipes}
-        recipesThumbnails={recipesThumbnails}
+        recipesArray={recipesArray}
         filterText={filterText}
         monthFilter={selectedMonth}
       />

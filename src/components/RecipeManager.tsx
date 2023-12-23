@@ -2,7 +2,13 @@ import { useState } from 'react';
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { Outlet, Link } from 'react-router-dom';
 import { RtdbCred, fetchMonths, fetchIngredients, fetchRecipes } from '../rtdb';
-import { Months, Ingredients, Recipes, RecipesThumbnails } from '../db-types';
+import {
+  Months,
+  Ingredients,
+  Recipes,
+  Recipe,
+  RecipesThumbnails,
+} from '../db-types';
 import { DriveSyncButton } from './DriveSyncButton';
 import { SettingsButton } from './SettingsButton';
 
@@ -16,6 +22,7 @@ export interface RecipeManagerContext {
   months: Months | undefined;
   ingredients: Ingredients | undefined;
   recipes: Recipes | undefined;
+  recipesArray: Recipe[];
   recipesThumbnails: RecipesThumbnails;
 }
 
@@ -116,6 +123,18 @@ export function RecipeManager() {
     }
   });
 
+  const recipesArray: Recipe[] = [];
+  for (const recipeId in recipesData) {
+    const thumbnailLink =
+      thumbnails[recipeId] !== undefined ? thumbnails[recipeId] : '';
+    const recipe: Recipe = {
+      ...recipesData[recipeId],
+      recipeId: recipeId,
+      thumbnailLink: thumbnailLink,
+    };
+    recipesArray.push(recipe);
+  }
+
   return (
     <>
       <Navbar expand="lg" className="bg-body-tertiary">
@@ -146,6 +165,7 @@ export function RecipeManager() {
               months: monthsData,
               ingredients: ingredientsData,
               recipes: recipesData,
+              recipesArray: recipesArray,
               recipesThumbnails: thumbnails,
             } satisfies RecipeManagerContext
           }

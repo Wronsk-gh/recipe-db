@@ -12,7 +12,7 @@ export function FilterableIngredientTable({} // months,
   // ingredients: Ingredients;
 }) {
   const [filterText, setFilterText] = useState('');
-  const { months, ingredients, recipes, recipesThumbnails } =
+  const { months, ingredients, recipes, recipesArray, recipesThumbnails } =
     useOutletContext<RecipeManagerContext>();
   if (
     months === undefined ||

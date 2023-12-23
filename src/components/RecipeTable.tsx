@@ -1,13 +1,7 @@
 import '../App.css';
 import { useState, useContext, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  Months,
-  Ingredients,
-  Recipes,
-  Recipe,
-  RecipesThumbnails,
-} from '../db-types';
+import { Months, Ingredients, Recipe, RecipesThumbnails } from '../db-types';
 import { RecipeRow } from './RecipeRow';
 import { ObjectEditor } from './ObjectEditor';
 import { PopUp } from './PopUp';
@@ -26,15 +20,13 @@ import {
 export function RecipeTable({
   months,
   ingredients,
-  recipes,
-  recipesThumbnails,
+  recipesArray,
   filterText,
   monthFilter,
 }: {
   months: Months;
   ingredients: Ingredients;
-  recipes: Recipes;
-  recipesThumbnails: RecipesThumbnails;
+  recipesArray: Recipe[];
   filterText: string;
   monthFilter: string;
 }) {
@@ -137,24 +129,23 @@ export function RecipeTable({
     queryClient.invalidateQueries({ queryKey: ['recipes'] });
   }
 
-  const recipeArray = [];
-
-  for (const recipeId in recipes) {
-    const thumbnailLink =
-      recipesThumbnails[recipeId] !== undefined
-        ? recipesThumbnails[recipeId]
-        : '';
-    const recipe: Recipe = {
-      ...recipes[recipeId],
-      recipeId: recipeId,
-      thumbnailLink: thumbnailLink,
-    };
-    recipeArray.push(recipe);
-    // break; // Uncomment to display only one recipe, for easier debugging
-  }
+  // const recipeArray = [];
+  // for (const recipeId in recipes) {
+  //   const thumbnailLink =
+  //     recipesThumbnails[recipeId] !== undefined
+  //       ? recipesThumbnails[recipeId]
+  //       : '';
+  //   const recipe: Recipe = {
+  //     ...recipes[recipeId],
+  //     recipeId: recipeId,
+  //     thumbnailLink: thumbnailLink,
+  //   };
+  //   recipeArray.push(recipe);
+  //   // break; // Uncomment to display only one recipe, for easier debugging
+  // }
 
   const table = useReactTable({
-    data: recipeArray,
+    data: recipesArray,
     columns: columns,
     state: {
       sorting,
