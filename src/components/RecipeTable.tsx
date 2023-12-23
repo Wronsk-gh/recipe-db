@@ -1,10 +1,11 @@
 import '../App.css';
 import { useState, useContext, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Months, Ingredients, Recipe, RecipesThumbnails } from '../db-types';
+import { Months, Ingredients, Recipe } from '../db-types';
 import { RecipeRow } from './RecipeRow';
 import { ObjectEditor } from './ObjectEditor';
 import { PopUp } from './PopUp';
+import { Filter } from './Filter';
 import { RecipeEditForm } from './RecipeEditForm';
 import { RtdbContext } from './RtdbContext';
 import { updateRecipeDisplayUserDb } from '../rtdb';
@@ -15,7 +16,33 @@ import {
   getSortedRowModel,
   SortingState,
   useReactTable,
+  FilterFn,
+  ColumnFiltersState,
+  Column,
+  Table,
+  getFilteredRowModel,
 } from '@tanstack/react-table';
+
+import { rankItem } from '@tanstack/match-sorter-utils';
+
+declare module '@tanstack/table-core' {
+  interface FilterFns {
+    fuzzy: FilterFn<unknown>;
+  }
+}
+
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  // Rank the item
+  const itemRank = rankItem(row.getValue(columnId), value);
+
+  // Store the itemRank info
+  addMeta({
+    itemRank,
+  });
+
+  // Return if the item should be filtered in/out
+  return itemRank.passed;
+};
 
 export function RecipeTable({
   months,
@@ -34,6 +61,7 @@ export function RecipeTable({
     undefined
   );
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   // Get the Rtdb from the context
   const rtdbCred = useContext(RtdbContext);
@@ -60,104 +88,44 @@ export function RecipeTable({
         id: 'recipeName',
         cell: (info) => info.getValue(),
         header: () => 'Name',
+        filterFn: 'fuzzy',
+      },
+      {
+        accessorFn: (recipe) => {
+          recipe.name;
+        },
+        id: 'recipeTags',
+        cell: (info) => info.getValue(),
+        header: () => 'Tags',
       },
     ],
     []
   );
-
-  // const excolumns = React.useMemo<ColumnDef<Person>[]>(
-  //   () => [
-  //     {
-  //       header: 'Name',
-  //       footer: (props) => props.column.id,
-  //       columns: [
-  //         {
-  //           accessorKey: 'firstName',
-  //           cell: (info) => info.getValue(),
-  //           footer: (props) => props.column.id,
-  //         },
-  //         {
-  //           accessorFn: (row) => row.lastName,
-  //           id: 'lastName',
-  //           cell: (info) => info.getValue(),
-  //           header: () => <span>Last Name</span>,
-  //           footer: (props) => props.column.id,
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       header: 'Info',
-  //       footer: (props) => props.column.id,
-  //       columns: [
-  //         {
-  //           accessorKey: 'age',
-  //           header: () => 'Age',
-  //           footer: (props) => props.column.id,
-  //         },
-  //         {
-  //           header: 'More Info',
-  //           columns: [
-  //             {
-  //               accessorKey: 'visits',
-  //               header: () => <span>Visits</span>,
-  //               footer: (props) => props.column.id,
-  //             },
-  //             {
-  //               accessorKey: 'status',
-  //               header: 'Status',
-  //               footer: (props) => props.column.id,
-  //             },
-  //             {
-  //               accessorKey: 'progress',
-  //               header: 'Profile Progress',
-  //               footer: (props) => props.column.id,
-  //             },
-  //           ],
-  //         },
-  //         {
-  //           accessorKey: 'createdAt',
-  //           header: 'Created At',
-  //         },
-  //       ],
-  //     },
-  //   ],
-  //   []
-  // );
 
   function onRecipeMutationSuccess() {
     // Force an update of the recipes
     queryClient.invalidateQueries({ queryKey: ['recipes'] });
   }
 
-  // const recipeArray = [];
-  // for (const recipeId in recipes) {
-  //   const thumbnailLink =
-  //     recipesThumbnails[recipeId] !== undefined
-  //       ? recipesThumbnails[recipeId]
-  //       : '';
-  //   const recipe: Recipe = {
-  //     ...recipes[recipeId],
-  //     recipeId: recipeId,
-  //     thumbnailLink: thumbnailLink,
-  //   };
-  //   recipeArray.push(recipe);
-  //   // break; // Uncomment to display only one recipe, for easier debugging
-  // }
-
   const table = useReactTable({
     data: recipesArray,
     columns: columns,
     state: {
       sorting,
+      columnFilters,
+    },
+    filterFns: {
+      fuzzy: fuzzyFilter,
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    debugTable: true,
+    // debugTable: true,
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   const rows = [];
-
   for (const recipe of table.getRowModel().rows) {
     rows.push(
       <RecipeRow
@@ -199,23 +167,30 @@ export function RecipeTable({
                 return (
                   <th key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder ? null : (
-                      <div
-                        {...{
-                          className: header.column.getCanSort()
-                            ? 'cursor-pointer select-none'
-                            : '',
-                          onClick: header.column.getToggleSortingHandler(),
-                        }}
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                        {{
-                          asc: ' 🔼',
-                          desc: ' 🔽',
-                        }[header.column.getIsSorted() as string] ?? null}
-                      </div>
+                      <>
+                        <div
+                          {...{
+                            className: header.column.getCanSort()
+                              ? 'cursor-pointer select-none'
+                              : '',
+                            onClick: header.column.getToggleSortingHandler(),
+                          }}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {{
+                            asc: ' 🔼',
+                            desc: ' 🔽',
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </div>
+                        {header.column.getCanFilter() ? (
+                          <div>
+                            <Filter column={header.column} table={table} />
+                          </div>
+                        ) : null}
+                      </>
                     )}
                   </th>
                 );
