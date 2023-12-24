@@ -17,7 +17,7 @@ export function MonthBar({
       height: '26px',
       textAlign: 'center',
     };
-    if (recipeMonthsId[monthKey] === true) {
+    if (recipeMonthsId[monthKey] !== true) {
       cellStyle['background'] = 'green';
     }
     return (

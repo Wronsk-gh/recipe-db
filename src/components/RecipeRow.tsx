@@ -1,4 +1,10 @@
-import { Months, Ingredients, Recipe } from '../db-types';
+import {
+  Months,
+  Ingredients,
+  Recipe,
+  getRecipeIngredients,
+  getRecipeMonths,
+} from '../db-types';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
@@ -22,34 +28,21 @@ export function RecipeRow({
   filterText: string;
   monthFilter: string;
 }) {
-  const cells = [];
-
-  // TODO remove those let declaration for const with direct value
-  let thumbnail = <></>;
-  // let nameCell = <Col key="name"></Col>;
-  let ingredientsCell = <Col key="ingredients"></Col>;
-  let monthsCell = <Col key="months"></Col>;
-  const recipeIngredients = [];
   const recipeMonthsId: {
     [monthId: string]: boolean;
   } = {};
-  const recipeMonths = [];
 
   // Ingredients cell content
   // create the list of ingredient name
-  for (const ingredientId in recipe.ingredients) {
-    if (ingredients[ingredientId] !== undefined) {
-      recipeIngredients.push(
-        <Badge pill bg="primary" key={ingredientId}>
-          {ingredients[ingredientId].name}
-        </Badge>
-      );
-    } else {
-      console.error(
-        `Recipe {recipe.name} has an ingredientId {ingredientId} which could not be found in the list of ingredients.`
-      );
-    }
-  }
+  const recipeIngredients = Object.entries(
+    getRecipeIngredients(recipe, ingredients)
+  ).map(([ingredientId, ingredientName]) => {
+    return (
+      <Badge pill bg="primary" key={ingredientId}>
+        {ingredientName}
+      </Badge>
+    );
+  });
   // ingredientsCell = (
   //   <Col key="ingredients">
   //     <Stack gap={3}>{recipeIngredients}</Stack>

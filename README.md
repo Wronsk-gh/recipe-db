@@ -28,6 +28,7 @@ Backlog :
 - [ ] Redirect to the recipes page by default
 - [ ] Implement a favourite button + filter
 - [ ] Embbed full list of ingredients in the database with servings, allow selecting some recipes and compute shopping list based on it
+- Unauthorised calls (to gapi or firebase) must trigger a re-auth automatically
 
 Bugs :
 ------

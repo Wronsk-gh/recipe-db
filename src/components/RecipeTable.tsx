@@ -1,7 +1,13 @@
 import '../App.css';
 import { useState, useContext, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Months, Ingredients, Recipe } from '../db-types';
+import {
+  Months,
+  Ingredients,
+  Recipe,
+  getRecipeIngredients,
+  getRecipeMonths,
+} from '../db-types';
 import { RecipeRow } from './RecipeRow';
 import { ObjectEditor } from './ObjectEditor';
 import { PopUp } from './PopUp';
@@ -92,11 +98,21 @@ export function RecipeTable({
       },
       {
         accessorFn: (recipe) => {
-          recipe.name;
+          return Object.values(getRecipeIngredients(recipe, ingredients));
         },
-        id: 'recipeTags',
+        id: 'recipeIngredients',
         cell: (info) => info.getValue(),
-        header: () => 'Tags',
+        header: () => 'Ingredients',
+        filterFn: 'arrIncludes',
+      },
+      {
+        accessorFn: (recipe) => {
+          return Object.values(getRecipeMonths(recipe, ingredients, months));
+        },
+        id: 'recipeMonths',
+        cell: (info) => info.getValue(),
+        header: () => 'Months',
+        filterFn: 'arrIncludes',
       },
     ],
     []
