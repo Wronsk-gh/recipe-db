@@ -103,7 +103,10 @@ export function RecipeRow({
           </a>
         </h5>
         <div className="mb-2 text-center">
-          <MonthBar months={months} recipeMonthsId={recipeMonthsId} />
+          <MonthBar
+            months={months}
+            recipeMonthsId={getRecipeMonths(recipe, ingredients, months)}
+          />
         </div>
         {recipeIngredients}
         <Card.Text></Card.Text>

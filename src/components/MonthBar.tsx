@@ -7,7 +7,7 @@ export function MonthBar({
 }: {
   months: Months;
   recipeMonthsId: {
-    [monthId: string]: boolean;
+    [monthId: string]: boolean | string;
   };
 }) {
   const tableData = Object.keys(months).map((monthKey) => {
@@ -17,7 +17,7 @@ export function MonthBar({
       height: '26px',
       textAlign: 'center',
     };
-    if (recipeMonthsId[monthKey] !== true) {
+    if (Boolean(recipeMonthsId[monthKey]) === true) {
       cellStyle['background'] = 'green';
     }
     return (
