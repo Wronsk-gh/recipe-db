@@ -221,34 +221,74 @@ function RecipeTableLoaded({
       </PopUp>
     ) : null;
 
-  const filters = [];
+  const options = Object.entries(months).map(([monthId, month]) => (
+    <option value={monthId} key={monthId}>
+      {month.name}
+    </option>
+  ));
 
+  const filters = [];
   for (const headerGroup of table.getHeaderGroups()) {
     for (const header of headerGroup.headers) {
       if (!header.isPlaceholder) {
-        filters.push(
-          <>
-            <div
-              {...{
-                className: header.column.getCanSort()
-                  ? 'cursor-pointer select-none'
-                  : '',
-                onClick: header.column.getToggleSortingHandler(),
-              }}
-            >
-              {flexRender(header.column.columnDef.header, header.getContext())}
-              {{
-                asc: ' 🔼',
-                desc: ' 🔽',
-              }[header.column.getIsSorted() as string] ?? null}
-            </div>
-            {header.column.getCanFilter() ? (
-              <div>
-                <Filter column={header.column} table={table} />
+        if (header.column.columnDef.meta?.headerKind === 'searchable') {
+          filters.push(
+            <>
+              <div
+                {...{
+                  className: header.column.getCanSort()
+                    ? 'cursor-pointer select-none'
+                    : '',
+                  onClick: header.column.getToggleSortingHandler(),
+                }}
+              >
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext()
+                )}
+                {{
+                  asc: ' 🔼',
+                  desc: ' 🔽',
+                }[header.column.getIsSorted() as string] ?? null}
               </div>
-            ) : null}
-          </>
-        );
+              {header.column.getCanFilter() ? (
+                <div>
+                  <Filter column={header.column} table={table} />
+                </div>
+              ) : null}
+            </>
+          );
+        } else if (header.column.columnDef.meta?.headerKind === 'tickable') {
+          filters.push(
+            <>
+              <div>
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext()
+                )}
+              </div>
+              {header.column.getCanFilter() ? (
+                <div>
+                  <Filter column={header.column} table={table} />
+                  <form>
+                    <label htmlFor="month">Choose a month:</label>
+                    <select
+                      name="month"
+                      onChange={(newValue) =>
+                        header.column.setFilterValue(newValue.target.value)
+                      }
+                    >
+                      <option value={''} key={''}>
+                        {'All'}
+                      </option>
+                      {options}
+                    </select>
+                  </form>
+                </div>
+              ) : null}
+            </>
+          );
+        }
       }
     }
   }
