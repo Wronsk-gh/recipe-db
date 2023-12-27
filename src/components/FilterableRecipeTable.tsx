@@ -1,23 +1,23 @@
 import { useState } from 'react';
-import { Months, Ingredients, Recipes, RecipesThumbnails } from '../db-types';
+import { MonthsDb, IngredientsDb, RecipesDb, RecipesThumbnails } from '../db-types';
 import { SearchBar } from './SearchBar';
 import { RecipeTable } from './RecipeTable';
 import { useOutletContext } from 'react-router-dom';
 import { RecipeManagerContext } from './RecipeManager';
 
-export function FilterableRecipeTable({} // months,
-// ingredients,
-// recipes,
-// recipesThumbnails,
-: {
-  // months: Months;
-  // ingredients: Ingredients;
-  // recipes: Recipes;
-  // recipesThumbnails: RecipesThumbnails;
-}) {
+export function FilterableRecipeTable({ } // months,
+  // ingredients,
+  // recipes,
+  // recipesThumbnails,
+  : {
+    // months: MonthsDb;
+    // ingredients: IngredientsDb;
+    // recipes: RecipesDb;
+    // recipesThumbnails: RecipesThumbnails;
+  }) {
   const [filterText, setFilterText] = useState('');
   const [selectedMonth, setSelectedMonth] = useState<string>('');
-  const { months, ingredients, recipes, recipesArray, recipesThumbnails } =
+  const { months, ingredients, recipes, recipesThumbnails } =
     useOutletContext<RecipeManagerContext>();
   if (
     months === undefined ||

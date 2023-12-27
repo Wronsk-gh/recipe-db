@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import _ from 'lodash';
 import { TagBox } from './TagBox';
-import { Months, Ingredient, Tag } from '../db-types';
+import { MonthsDb, Ingredient, Tag } from '../db-types';
 
 export function IngredientEditForm({
   months,
   displayedObject,
   onDisplayedObjectChange,
 }: {
-  months: Months;
+  months: MonthsDb;
   displayedObject: Ingredient;
   onDisplayedObjectChange: (ingredient: Ingredient) => void;
 }) {

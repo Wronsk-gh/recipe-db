@@ -1,6 +1,6 @@
 import { useState, ReactNode } from 'react';
 import { UseMutationResult } from '@tanstack/react-query';
-import { NamedObject } from '../db-types';
+import { ObjectWithName } from '../db-types';
 import _ from 'lodash';
 
 interface PropsEditForm<T> {
@@ -8,7 +8,7 @@ interface PropsEditForm<T> {
   onDisplayedObjectChange: (newObj: T) => void;
 }
 
-export function ObjectEditor<T extends NamedObject>({
+export function ObjectEditor<T extends ObjectWithName>({
   objectToEdit,
   objectMutation,
   renderEditForm,

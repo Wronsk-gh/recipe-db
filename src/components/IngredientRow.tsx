@@ -1,14 +1,14 @@
 import _ from 'lodash';
 
 import { MonthBar } from './MonthBar';
-import { Months, Ingredient } from '../db-types';
+import { MonthsDb, Ingredient } from '../db-types';
 
 export function IngredientRow({
   months,
   ingredient,
   onEdit,
 }: {
-  months: Months;
+  months: MonthsDb;
   ingredient: Ingredient;
   onEdit: (ingredientToEdit: Ingredient) => void;
 }) {

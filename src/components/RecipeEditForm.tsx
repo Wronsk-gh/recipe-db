@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import _ from 'lodash';
 import { TagBox } from './TagBox';
-import { Ingredients, Recipe, Tag } from '../db-types';
+import { IngredientsDb, Recipe, Tag } from '../db-types';
 
 export function RecipeEditForm({
   ingredients,
   displayedObject,
   onDisplayedObjectChange,
 }: {
-  ingredients: Ingredients;
+  ingredients: IngredientsDb;
   displayedObject: Recipe;
   onDisplayedObjectChange: (recipe: Recipe) => void;
 }) {
@@ -73,21 +73,22 @@ export function RecipeEditForm({
       <button
         onClick={() => {
           if (selectedIngredient !== '') {
-            if (displayedObject.ingredients === undefined) {
-              const newDisplayedObject = {
-                ...displayedObject,
-                ingredients: {
-                  [selectedIngredient]: true,
-                },
-              };
-              onDisplayedObjectChange(newDisplayedObject);
-            } else if (
+            // if (displayedObject.ingredients === undefined) {
+            //   const newDisplayedObject = {
+            //     ...displayedObject,
+            //     ingredients: {
+            //       [selectedIngredient]: true,
+            //     },
+            //   };
+            //   onDisplayedObjectChange(newDisplayedObject);
+            // } else
+            if (
               displayedObject.ingredients[selectedIngredient] === undefined
             ) {
               const newDisplayedObject = {
                 ...displayedObject,
                 ingredients: {
-                  [selectedIngredient]: true,
+                  [selectedIngredient]: ingredients[selectedIngredient].name,
                   ...displayedObject.ingredients,
                 },
               };

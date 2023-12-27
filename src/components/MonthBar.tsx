@@ -1,11 +1,11 @@
 import React from 'react';
-import { Months } from '../db-types';
+import { MonthsDb } from '../db-types';
 
 export function MonthBar({
   months,
   recipeMonthsId,
 }: {
-  months: Months;
+  months: MonthsDb;
   recipeMonthsId: {
     [monthId: string]: boolean | string;
   };

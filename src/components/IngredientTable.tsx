@@ -1,7 +1,7 @@
 import '../App.css';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useContext } from 'react';
-import { Months, Ingredients, Ingredient } from '../db-types';
+import { MonthsDb, IngredientsDb, Ingredient } from '../db-types';
 import { IngredientRow } from './IngredientRow';
 import { AddIngredientButton } from './AddIngredientButton';
 import { updateIngredientDisplayUserDb } from '../rtdb';
@@ -14,8 +14,8 @@ export function IngredientTable({
   months,
   ingredients,
 }: {
-  months: Months;
-  ingredients: Ingredients;
+  months: MonthsDb;
+  ingredients: IngredientsDb;
 }) {
   const [editedObject, setEditedObject] = useState<Ingredient | undefined>(
     undefined
@@ -46,8 +46,8 @@ export function IngredientTable({
   const rows = [];
   const headers = [];
 
-  headers.push(<th key="name">Ingredients</th>);
-  headers.push(<th key="months">Months</th>);
+  headers.push(<th key="name">IngredientsDb</th>);
+  headers.push(<th key="months">MonthsDb</th>);
   headers.push(<th key="edit"></th>);
 
   for (const ingredientId in ingredients) {

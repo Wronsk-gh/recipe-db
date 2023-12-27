@@ -1,62 +1,65 @@
-export interface Months {
+export type MonthsDb = {
   [monthId: string]: {
     name: string;
   };
 }
 
-export interface Ingredients {
+export type IngredientsDb = {
   [ingredientId: string]: {
-    months: {
+    months?: {
       [monthId: string]: boolean;
     };
     name: string;
   };
 }
 
-export interface Recipes {
-  [recipeId: string]: {
-    ingredients: {
-      [ingredientId: string]: boolean;
-    };
-    name: string;
-    google_id: string;
-  };
-}
-
-export interface RecipesThumbnails {
-  [recipeId: string]: string;
-}
-
-export interface Tag {
-  id: string;
-  name: string;
-}
-
-export interface Ingredient extends NamedObject {
-  ingredientId: string;
-  months?: {
-    [monthId: string]: boolean;
-  };
-  // name: string;
-}
-
-export interface Recipe {
-  recipeId: string;
-  ingredients: {
+export type RecipeDb = {
+  ingredients?: {
     [ingredientId: string]: boolean;
   };
   name: string;
   google_id: string;
-  thumbnailLink: string;
 }
 
-export interface NamedObject {
+export type RecipesDb = {
+  [recipeId: string]: RecipeDb
+}
+
+export type ObjectWithName = {
   name: string;
 }
 
-export function getRecipeIngredients(recipe: Recipe, ingredients: Ingredients) {
-  const ingredientsNames: { [id: string]: string } = {};
-  for (const ingredientId in recipe.ingredients) {
+export type ObjectWithId = {
+  id: string;
+}
+
+export type ObjectWithNamedIds = {
+  [id: string]: string;
+}
+
+export type RecipesThumbnails = {
+  [recipeId: string]: string;
+}
+
+export type Tag = ObjectWithName & ObjectWithId
+
+export type Ingredient = ObjectWithName & {
+  ingredientId: string;
+  months?: {
+    [monthId: string]: boolean;
+  };
+}
+
+export type Recipe = ObjectWithId & ObjectWithName & {
+  ingredients: ObjectWithNamedIds;
+  months: ObjectWithNamedIds
+  google_id: string;
+  thumbnailLink: string;
+}
+
+export function getRecipeIngredients(recipeId: string, recipes: RecipesDb, ingredients: IngredientsDb) {
+  const ingredientsNames: ObjectWithNamedIds = {};
+  for (const ingredientId in recipes[recipeId].ingredients) {
     if (ingredients[ingredientId] !== undefined) {
       ingredientsNames[ingredientId] = ingredients[ingredientId].name;
     } else {
@@ -69,18 +72,19 @@ export function getRecipeIngredients(recipe: Recipe, ingredients: Ingredients) {
 }
 
 export function getRecipeMonths(
-  recipe: Recipe,
-  ingredients: Ingredients,
-  months: Months
+  recipeId: string,
+  recipes: RecipesDb,
+  ingredients: IngredientsDb,
+  months: MonthsDb
 ) {
   const recipeMonthsId: { [id: string]: boolean } = {};
   for (const monthId in months) {
     // Assume month is present by default
     recipeMonthsId[monthId] = true;
-    for (const ingredientId in recipe.ingredients) {
+    for (const ingredientId in recipes[recipeId].ingredients) {
       if (
         ingredients[ingredientId].months === undefined ||
-        !(monthId in ingredients[ingredientId].months)
+        !(monthId in ingredients[ingredientId].months!)
       ) {
         // Remove the month if it's not present for one ingredient
         recipeMonthsId[monthId] = false;

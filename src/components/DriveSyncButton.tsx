@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Recipes } from '../db-types';
+import { RecipesDb } from '../db-types';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { useState } from 'react';
@@ -17,7 +17,7 @@ interface RecipeMutationData {
   name: string;
 }
 
-export function DriveSyncButton({ recipes }: { recipes: Recipes | undefined }) {
+export function DriveSyncButton({ recipes }: { recipes: RecipesDb | undefined }) {
   const rtdbCred = useContext(RtdbContext);
   const [show, setShow] = useState<'nothing' | 'add' | 'remove'>('nothing');
   const [listToAdd, setListToAdd] = useState<{ [id: string]: string }>({});
@@ -39,7 +39,7 @@ export function DriveSyncButton({ recipes }: { recipes: Recipes | undefined }) {
     onError: () => {
       window.alert('Could not create new recipes...');
     },
-    onSuccess: () => {},
+    onSuccess: () => { },
     onSettled: () => {
       newRecipesMutation.reset();
     },
@@ -178,7 +178,7 @@ export function DriveSyncButton({ recipes }: { recipes: Recipes | undefined }) {
   );
 }
 
-function getDbGoogleIdsNames(recipes: Recipes): { [id: string]: string } {
+function getDbGoogleIdsNames(recipes: RecipesDb): { [id: string]: string } {
   // Using an object with keys allow for setting duplicate entries as one
   const idsNamesList: { [id: string]: string } = {};
   for (const recipeId in recipes) {

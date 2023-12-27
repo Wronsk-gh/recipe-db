@@ -9,7 +9,7 @@ import {
   remove,
 } from 'firebase/database';
 
-import { Months, Ingredients, Recipes, Ingredient, Recipe } from './db-types';
+import { MonthsDb, IngredientsDb, RecipesDb, Ingredient, Recipe, RecipeDb } from './db-types';
 
 export interface RtdbCred {
   user: User | null;
@@ -64,13 +64,28 @@ export async function updateRecipeDisplayUserDb(
       : rtdbCred.user.uid;
   const recipeRef = ref(
     rtdbCred.db,
-    `users/${uid}/recipes/${newRecipe.recipeId}`
+    `users/${uid}/recipes/${newRecipe.id}`
   );
-  const {
-    recipeId: removedRecipeId,
-    thumbnailLink: removedThumbnailLink,
-    ...newDbRecipe
-  } = newRecipe;
+  // type tempo = RecipeDb & { id: string, thumbnailLink: string }
+  // const {
+  //   id: removedRecipeId,
+  //   thumbnailLink: removedThumbnailLink,
+  //   ...newDbRecipe
+  // }: tempo = newRecipe;
+  const newDbRecipe: RecipeDb = {
+    name: newRecipe.name,
+    google_id: newRecipe.google_id,
+    ingredients: {}
+  };
+  for (const ingredientId in newRecipe.ingredients) {
+    newDbRecipe.ingredients![ingredientId] = true;
+  }
+  // const {
+  //   id: removedRecipeId,
+  //   thumbnailLink: removedThumbnailLink,
+  //   ...newDbRecipe
+  // }: { id: string, thumbnailLink: string } & RecipeDb = newRecipe;
+  // const newDbRecipe
   await set(recipeRef, newDbRecipe);
 }
 
@@ -219,15 +234,15 @@ async function fetchFromRootDb<DataType>(
 }
 
 export async function fetchMonths(rtdbCred: RtdbCred) {
-  return await fetchFromRootDb<Months>(rtdbCred, 'months');
+  return await fetchFromRootDb<MonthsDb>(rtdbCred, 'months');
 }
 
 export async function fetchIngredients(rtdbCred: RtdbCred) {
-  return await fetchFromDisplayUserDb<Ingredients>(rtdbCred, 'ingredients');
+  return await fetchFromDisplayUserDb<IngredientsDb>(rtdbCred, 'ingredients');
 }
 
 export async function fetchRecipes(rtdbCred: RtdbCred) {
-  return await fetchFromDisplayUserDb<Recipes>(rtdbCred, 'recipes');
+  return await fetchFromDisplayUserDb<RecipesDb>(rtdbCred, 'recipes');
 }
 
 export async function fetchDriveFolderId(rtdbCred: RtdbCred) {

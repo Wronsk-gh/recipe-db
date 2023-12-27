@@ -3,11 +3,13 @@ import { useQuery, useQueries } from '@tanstack/react-query';
 import { Outlet, Link } from 'react-router-dom';
 import { RtdbCred, fetchMonths, fetchIngredients, fetchRecipes } from '../rtdb';
 import {
-  Months,
-  Ingredients,
-  Recipes,
+  MonthsDb,
+  IngredientsDb,
+  RecipesDb,
   Recipe,
   RecipesThumbnails,
+  getRecipeIngredients,
+  getRecipeMonths,
 } from '../db-types';
 import { DriveSyncButton } from './DriveSyncButton';
 import { SettingsButton } from './SettingsButton';
@@ -19,10 +21,9 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 
 export interface RecipeManagerContext {
-  months: Months | undefined;
-  ingredients: Ingredients | undefined;
-  recipes: Recipes | undefined;
-  recipesArray: Recipe[];
+  months: MonthsDb | undefined;
+  ingredients: IngredientsDb | undefined;
+  recipes: RecipesDb | undefined;
   recipesThumbnails: RecipesThumbnails;
 }
 
@@ -99,19 +100,19 @@ export function RecipeManager() {
     queries:
       recipesData && Object.entries(recipesData)
         ? Object.entries(recipesData).map(([recipeId, recipe]) => {
-            return {
-              queryKey: ['thumbnail', recipe.google_id],
-              queryFn: async () => {
-                const recipeIdThumbnail: RecipesThumbnails = {};
-                recipeIdThumbnail[recipeId] = await fetchThumbnail(
-                  recipe.google_id
-                );
-                return recipeIdThumbnail;
-              },
-              enabled: !!recipesData,
-              staleTime: 10 * 60 * 1000, // 10 minute
-            };
-          })
+          return {
+            queryKey: ['thumbnail', recipe.google_id],
+            queryFn: async () => {
+              const recipeIdThumbnail: RecipesThumbnails = {};
+              recipeIdThumbnail[recipeId] = await fetchThumbnail(
+                recipe.google_id
+              );
+              return recipeIdThumbnail;
+            },
+            enabled: !!recipesData,
+            staleTime: 10 * 60 * 1000, // 10 minute
+          };
+        })
         : [], // if recipesData is undefined or entries in recipesData is null, an empty array is returned
   });
 
@@ -123,27 +124,15 @@ export function RecipeManager() {
     }
   });
 
-  const recipesArray: Recipe[] = [];
-  for (const recipeId in recipesData) {
-    const thumbnailLink =
-      thumbnails[recipeId] !== undefined ? thumbnails[recipeId] : '';
-    const recipe: Recipe = {
-      ...recipesData[recipeId],
-      recipeId: recipeId,
-      thumbnailLink: thumbnailLink,
-    };
-    recipesArray.push(recipe);
-  }
-
   return (
     <>
       <Navbar expand="lg" className="bg-body-tertiary">
-        <Navbar.Brand>Drive Recipes</Navbar.Brand>
+        <Navbar.Brand>Drive RecipesDb</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="recipes">
-              Recipes
+              RecipesDb
             </Nav.Link>
             <Nav.Link as={Link} to="ingredients">
               ingredients
@@ -165,7 +154,6 @@ export function RecipeManager() {
               months: monthsData,
               ingredients: ingredientsData,
               recipes: recipesData,
-              recipesArray: recipesArray,
               recipesThumbnails: thumbnails,
             } satisfies RecipeManagerContext
           }

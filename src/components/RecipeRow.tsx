@@ -1,6 +1,6 @@
 import {
-  Months,
-  Ingredients,
+  MonthsDb,
+  IngredientsDb,
   Recipe,
   getRecipeIngredients,
   getRecipeMonths,
@@ -19,8 +19,8 @@ export function RecipeRow({
   recipe,
   onEdit,
 }: {
-  months: Months;
-  ingredients: Ingredients;
+  months: MonthsDb;
+  ingredients: IngredientsDb;
   recipe: Recipe;
   onEdit: (recipeToEdit: Recipe) => void;
 }) {
@@ -28,10 +28,10 @@ export function RecipeRow({
     [monthId: string]: boolean;
   } = {};
 
-  // Ingredients cell content
+  // IngredientsDb cell content
   // create the list of ingredient name
   const recipeIngredients = Object.entries(
-    getRecipeIngredients(recipe, ingredients)
+    recipe.ingredients
   ).map(([ingredientId, ingredientName]) => {
     return (
       <Badge pill bg="primary" key={ingredientId}>
@@ -45,7 +45,7 @@ export function RecipeRow({
   //   </Col>
   // );
 
-  // Months cell content
+  // MonthsDb cell content
   // Intersect all monthsId
   for (const monthId in months) {
     // Assume month is present by default
@@ -53,7 +53,7 @@ export function RecipeRow({
     for (const ingredientId in recipe.ingredients) {
       if (
         ingredients[ingredientId].months === undefined ||
-        !(monthId in ingredients[ingredientId].months)
+        !(monthId in ingredients[ingredientId].months!)
       ) {
         // Remove the month if it's not present for one ingredient
         recipeMonthsId[monthId] = false;
@@ -101,7 +101,7 @@ export function RecipeRow({
         <div className="mb-2 text-center">
           <MonthBar
             months={months}
-            recipeMonthsId={getRecipeMonths(recipe, ingredients, months)}
+            recipeMonthsId={recipe.months}
           />
         </div>
         {recipeIngredients}

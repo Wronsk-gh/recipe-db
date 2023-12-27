@@ -4,8 +4,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useOutletContext } from 'react-router-dom';
 import { RecipeManagerContext } from './RecipeManager';
 import {
-  Months,
-  Ingredients,
+  MonthsDb,
+  IngredientsDb,
+  RecipesDb,
   Recipe,
   getRecipeIngredients,
   getRecipeMonths,
@@ -53,7 +54,7 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 };
 
 export function RecipeTable() {
-  const { months, ingredients, recipes, recipesArray, recipesThumbnails } =
+  const { months, ingredients, recipes, recipesThumbnails } =
     useOutletContext<RecipeManagerContext>();
   // Display loading animation in case the data are not yet fetched
   if (
@@ -64,6 +65,25 @@ export function RecipeTable() {
     return <p>Loading...</p>;
   }
 
+  const recipesArray: Recipe[] = [];
+  for (const recipeId in recipes) {
+    const thumbnailLink =
+      recipesThumbnails[recipeId] !== undefined ? recipesThumbnails[recipeId] : '';
+    const recipe: Recipe = {
+      id: recipeId,
+      name: recipes[recipeId].name,
+      ingredients: getRecipeIngredients(recipeId, recipes, ingredients),
+      months: getRecipeMonths(recipeId, recipes, ingredients, months),
+      google_id: recipes[recipeId].google_id,
+      thumbnailLink: thumbnailLink,
+    };
+
+    recipesArray.push(recipe);
+  }
+  return <RecipeTableLoaded months={months} ingredients={ingredients} recipesArray={recipesArray} />
+}
+
+function RecipeTableLoaded({ months, ingredients, recipesArray }: { months: MonthsDb, ingredients: IngredientsDb, recipesArray: Recipe[] }) {
   const [editedObject, setEditedObject] = useState<Recipe | undefined>(
     undefined
   );
@@ -99,20 +119,20 @@ export function RecipeTable() {
       },
       {
         accessorFn: (recipe) => {
-          return Object.values(getRecipeIngredients(recipe, ingredients));
+          return Object.values(recipe.ingredients);
         },
         id: 'recipeIngredients',
         cell: (info) => info.getValue(),
-        header: () => 'Ingredients',
+        header: () => 'IngredientsDb',
         filterFn: 'arrIncludes',
       },
       {
         accessorFn: (recipe) => {
-          return Object.values(getRecipeMonths(recipe, ingredients, months));
+          return Object.values(recipe.months);
         },
         id: 'recipeMonths',
         cell: (info) => info.getValue(),
-        header: () => 'Months',
+        header: () => 'MonthsDb',
         filterFn: 'arrIncludes',
       },
     ],
@@ -146,7 +166,7 @@ export function RecipeTable() {
   for (const recipe of table.getRowModel().rows) {
     rows.push(
       <RecipeRow
-        key={recipe.original.recipeId}
+        key={recipe.original.id}
         months={months}
         ingredients={ingredients}
         recipe={recipe.original}
