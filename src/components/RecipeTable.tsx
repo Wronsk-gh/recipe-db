@@ -68,7 +68,9 @@ export function RecipeTable() {
   const recipesArray: Recipe[] = [];
   for (const recipeId in recipes) {
     const thumbnailLink =
-      recipesThumbnails[recipeId] !== undefined ? recipesThumbnails[recipeId] : '';
+      recipesThumbnails[recipeId] !== undefined
+        ? recipesThumbnails[recipeId]
+        : '';
     const recipe: Recipe = {
       id: recipeId,
       name: recipes[recipeId].name,
@@ -80,10 +82,24 @@ export function RecipeTable() {
 
     recipesArray.push(recipe);
   }
-  return <RecipeTableLoaded months={months} ingredients={ingredients} recipesArray={recipesArray} />
+  return (
+    <RecipeTableLoaded
+      months={months}
+      ingredients={ingredients}
+      recipesArray={recipesArray}
+    />
+  );
 }
 
-function RecipeTableLoaded({ months, ingredients, recipesArray }: { months: MonthsDb, ingredients: IngredientsDb, recipesArray: Recipe[] }) {
+function RecipeTableLoaded({
+  months,
+  ingredients,
+  recipesArray,
+}: {
+  months: MonthsDb;
+  ingredients: IngredientsDb;
+  recipesArray: Recipe[];
+}) {
   const [editedObject, setEditedObject] = useState<Recipe | undefined>(
     undefined
   );
