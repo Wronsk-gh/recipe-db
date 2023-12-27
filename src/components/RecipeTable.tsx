@@ -29,6 +29,7 @@ import {
   ColumnFiltersState,
   Column,
   Table,
+  RowData,
   getFilteredRowModel,
 } from '@tanstack/react-table';
 
@@ -37,6 +38,9 @@ import { rankItem } from '@tanstack/match-sorter-utils';
 declare module '@tanstack/table-core' {
   interface FilterFns {
     fuzzy: FilterFn<unknown>;
+  }
+  interface ColumnMeta<TData extends RowData, TValue> {
+    headerKind: 'searchable' | 'tickable';
   }
 }
 
@@ -132,6 +136,9 @@ function RecipeTableLoaded({
         cell: (info) => info.getValue(),
         header: () => 'Name',
         filterFn: 'fuzzy',
+        meta: {
+          headerKind: 'searchable',
+        },
       },
       {
         accessorFn: (recipe) => {
@@ -141,6 +148,9 @@ function RecipeTableLoaded({
         cell: (info) => info.getValue(),
         header: () => 'IngredientsDb',
         filterFn: 'arrIncludes',
+        meta: {
+          headerKind: 'tickable',
+        },
       },
       {
         accessorFn: (recipe) => {
@@ -150,6 +160,9 @@ function RecipeTableLoaded({
         cell: (info) => info.getValue(),
         header: () => 'MonthsDb',
         filterFn: 'arrIncludes',
+        meta: {
+          headerKind: 'tickable',
+        },
       },
     ],
     []
@@ -208,48 +221,41 @@ function RecipeTableLoaded({
       </PopUp>
     ) : null;
 
+  const filters = [];
+
+  for (const headerGroup of table.getHeaderGroups()) {
+    for (const header of headerGroup.headers) {
+      if (!header.isPlaceholder) {
+        filters.push(
+          <>
+            <div
+              {...{
+                className: header.column.getCanSort()
+                  ? 'cursor-pointer select-none'
+                  : '',
+                onClick: header.column.getToggleSortingHandler(),
+              }}
+            >
+              {flexRender(header.column.columnDef.header, header.getContext())}
+              {{
+                asc: ' 🔼',
+                desc: ' 🔽',
+              }[header.column.getIsSorted() as string] ?? null}
+            </div>
+            {header.column.getCanFilter() ? (
+              <div>
+                <Filter column={header.column} table={table} />
+              </div>
+            ) : null}
+          </>
+        );
+      }
+    }
+  }
+
   return (
     <div>
-      <table>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <th key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder ? null : (
-                      <>
-                        <div
-                          {...{
-                            className: header.column.getCanSort()
-                              ? 'cursor-pointer select-none'
-                              : '',
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {{
-                            asc: ' 🔼',
-                            desc: ' 🔽',
-                          }[header.column.getIsSorted() as string] ?? null}
-                        </div>
-                        {header.column.getCanFilter() ? (
-                          <div>
-                            <Filter column={header.column} table={table} />
-                          </div>
-                        ) : null}
-                      </>
-                    )}
-                  </th>
-                );
-              })}
-            </tr>
-          ))}
-        </thead>
-      </table>
+      {filters}
       <div
         style={{
           display: 'flex',
