@@ -18,15 +18,11 @@ export function RecipeRow({
   ingredients,
   recipe,
   onEdit,
-  filterText,
-  monthFilter,
 }: {
   months: Months;
   ingredients: Ingredients;
   recipe: Recipe;
   onEdit: (recipeToEdit: Recipe) => void;
-  filterText: string;
-  monthFilter: string;
 }) {
   const recipeMonthsId: {
     [monthId: string]: boolean;
@@ -123,13 +119,5 @@ export function RecipeRow({
     </Card>
   );
 
-  // See if filter allows display
-  if (
-    (monthFilter === '' || recipeMonthsId[monthFilter] === true) &&
-    recipe.name.toLowerCase().indexOf(filterText.toLowerCase()) !== -1
-  ) {
-    return recipeCard;
-  } else {
-    return null;
-  }
+  return recipeCard;
 }

@@ -1,6 +1,8 @@
 import '../App.css';
 import { useState, useContext, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useOutletContext } from 'react-router-dom';
+import { RecipeManagerContext } from './RecipeManager';
 import {
   Months,
   Ingredients,
@@ -50,19 +52,18 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
-export function RecipeTable({
-  months,
-  ingredients,
-  recipesArray,
-  filterText,
-  monthFilter,
-}: {
-  months: Months;
-  ingredients: Ingredients;
-  recipesArray: Recipe[];
-  filterText: string;
-  monthFilter: string;
-}) {
+export function RecipeTable() {
+  const { months, ingredients, recipes, recipesArray, recipesThumbnails } =
+    useOutletContext<RecipeManagerContext>();
+  // Display loading animation in case the data are not yet fetched
+  if (
+    months === undefined ||
+    ingredients === undefined ||
+    recipes === undefined
+  ) {
+    return <p>Loading...</p>;
+  }
+
   const [editedObject, setEditedObject] = useState<Recipe | undefined>(
     undefined
   );
@@ -150,8 +151,6 @@ export function RecipeTable({
         ingredients={ingredients}
         recipe={recipe.original}
         onEdit={setEditedObject}
-        filterText={filterText}
-        monthFilter={monthFilter}
       />
     );
   }

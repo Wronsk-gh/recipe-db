@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecipeManager } from './components/RecipeManager';
 import { FilterableIngredientTable } from './components/FilterableIngredientTable';
-import { FilterableRecipeTable } from './components/FilterableRecipeTable';
+import { RecipeTable } from './components/RecipeTable';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -27,7 +27,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'recipes',
-        element: <FilterableRecipeTable />,
+        element: <RecipeTable />,
       },
       {
         path: 'ingredients',

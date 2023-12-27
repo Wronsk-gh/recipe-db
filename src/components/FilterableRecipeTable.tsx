@@ -48,13 +48,7 @@ export function FilterableRecipeTable({} // months,
           {options}
         </select>
       </form>
-      <RecipeTable
-        months={months}
-        ingredients={ingredients}
-        recipesArray={recipesArray}
-        filterText={filterText}
-        monthFilter={selectedMonth}
-      />
+      <RecipeTable />
     </div>
   );
 }
