@@ -2,7 +2,7 @@ export type MonthsDb = {
   [monthId: string]: {
     name: string;
   };
-}
+};
 
 export type IngredientsDb = {
   [ingredientId: string]: {
@@ -11,7 +11,7 @@ export type IngredientsDb = {
     };
     name: string;
   };
-}
+};
 
 export type RecipeDb = {
   ingredients?: {
@@ -19,45 +19,52 @@ export type RecipeDb = {
   };
   name: string;
   google_id: string;
-}
+};
 
 export type RecipesDb = {
-  [recipeId: string]: RecipeDb
-}
+  [recipeId: string]: RecipeDb;
+};
 
 export type ObjectWithName = {
   name: string;
-}
+};
 
 export type ObjectWithId = {
   id: string;
-}
+};
 
 export type ObjectWithNamedIds = {
   [id: string]: string;
-}
+};
 
 export type RecipesThumbnails = {
   [recipeId: string]: string;
-}
+};
 
-export type Tag = ObjectWithName & ObjectWithId
+export type Tag = ObjectWithName & ObjectWithId;
+
+export type Month = ObjectWithName & ObjectWithId;
 
 export type Ingredient = ObjectWithName & {
   ingredientId: string;
   months?: {
     [monthId: string]: boolean;
   };
-}
+};
 
-export type Recipe = ObjectWithId & ObjectWithName & {
-  ingredients: ObjectWithNamedIds;
-  months: ObjectWithNamedIds
-  google_id: string;
-  thumbnailLink: string;
-}
+export type Recipe = ObjectWithId &
+  ObjectWithName & {
+    ingredients: ObjectWithNamedIds;
+    months: ObjectWithNamedIds;
+    google_id: string;
+    thumbnailLink: string;
+  };
 
-export function getRecipeIngredients(recipeId: string, recipes: RecipesDb, ingredients: IngredientsDb) {
+export function getRecipeIngredients(
+  recipeId: string,
+  recipes: RecipesDb,
+  ingredients: IngredientsDb
+) {
   const ingredientsNames: ObjectWithNamedIds = {};
   for (const ingredientId in recipes[recipeId].ingredients) {
     if (ingredients[ingredientId] !== undefined) {
