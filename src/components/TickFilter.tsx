@@ -1,7 +1,19 @@
-import { useState } from 'react';
+import { useState, Dispatch, SetStateAction } from 'react';
 import { Column, Table } from '@tanstack/react-table';
 import { ObjectWithId, ObjectWithName } from '../db-types';
 import { useSelect } from 'downshift';
+
+function useFilterState<S>(
+  initialState: S | (() => S),
+  column: Column<any, unknown>
+): [S, Dispatch<SetStateAction<S>>] {
+  const [selectedItems, setSelectedItems] = useState<S>(initialState);
+  const setStateAndFilter: Dispatch<SetStateAction<S>> = (value) => {
+    setSelectedItems(value);
+    column.setFilterValue(value);
+  };
+  return [selectedItems, setStateAndFilter];
+}
 
 export function TickFilter({
   column,
@@ -10,12 +22,20 @@ export function TickFilter({
   column: Column<any, unknown>;
   table: Table<any>;
 }) {
-  const itemsArray = column.columnDef.meta
-    ? column.columnDef.meta.tickOptions
-    : [];
-  const [selectedItems, setSelectedItems] = useState<
-    (ObjectWithName & ObjectWithId)[]
-  >([]);
+  const itemsArray: (ObjectWithName & ObjectWithId)[] = [];
+  if (column.columnDef.meta) {
+    for (const items of column.columnDef.meta.tickOptions) {
+      itemsArray.push({ name: items.name, id: items.id });
+    }
+  }
+
+  // const [selectedItems, setSelectedItems] = useState<
+  //   (ObjectWithName & ObjectWithId)[]
+  // >([]);
+  const [selectedItems, setSelectedItems] = useFilterState<string[]>(
+    [],
+    column
+  );
   const {
     isOpen,
     selectedItem,
@@ -33,7 +53,6 @@ export function TickFilter({
         case useSelect.stateChangeTypes.ToggleButtonKeyDownEnter:
         case useSelect.stateChangeTypes.ToggleButtonKeyDownSpaceButton:
         case useSelect.stateChangeTypes.ItemClick:
-          // console.log(changes);
           return {
             ...changes,
             isOpen: true, // Keep menu open after selection.
@@ -45,13 +64,11 @@ export function TickFilter({
     },
     selectedItem: null,
     onSelectedItemChange: ({ selectedItem }) => {
-      console.log("I'm HEREEEEEEEEEEEEEEEEEEEE (onSelectedItemChange)");
-      console.log(`selectedItem : ${selectedItem}`);
       if (!selectedItem) {
         return;
       }
 
-      const index = selectedItems.map(itemToId).indexOf(itemToId(selectedItem));
+      const index = selectedItems.indexOf(itemToId(selectedItem));
 
       if (index > 0) {
         setSelectedItems([
@@ -61,12 +78,10 @@ export function TickFilter({
       } else if (index === 0) {
         setSelectedItems([...selectedItems.slice(1)]);
       } else {
-        setSelectedItems([...selectedItems, selectedItem]);
+        setSelectedItems([...selectedItems, itemToId(selectedItem)]);
       }
     },
   });
-  console.log('STATE selectedItem :');
-  console.log(selectedItem);
   const buttonText = selectedItems.length
     ? `${selectedItems.length} ${column.id} selected.`
     : `${column.id} filter.`;
@@ -78,7 +93,7 @@ export function TickFilter({
     return item ? item.id : '';
   }
 
-  const columnFilterValue = column.getFilterValue();
+  // const columnFilterValue = column.getFilterValue();
 
   return (
     <>
@@ -89,9 +104,8 @@ export function TickFilter({
           <span className="px-2">{isOpen ? <>&#8593;</> : <>&#8595;</>}</span>
         </div>
       </div>
-      {/* <ul className={`${!isOpen && 'hidden'}`} {...getMenuProps()}> */}
-      <ul className={`${!true && 'hidden'}`} {...getMenuProps()}>
-        {true &&
+      <ul className={`${!isOpen && 'hidden'}`} {...getMenuProps()}>
+        {isOpen &&
           itemsArray.map((item, index) => (
             <li
               className={`${highlightedIndex === index && 'bg-blue-300'}
@@ -101,15 +115,13 @@ export function TickFilter({
               {...getItemProps({
                 item,
                 index,
-                'aria-selected': selectedItems
-                  .map(itemToId)
-                  .includes(itemToId(item)),
+                'aria-selected': selectedItems.includes(itemToId(item)),
               })}
             >
               <input
                 type="checkbox"
                 className="h-5 w-5"
-                checked={selectedItems.map(itemToId).includes(itemToId(item))}
+                checked={selectedItems.includes(itemToId(item))}
                 value={item.name}
                 onChange={() => null}
               />

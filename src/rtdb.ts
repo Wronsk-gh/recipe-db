@@ -9,7 +9,14 @@ import {
   remove,
 } from 'firebase/database';
 
-import { MonthsDb, IngredientsDb, RecipesDb, Ingredient, Recipe, RecipeDb } from './db-types';
+import {
+  MonthsDb,
+  IngredientsDb,
+  RecipesDb,
+  Ingredient,
+  Recipe,
+  RecipeDb,
+} from './db-types';
 
 export interface RtdbCred {
   user: User | null;
@@ -62,10 +69,7 @@ export async function updateRecipeDisplayUserDb(
     rtdbCred.displayUserId !== null
       ? rtdbCred.displayUserId
       : rtdbCred.user.uid;
-  const recipeRef = ref(
-    rtdbCred.db,
-    `users/${uid}/recipes/${newRecipe.id}`
-  );
+  const recipeRef = ref(rtdbCred.db, `users/${uid}/recipes/${newRecipe.id}`);
   // type tempo = RecipeDb & { id: string, thumbnailLink: string }
   // const {
   //   id: removedRecipeId,
@@ -75,7 +79,7 @@ export async function updateRecipeDisplayUserDb(
   const newDbRecipe: RecipeDb = {
     name: newRecipe.name,
     google_id: newRecipe.google_id,
-    ingredients: {}
+    ingredients: {},
   };
   for (const ingredientId in newRecipe.ingredients) {
     newDbRecipe.ingredients![ingredientId] = true;
@@ -102,9 +106,9 @@ export async function updateIngredientDisplayUserDb(
       : rtdbCred.user.uid;
   const ingredientRef = ref(
     rtdbCred.db,
-    `users/${uid}/ingredients/${newIngredient.ingredientId}`
+    `users/${uid}/ingredients/${newIngredient.id}`
   );
-  const { ingredientId: removed, ...newDbIngredient } = newIngredient;
+  const { id: removed, ...newDbIngredient } = newIngredient;
   await set(ingredientRef, newDbIngredient);
 }
 

@@ -5,12 +5,12 @@ import { IngredientTable } from './IngredientTable';
 import { useOutletContext } from 'react-router-dom';
 import { RecipeManagerContext } from './RecipeManager';
 
-export function FilterableIngredientTable({ } // months,
-  // ingredients,
-  : {
-    // months: MonthsDb;
-    // ingredients: IngredientsDb;
-  }) {
+export function FilterableIngredientTable({} // months,
+// ingredients,
+: {
+  // months: MonthsDb;
+  // ingredients: IngredientsDb;
+}) {
   const [filterText, setFilterText] = useState('');
   const { months, ingredients, recipes, recipesThumbnails } =
     useOutletContext<RecipeManagerContext>();
@@ -25,7 +25,7 @@ export function FilterableIngredientTable({ } // months,
   return (
     <div>
       <SearchBar filterText={filterText} onFilterTextChange={setFilterText} />
-      <IngredientTable months={months} ingredients={ingredients} />
+      <IngredientTable />
     </div>
   );
 }

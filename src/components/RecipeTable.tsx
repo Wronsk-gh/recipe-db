@@ -10,7 +10,9 @@ import {
   Recipe,
   getRecipeIngredients,
   getRecipeMonths,
+  getIngredientMonths,
   Month,
+  Ingredient,
   ObjectWithName,
   ObjectWithId,
 } from '../db-types';
@@ -46,6 +48,7 @@ import { rankItem } from '@tanstack/match-sorter-utils';
 declare module '@tanstack/table-core' {
   interface FilterFns {
     fuzzy: FilterFn<unknown>;
+    arrIncludesAllId: FilterFn<unknown>;
   }
   interface ColumnMeta<TData extends RowData, TValue> {
     headerKind: 'searchable' | 'tickable';
@@ -64,6 +67,21 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 
   // Return if the item should be filtered in/out
   return itemRank.passed;
+};
+
+const arrIncludesAllIdFilter: FilterFn<any[]> = (
+  row,
+  columnId,
+  filterValue,
+  addMeta
+) => {
+  const itemValue: any[] = row.getValue(columnId);
+
+  // Return if the item should be filtered in/out
+  // Check that all IDs in the filter array are present in the item array
+  return filterValue.every((el: any) => {
+    return itemValue.includes(el);
+  });
 };
 
 export function RecipeTable() {
@@ -92,13 +110,32 @@ export function RecipeTable() {
       google_id: recipes[recipeId].google_id,
       thumbnailLink: thumbnailLink,
     };
-
     recipesArray.push(recipe);
   }
+  const monthsArray: Month[] = [];
+  for (const monthId in months) {
+    const month: Month = {
+      id: monthId,
+      name: months[monthId].name,
+    };
+    monthsArray.push(month);
+  }
+  const ingredientsArray: Ingredient[] = [];
+  for (const ingredientId in ingredients) {
+    const ingredient: Ingredient = {
+      id: ingredientId,
+      name: ingredients[ingredientId].name,
+      months: getIngredientMonths(ingredientId, ingredients, months),
+    };
+    ingredientsArray.push(ingredient);
+  }
+
   return (
     <RecipeTableLoaded
       months={months}
       ingredients={ingredients}
+      monthsArray={monthsArray}
+      ingredientsArray={ingredientsArray}
       recipesArray={recipesArray}
     />
   );
@@ -107,10 +144,14 @@ export function RecipeTable() {
 function RecipeTableLoaded({
   months,
   ingredients,
+  monthsArray,
+  ingredientsArray,
   recipesArray,
 }: {
   months: MonthsDb;
   ingredients: IngredientsDb;
+  monthsArray: Month[];
+  ingredientsArray: Ingredient[];
   recipesArray: Recipe[];
 }) {
   const [editedObject, setEditedObject] = useState<Recipe | undefined>(
@@ -118,64 +159,6 @@ function RecipeTableLoaded({
   );
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
-  const monthsArray: Month[] = Object.keys(months).map((monthId) => {
-    const month: Month = {
-      id: monthId,
-      name: months[monthId].name,
-    };
-    return month;
-  });
-  const [selectedItems, setSelectedItems] = useState<Month[]>([]);
-  const {
-    isOpen,
-    selectedItem,
-    getToggleButtonProps,
-    getLabelProps,
-    getMenuProps,
-    highlightedIndex,
-    getItemProps,
-  } = useSelect<Month>({
-    items: monthsArray,
-    itemToString: itemToString,
-    stateReducer: (state, actionAndChanges) => {
-      const { changes, type } = actionAndChanges;
-      switch (type) {
-        case useSelect.stateChangeTypes.ToggleButtonKeyDownEnter:
-        case useSelect.stateChangeTypes.ToggleButtonKeyDownSpaceButton:
-        case useSelect.stateChangeTypes.ItemClick:
-          return {
-            ...changes,
-            isOpen: true, // Keep menu open after selection.
-            highlightedIndex: state.highlightedIndex,
-          };
-        default:
-          return changes;
-      }
-    },
-    selectedItem: null,
-    onSelectedItemChange: ({ selectedItem }) => {
-      if (!selectedItem) {
-        return;
-      }
-
-      const index = selectedItems.map(itemToId).indexOf(itemToId(selectedItem));
-
-      if (index > 0) {
-        setSelectedItems([
-          ...selectedItems.slice(0, index),
-          ...selectedItems.slice(index + 1),
-        ]);
-      } else if (index === 0) {
-        setSelectedItems([...selectedItems.slice(1)]);
-      } else {
-        setSelectedItems([...selectedItems, selectedItem]);
-      }
-    },
-  });
-  const buttonText = selectedItems.length
-    ? `${selectedItems.length} months selected.`
-    : 'Months filter.';
 
   function itemToString(item: ObjectWithName | null) {
     return item ? item.name : '';
@@ -222,15 +205,10 @@ function RecipeTableLoaded({
         id: 'recipeIngredients',
         cell: (info) => info.getValue(),
         header: () => 'IngredientsDb',
-        filterFn: 'arrIncludes',
+        filterFn: 'arrIncludesAllId',
         meta: {
           headerKind: 'tickable',
-          tickOptions: Object.entries(ingredients).map(
-            ([ingredientId, ingredient]) => ({
-              id: ingredientId,
-              name: ingredient.name,
-            })
-          ),
+          tickOptions: ingredientsArray,
         },
       },
       {
@@ -240,13 +218,10 @@ function RecipeTableLoaded({
         id: 'recipeMonths',
         cell: (info) => info.getValue(),
         header: () => 'MonthsDb',
-        filterFn: 'arrIncludes',
+        filterFn: 'arrIncludesAllId',
         meta: {
           headerKind: 'tickable',
-          tickOptions: Object.entries(months).map(([monthId, month]) => ({
-            id: monthId,
-            name: month.name,
-          })),
+          tickOptions: monthsArray,
         },
       },
     ],
@@ -267,6 +242,7 @@ function RecipeTableLoaded({
     },
     filterFns: {
       fuzzy: fuzzyFilter,
+      arrIncludesAllId: arrIncludesAllIdFilter,
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -347,37 +323,6 @@ function RecipeTableLoaded({
           filters.push(
             <>
               <TickFilter column={header.column} table={table} />
-
-              {/* <div>
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext()
-                )}
-              </div>
-              {header.column.getCanFilter() ? (
-                <div>
-                  <form>
-                    <label htmlFor="month">Choose a month:</label>
-                    <select
-                      name="month"
-                      onChange={(newValue) =>
-                        header.column.setFilterValue(newValue.target.value)
-                      }
-                    >
-                      <option value={''} key={''}>
-                        {'All'}
-                      </option>
-                      {header.column.columnDef.meta?.tickOptions.map(
-                        (entry) => (
-                          <option value={entry.id} key={entry.id}>
-                            {entry.name}
-                          </option>
-                        )
-                      )}
-                    </select>
-                  </form>
-                </div>
-              ) : null} */}
             </>
           );
         }
@@ -387,56 +332,6 @@ function RecipeTableLoaded({
 
   return (
     <div>
-      {/* <Dropdown>
-        <Dropdown.Toggle variant="success" id="dropdown-basic">
-          Dropdown Button
-        </Dropdown.Toggle>
-
-        <Dropdown.Menu>
-          <Dropdown.Item>Action</Dropdown.Item>
-          <Dropdown.Item>Another action</Dropdown.Item>
-          <Dropdown.Item>Something else</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown> */}
-      <div>
-        <div className="">
-          <label {...getLabelProps()}>Which month to filter ?</label>
-          <div className="" {...getToggleButtonProps()}>
-            <span>{buttonText}</span>
-            <span className="px-2">{isOpen ? <>&#8593;</> : <>&#8595;</>}</span>
-          </div>
-        </div>
-        <ul className={`${!isOpen && 'hidden'}`} {...getMenuProps()}>
-          {isOpen &&
-            monthsArray.map((item, index) => (
-              <li
-                className={`${highlightedIndex === index && 'bg-blue-300'}
-                  ${selectedItem === item && 'font-bold'}
-                  `}
-                key={item.id}
-                {...getItemProps({
-                  item,
-                  index,
-                  'aria-selected': selectedItems
-                    .map(itemToId)
-                    .includes(itemToId(item)),
-                })}
-              >
-                <input
-                  type="checkbox"
-                  className="h-5 w-5"
-                  checked={selectedItems.map(itemToId).includes(itemToId(item))}
-                  value={item.name}
-                  onChange={() => null}
-                />
-                <div className="">
-                  <span>{item.name}</span>
-                  {/* <span className="text-sm text-gray-700">{item.name}</span> */}
-                </div>
-              </li>
-            ))}
-        </ul>
-      </div>
       {filters}
       <div
         style={{

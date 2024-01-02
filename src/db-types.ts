@@ -45,12 +45,10 @@ export type Tag = ObjectWithName & ObjectWithId;
 
 export type Month = ObjectWithName & ObjectWithId;
 
-export type Ingredient = ObjectWithName & {
-  ingredientId: string;
-  months?: {
-    [monthId: string]: boolean;
+export type Ingredient = ObjectWithName &
+  ObjectWithId & {
+    months: ObjectWithNamedIds;
   };
-};
 
 export type Recipe = ObjectWithId &
   ObjectWithName & {
@@ -59,6 +57,24 @@ export type Recipe = ObjectWithId &
     google_id: string;
     thumbnailLink: string;
   };
+
+export function getIngredientMonths(
+  ingredientId: string,
+  ingredients: IngredientsDb,
+  months: MonthsDb
+) {
+  const monthsNames: ObjectWithNamedIds = {};
+  for (const monthId in ingredients[ingredientId].months) {
+    if (months[monthId] !== undefined) {
+      monthsNames[monthId] = months[monthId].name;
+    } else {
+      console.error(
+        `Ingredient {ingredient.name} has a monthId {monthId} which could not be found in the list of months.`
+      );
+    }
+  }
+  return monthsNames;
+}
 
 export function getRecipeIngredients(
   recipeId: string,

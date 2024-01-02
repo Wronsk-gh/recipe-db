@@ -76,10 +76,10 @@ export function IngredientEditForm({
               displayedObject.months = {};
             }
             if (displayedObject.months[selectedMonth] === undefined) {
-              const newDisplayedObject = {
+              const newDisplayedObject: Ingredient = {
                 ...displayedObject,
                 months: {
-                  [selectedMonth]: true,
+                  [selectedMonth]: months[selectedMonth].name,
                   ...displayedObject.months,
                 },
               };
