@@ -208,7 +208,15 @@ function RecipeTableLoaded({
         filterFn: 'arrIncludesAllId',
         meta: {
           headerKind: 'tickable',
-          tickOptions: ingredientsArray,
+          tickOptions: [...ingredientsArray].sort((x, y) => {
+            if (x.name.toLowerCase() > y.name.toLowerCase()) {
+              return 1;
+            }
+            if (x.name.toLowerCase() < y.name.toLowerCase()) {
+              return -1;
+            }
+            return 0;
+          }),
         },
       },
       {

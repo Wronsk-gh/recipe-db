@@ -3,8 +3,11 @@ Created with CodeSandbox
 
 Backlog :
 ---------
-- [ ] Implement powerfull filtering and sorting capabilities based on tags, names, etc
-    * Probably need to use a library, but cannot find one...
+- [ ] Implement Filter multi select with also a text bar showing selected choices and auto completion (useMultipleSelection instead of useSelect ?)
+    * https://www.downshift-js.com/use-multiple-selection#usage-with-combobox
+- [ ] Implement better UI for filters
+- [X] Implement powerfull filtering and sorting capabilities based on tags, names, etc
+    * Probably need to use a library, but cannot find one... -> decided to use TanStack React Table and Downshift for dropdown multi select
 - [X] prevent resyncing before the previous sync isn't finished (Also force a refetch of recipes after adding the ingredient -> use a mutation !!!)
 - [X] implement in the database a setting of the folder in drive to fetch pictures and new recipe from
 - [X] Implement a button to resync with the recipes from the folder
@@ -28,7 +31,7 @@ Backlog :
 - [ ] Redirect to the recipes page by default
 - [ ] Implement a favourite button + filter
 - [ ] Embbed full list of ingredients in the database with servings, allow selecting some recipes and compute shopping list based on it
-- Unauthorised calls (to gapi or firebase) must trigger a re-auth automatically
+- [ ] Unauthorised calls (to gapi or firebase) must trigger a re-auth automatically
 
 Bugs :
 ------

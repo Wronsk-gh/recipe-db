@@ -1,18 +1,44 @@
-import { useState, Dispatch, SetStateAction } from 'react';
-import { Column, Table } from '@tanstack/react-table';
+import { useState, useMemo } from 'react';
 import { ObjectWithId, ObjectWithName } from '../db-types';
-import { useSelect } from 'downshift';
+import { useMultipleSelection, useCombobox } from 'downshift';
+import { Column, Table } from '@tanstack/react-table';
 
-function useFilterState<S>(
-  initialState: S | (() => S),
+function itemToString(item: (ObjectWithName & ObjectWithId) | null) {
+  return item ? item.name : '';
+}
+function itemToId(item: (ObjectWithName & ObjectWithId) | null) {
+  return item ? item.id : '';
+}
+
+function useFilterState(
+  initialState: (ObjectWithName & ObjectWithId)[],
   column: Column<any, unknown>
-): [S, Dispatch<SetStateAction<S>>] {
-  const [selectedItems, setSelectedItems] = useState<S>(initialState);
-  const setStateAndFilter: Dispatch<SetStateAction<S>> = (value) => {
-    setSelectedItems(value);
-    column.setFilterValue(value);
-  };
+): [
+  (ObjectWithName & ObjectWithId)[],
+  (selectedItems: (ObjectWithName & ObjectWithId)[]) => void,
+] {
+  const [selectedItems, setSelectedItems] =
+    useState<(ObjectWithName & ObjectWithId)[]>(initialState);
+  function setStateAndFilter(selectedItems: (ObjectWithName & ObjectWithId)[]) {
+    setSelectedItems(selectedItems);
+    column.setFilterValue(selectedItems.map(itemToId));
+  }
   return [selectedItems, setStateAndFilter];
+}
+
+function getFilteredItems(
+  selectedItems: (ObjectWithName & ObjectWithId)[],
+  itemsArray: (ObjectWithName & ObjectWithId)[],
+  inputValue: string
+): (ObjectWithName & ObjectWithId)[] {
+  const lowerCasedInputValue = inputValue.toLowerCase();
+
+  return itemsArray.filter(function filterItems(item) {
+    return (
+      !selectedItems.map(itemToId).includes(item.id) &&
+      item.name.toLowerCase().includes(lowerCasedInputValue)
+    );
+  });
 }
 
 export function TickFilter({
@@ -24,114 +50,176 @@ export function TickFilter({
 }) {
   const itemsArray: (ObjectWithName & ObjectWithId)[] = [];
   if (column.columnDef.meta) {
-    for (const items of column.columnDef.meta.tickOptions) {
-      itemsArray.push({ name: items.name, id: items.id });
+    for (const item of column.columnDef.meta.tickOptions) {
+      itemsArray.push({ name: item.name, id: item.id });
     }
   }
 
-  // const [selectedItems, setSelectedItems] = useState<
-  //   (ObjectWithName & ObjectWithId)[]
-  // >([]);
-  const [selectedItems, setSelectedItems] = useFilterState<string[]>(
-    [],
-    column
+  const [inputValue, setInputValue] = useState('');
+  const [selectedItems, setSelectedItems] = useFilterState([], column);
+
+  // const dropdownListItems = useMemo(
+  //   () => getFilteredItems(selectedItems, inputValue),
+  //   [selectedItems, inputValue]
+  // );
+
+  // Note: Removed the Memo as causing some bugs
+  // OCA COULD THE MEMO be the bug ????
+  const dropdownListItems = getFilteredItems(
+    selectedItems,
+    itemsArray,
+    inputValue
   );
+
+  const { getSelectedItemProps, getDropdownProps, removeSelectedItem } =
+    useMultipleSelection({
+      selectedItems: selectedItems,
+      onStateChange: function onStateChange({
+        selectedItems: newSelectedItems,
+        type,
+      }) {
+        switch (type) {
+          case useMultipleSelection.stateChangeTypes
+            .SelectedItemKeyDownBackspace:
+          case useMultipleSelection.stateChangeTypes.SelectedItemKeyDownDelete:
+          case useMultipleSelection.stateChangeTypes.DropdownKeyDownBackspace:
+          case useMultipleSelection.stateChangeTypes.FunctionRemoveSelectedItem:
+            setSelectedItems(newSelectedItems ?? []);
+            break;
+          default:
+            break;
+        }
+      },
+    });
   const {
     isOpen,
-    selectedItem,
     getToggleButtonProps,
     getLabelProps,
     getMenuProps,
+    getInputProps,
     highlightedIndex,
     getItemProps,
-  } = useSelect<ObjectWithName & ObjectWithId>({
-    items: itemsArray,
+    selectedItem,
+  } = useCombobox({
+    items: dropdownListItems,
     itemToString: itemToString,
-    stateReducer: (state, actionAndChanges) => {
+    defaultHighlightedIndex: 0, // after selection, highlight the first item.
+    selectedItem: null,
+    inputValue: inputValue,
+    stateReducer: function stateReducer(state, actionAndChanges) {
       const { changes, type } = actionAndChanges;
+
       switch (type) {
-        case useSelect.stateChangeTypes.ToggleButtonKeyDownEnter:
-        case useSelect.stateChangeTypes.ToggleButtonKeyDownSpaceButton:
-        case useSelect.stateChangeTypes.ItemClick:
+        case useCombobox.stateChangeTypes.InputKeyDownEnter:
+        case useCombobox.stateChangeTypes.ItemClick:
           return {
             ...changes,
-            isOpen: true, // Keep menu open after selection.
-            highlightedIndex: state.highlightedIndex,
+            isOpen: true, // keep the menu open after selection.
+            highlightedIndex: 0, // with the first option highlighted.
           };
         default:
           return changes;
       }
     },
-    selectedItem: null,
-    onSelectedItemChange: ({ selectedItem }) => {
-      if (!selectedItem) {
-        return;
-      }
+    onStateChange: function onStateChange({
+      inputValue: newInputValue,
+      type,
+      selectedItem: newSelectedItem,
+    }) {
+      switch (type) {
+        case useCombobox.stateChangeTypes.InputKeyDownEnter:
+        case useCombobox.stateChangeTypes.ItemClick:
+        case useCombobox.stateChangeTypes.InputBlur:
+          if (newSelectedItem) {
+            setSelectedItems([...selectedItems, newSelectedItem]);
+            setInputValue('');
+          }
+          break;
 
-      const index = selectedItems.indexOf(itemToId(selectedItem));
-
-      if (index > 0) {
-        setSelectedItems([
-          ...selectedItems.slice(0, index),
-          ...selectedItems.slice(index + 1),
-        ]);
-      } else if (index === 0) {
-        setSelectedItems([...selectedItems.slice(1)]);
-      } else {
-        setSelectedItems([...selectedItems, itemToId(selectedItem)]);
+        case useCombobox.stateChangeTypes.InputChange:
+          setInputValue(newInputValue ?? '');
+          break;
+        default:
+          break;
       }
     },
   });
-  const buttonText = selectedItems.length
-    ? `${selectedItems.length} ${column.id} selected.`
-    : `${column.id} filter.`;
-
-  function itemToString(item: (ObjectWithName & ObjectWithId) | null) {
-    return item ? item.name : '';
-  }
-  function itemToId(item: (ObjectWithName & ObjectWithId) | null) {
-    return item ? item.id : '';
-  }
 
   // const columnFilterValue = column.getFilterValue();
 
   return (
     <>
-      <div className="">
-        <label {...getLabelProps()}>{`Which ${column.id} to filter ?`}</label>
-        <div className="" {...getToggleButtonProps()}>
-          <span>{buttonText}</span>
-          <span className="px-2">{isOpen ? <>&#8593;</> : <>&#8595;</>}</span>
-        </div>
-      </div>
-      <ul className={`${!isOpen && 'hidden'}`} {...getMenuProps()}>
-        {isOpen &&
-          itemsArray.map((item, index) => (
-            <li
-              className={`${highlightedIndex === index && 'bg-blue-300'}
-            ${selectedItem === item && 'font-bold'}
-            `}
-              key={item.id}
-              {...getItemProps({
-                item,
-                index,
-                'aria-selected': selectedItems.includes(itemToId(item)),
-              })}
-            >
+      <div className="w-[592px]">
+        <div className="flex flex-col gap-1">
+          <label className="w-fit" {...getLabelProps()}>
+            {`${column.id}`}
+          </label>
+          <div className="shadow-sm bg-white inline-flex gap-2 items-center flex-wrap p-1.5">
+            {selectedItems.map(
+              function renderSelectedItem(selectedItemForRender, index) {
+                return (
+                  <span
+                    className="bg-gray-100 rounded-md px-1 focus:bg-red-400"
+                    key={`selected-item-${index}`}
+                    {...getSelectedItemProps({
+                      selectedItem: selectedItemForRender,
+                      index,
+                    })}
+                  >
+                    {selectedItemForRender.name}
+                    <span
+                      className="px-1 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeSelectedItem(selectedItemForRender);
+                      }}
+                    >
+                      &#10005;
+                    </span>
+                  </span>
+                );
+              }
+            )}
+            <div className="flex gap-0.5 grow">
               <input
-                type="checkbox"
-                className="h-5 w-5"
-                checked={selectedItems.includes(itemToId(item))}
-                value={item.name}
-                onChange={() => null}
+                placeholder={`${column.id}`}
+                className="w-full"
+                {...getInputProps(
+                  getDropdownProps({ preventKeyAction: isOpen })
+                )}
               />
-              <div className="">
+              <button
+                aria-label="toggle menu"
+                className="px-2"
+                type="button"
+                {...getToggleButtonProps()}
+              >
+                &#8595;
+              </button>
+            </div>
+          </div>
+        </div>
+        <ul
+          className={`absolute w-inherit bg-white mt-1 shadow-md max-h-80 overflow-scroll p-0 z-10 ${
+            !(isOpen && dropdownListItems.length) && 'hidden'
+          }`}
+          {...getMenuProps()}
+        >
+          {isOpen &&
+            dropdownListItems.map((item, index) => (
+              <li
+                className={`${highlightedIndex === index && 'bg-blue-300'} ${
+                  selectedItem === item && 'font-bold'
+                }
+                py-2 px-3 shadow-sm flex flex-col`}
+                key={`${item.id}${index}`}
+                {...getItemProps({ item: item, index: index })}
+              >
                 <span>{item.name}</span>
-                {/* <span className="text-sm text-gray-700">{item.name}</span> */}
-              </div>
-            </li>
-          ))}
-      </ul>
+              </li>
+            ))}
+        </ul>
+      </div>
     </>
   );
 }
