@@ -54,10 +54,10 @@ export function getRecipeMonths(
   allMonths: IdItemCollection<Month>
 ) {
   const months = new IdItemCollection<Month>();
-  for (const month of allMonths.iter()) {
+  for (const month of allMonths.asArray()) {
     // Assume month is present by default
     let isPresent = true;
-    for (const ingredient of ingredients.iter()) {
+    for (const ingredient of ingredients.asArray()) {
       if (ingredient.months.isItemIn(month)) {
         // Remove the month if it's not present for one ingredient
         isPresent = false;

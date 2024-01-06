@@ -15,8 +15,8 @@ export class IdItemCollection<T extends ItemWithId> {
     this.collection[item.id] = item;
   }
 
-  iter(): IterableIterator<T> {
-    return Object.values(this.collection).values();
+  asArray(): T[] {
+    return Object.values(this.collection);
   }
 
   isItemIn(item: T): boolean {
