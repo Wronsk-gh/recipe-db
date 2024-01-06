@@ -19,6 +19,9 @@ import {
 import { RecipeRow } from './RecipeRow';
 import { ObjectEditor } from './ObjectEditor';
 import { PopUp } from './PopUp';
+import { RecipeEditModal } from './RecipeEditModal';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 import { Filter } from './Filter';
 import { TickFilter } from './TickFilter';
 import { RecipeEditForm } from './RecipeEditForm';
@@ -274,21 +277,23 @@ function RecipeTableLoaded({
   }
 
   // Insert the recipe editor popup if needed
-  const objectEditor =
-    editedObject !== undefined ? (
-      <PopUp>
-        <ObjectEditor
-          objectToEdit={editedObject}
-          objectMutation={recipeMutation}
-          renderEditForm={(props) => {
-            return <RecipeEditForm {...props} ingredients={ingredients} />;
-          }}
-          onEditEnd={() => {
-            setEditedObject(undefined);
-          }}
-        />
-      </PopUp>
-    ) : null;
+  // const objectEditor =
+  //   editedObject !== undefined ? (
+  //     <PopUp>
+  //       <ObjectEditor
+  //         objectToEdit={editedObject}
+  //         objectMutation={recipeMutation}
+  //         renderEditForm={(props) => {
+  //           return <RecipeEditForm {...props} ingredients={ingredients} />;
+  //         }}
+  //         onEditEnd={() => {
+  //           setEditedObject(undefined);
+  //         }}
+  //       />
+  //     </PopUp>
+  //   ) : null;
+
+  const objectEditor = <RecipeEditModal />;
 
   const options = Object.entries(months).map(([monthId, month]) => (
     <option value={monthId} key={monthId}>

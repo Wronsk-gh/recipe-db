@@ -149,17 +149,17 @@ export function TickFilter({
 
   return (
     <>
-      <div className="w-[592px]">
-        <div className="flex flex-col gap-1">
-          <label className="w-fit" {...getLabelProps()}>
+      <div className="">
+        <div className="">
+          <label className="" {...getLabelProps()}>
             {`${column.id}`}
           </label>
-          <div className="shadow-sm bg-white inline-flex gap-2 items-center flex-wrap p-1.5">
+          <div className="">
             {selectedItems.map(
               function renderSelectedItem(selectedItemForRender, index) {
                 return (
                   <span
-                    className="bg-gray-100 rounded-md px-1 focus:bg-red-400"
+                    className=""
                     key={`selected-item-${index}`}
                     {...getSelectedItemProps({
                       selectedItem: selectedItemForRender,
@@ -168,7 +168,7 @@ export function TickFilter({
                   >
                     {selectedItemForRender.name}
                     <span
-                      className="px-1 cursor-pointer"
+                      className=""
                       onClick={(e) => {
                         e.stopPropagation();
                         removeSelectedItem(selectedItemForRender);
@@ -180,17 +180,17 @@ export function TickFilter({
                 );
               }
             )}
-            <div className="flex gap-0.5 grow">
+            <div className="">
               <input
                 placeholder={`${column.id}`}
-                className="w-full"
+                className=""
                 {...getInputProps(
                   getDropdownProps({ preventKeyAction: isOpen })
                 )}
               />
               <button
                 aria-label="toggle menu"
-                className="px-2"
+                className=""
                 type="button"
                 {...getToggleButtonProps()}
               >
@@ -200,18 +200,27 @@ export function TickFilter({
           </div>
         </div>
         <ul
-          className={`absolute w-inherit bg-white mt-1 shadow-md max-h-80 overflow-scroll p-0 z-10 ${
+          // className={`absolute w-inherit bg-white mt-1 shadow-md max-h-80 overflow-scroll p-0 z-10 ${
+          //   !(isOpen && dropdownListItems.length) && 'hidden'
+          // }`}
+          className={`list-group d-inline-block ${
             !(isOpen && dropdownListItems.length) && 'hidden'
           }`}
           {...getMenuProps()}
         >
           {isOpen &&
             dropdownListItems.map((item, index) => (
+              // <li
+              //   className={`${highlightedIndex === index && 'bg-blue-300'} ${
+              //     selectedItem === item && 'font-bold'
+              //   }
+              //   py-2 px-3 shadow-sm flex flex-col`}
+              //   key={`${item.id}${index}`}
+              //   {...getItemProps({ item: item, index: index })}
+              // >
               <li
-                className={`${highlightedIndex === index && 'bg-blue-300'} ${
-                  selectedItem === item && 'font-bold'
-                }
-                py-2 px-3 shadow-sm flex flex-col`}
+                className={`${highlightedIndex === index && 'active'} 
+                list-group-item`}
                 key={`${item.id}${index}`}
                 {...getItemProps({ item: item, index: index })}
               >
