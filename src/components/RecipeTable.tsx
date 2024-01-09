@@ -1,21 +1,21 @@
 import '../App.css';
 import { useState, useContext, useMemo } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useOutletContext } from 'react-router-dom';
 import { RecipeManagerContext } from './RecipeManager';
 import {
   MonthsDb,
   IngredientsDb,
   RecipesDb,
-  Recipe,
   getRecipeIngredients,
   getRecipeMonths,
   getIngredientMonths,
-  Month,
-  Ingredient,
   ObjectWithName,
   ObjectWithId,
 } from '../db-types';
+import { Month } from '../models/Month';
+import { Ingredient } from '../models/Ingredient';
+import { Recipe } from '../models/Recipe';
+import { IdItemCollection } from '../models/IdItemCollection';
 import { RecipeRow } from './RecipeRow';
 import { ObjectEditor } from './ObjectEditor';
 import { PopUp } from './PopUp';
@@ -26,7 +26,6 @@ import { Filter } from './Filter';
 import { TickFilter } from './TickFilter';
 import { RecipeEditForm } from './RecipeEditForm';
 import { RtdbContext } from './RtdbContext';
-import { updateRecipeDisplayUserDb } from '../rtdb';
 import {
   ColumnDef,
   flexRender,
@@ -99,94 +98,60 @@ export function RecipeTable() {
     return <p>Loading...</p>;
   }
 
-  const recipesArray: Recipe[] = [];
-  for (const recipeId in recipes) {
-    const thumbnailLink =
-      recipesThumbnails[recipeId] !== undefined
-        ? recipesThumbnails[recipeId]
-        : '';
-    const recipe: Recipe = {
-      id: recipeId,
-      name: recipes[recipeId].name,
-      ingredients: getRecipeIngredients(recipeId, recipes, ingredients),
-      months: getRecipeMonths(recipeId, recipes, ingredients, months),
-      google_id: recipes[recipeId].google_id,
-      thumbnailLink: thumbnailLink,
-    };
-    recipesArray.push(recipe);
-  }
-  const monthsArray: Month[] = [];
+  const allMonths = new IdItemCollection<Month>();
   for (const monthId in months) {
-    const month: Month = {
-      id: monthId,
-      name: months[monthId].name,
-    };
-    monthsArray.push(month);
+    const month = new Month(monthId, months);
+    allMonths.addItem(month);
   }
-  const ingredientsArray: Ingredient[] = [];
+  const allIngredients = new IdItemCollection<Ingredient>();
   for (const ingredientId in ingredients) {
-    const ingredient: Ingredient = {
-      id: ingredientId,
-      name: ingredients[ingredientId].name,
-      months: getIngredientMonths(ingredientId, ingredients, months),
-    };
-    ingredientsArray.push(ingredient);
+    const ingredient = new Ingredient(ingredientId, ingredients, allMonths);
+    allIngredients.addItem(ingredient);
+  }
+  const allRecipes = new IdItemCollection<Recipe>();
+  for (const recipeId in recipes) {
+    const thumbnailLink = recipesThumbnails[recipeId] ?? '';
+    // const recipe: Recipe = {
+    //   id: recipeId,
+    //   name: recipes[recipeId].name,
+    //   ingredients: getRecipeIngredients(recipeId, recipes, ingredients),
+    //   months: getRecipeMonths(recipeId, recipes, ingredients, months),
+    //   google_id: recipes[recipeId].google_id,
+    //   thumbnailLink: thumbnailLink,
+    // };
+    const recipe = new Recipe(
+      recipeId,
+      recipes,
+      thumbnailLink,
+      allIngredients,
+      allMonths
+    );
+    allRecipes.addItem(recipe);
   }
 
   return (
     <RecipeTableLoaded
-      months={months}
-      ingredients={ingredients}
-      monthsArray={monthsArray}
-      ingredientsArray={ingredientsArray}
-      recipesArray={recipesArray}
+      allMonths={allMonths}
+      allIngredients={allIngredients}
+      allRecipes={allRecipes}
     />
   );
 }
 
 function RecipeTableLoaded({
-  months,
-  ingredients,
-  monthsArray,
-  ingredientsArray,
-  recipesArray,
+  allMonths,
+  allIngredients,
+  allRecipes,
 }: {
-  months: MonthsDb;
-  ingredients: IngredientsDb;
-  monthsArray: Month[];
-  ingredientsArray: Ingredient[];
-  recipesArray: Recipe[];
+  allMonths: IdItemCollection<Month>;
+  allIngredients: IdItemCollection<Ingredient>;
+  allRecipes: IdItemCollection<Recipe>;
 }) {
-  const [editedObject, setEditedObject] = useState<Recipe | undefined>(
-    undefined
-  );
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  function itemToString(item: ObjectWithName | null) {
-    return item ? item.name : '';
-  }
-  function itemToId(item: ObjectWithId | null) {
-    return item ? item.id : '';
-  }
-
   // Get the Rtdb from the context
   const rtdbCred = useContext(RtdbContext);
-  // Get QueryClient from the context
-  const queryClient = useQueryClient();
-
-  const recipeMutation = useMutation({
-    mutationFn: async (newRecipe: Recipe) => {
-      await updateRecipeDisplayUserDb(rtdbCred, newRecipe);
-    },
-    onError: () => {
-      window.alert('Could not update...');
-    },
-    onSuccess: onRecipeMutationSuccess,
-    onSettled: () => {
-      recipeMutation.reset();
-    },
-  });
 
   const columns = useMemo<ColumnDef<Recipe>[]>(
     () => [
@@ -203,7 +168,7 @@ function RecipeTableLoaded({
       },
       {
         accessorFn: (recipe) => {
-          return Object.keys(recipe.ingredients);
+          return recipe.ingredients.IdsAsArray();
         },
         id: 'recipeIngredients',
         cell: (info) => info.getValue(),
@@ -211,7 +176,7 @@ function RecipeTableLoaded({
         filterFn: 'arrIncludesAllId',
         meta: {
           headerKind: 'tickable',
-          tickOptions: [...ingredientsArray].sort((x, y) => {
+          tickOptions: allIngredients.asArray().sort((x, y) => {
             if (x.name.toLowerCase() > y.name.toLowerCase()) {
               return 1;
             }
@@ -224,7 +189,7 @@ function RecipeTableLoaded({
       },
       {
         accessorFn: (recipe) => {
-          return Object.keys(recipe.months);
+          return recipe.months.IdsAsArray();
         },
         id: 'recipeMonths',
         cell: (info) => info.getValue(),
@@ -232,20 +197,15 @@ function RecipeTableLoaded({
         filterFn: 'arrIncludesAllId',
         meta: {
           headerKind: 'tickable',
-          tickOptions: monthsArray,
+          tickOptions: allMonths.asArray(),
         },
       },
     ],
     []
   );
 
-  function onRecipeMutationSuccess() {
-    // Force an update of the recipes
-    queryClient.invalidateQueries({ queryKey: ['recipes'] });
-  }
-
   const table = useReactTable({
-    data: recipesArray,
+    data: allRecipes.asArray(),
     columns: columns,
     state: {
       sorting,
@@ -263,18 +223,21 @@ function RecipeTableLoaded({
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  const rows = [];
-  for (const recipe of table.getRowModel().rows) {
-    rows.push(
-      <RecipeRow
-        key={recipe.original.id}
-        months={months}
-        ingredients={ingredients}
-        recipe={recipe.original}
-        onEdit={setEditedObject}
-      />
-    );
-  }
+  const rows = table
+    .getRowModel()
+    .rows.map((tableRow) => (
+      <RecipeRow key={tableRow.original.id} recipe={tableRow.original} />
+    ));
+
+  // const rows = [];
+  // for (const tableRow of table.getRowModel().rows) {
+  //   rows.push(
+  //     <RecipeRow
+  //       key={tableRow.original.id}
+  //       recipe={tableRow.original}
+  //     />
+  //   );
+  // }
 
   // Insert the recipe editor popup if needed
   // const objectEditor =
@@ -293,13 +256,11 @@ function RecipeTableLoaded({
   //     </PopUp>
   //   ) : null;
 
-  const objectEditor = <RecipeEditModal />;
-
-  const options = Object.entries(months).map(([monthId, month]) => (
-    <option value={monthId} key={monthId}>
-      {month.name}
-    </option>
-  ));
+  // const options = Object.entries(months).map(([monthId, month]) => (
+  //   <option value={monthId} key={monthId}>
+  //     {month.name}
+  //   </option>
+  // ));
 
   const filters = [];
   for (const headerGroup of table.getHeaderGroups()) {
@@ -307,7 +268,7 @@ function RecipeTableLoaded({
       if (!header.isPlaceholder) {
         if (header.column.columnDef.meta?.headerKind === 'searchable') {
           filters.push(
-            <>
+            <div key={header.column.columnDef.id}>
               <div
                 {...{
                   className: header.column.getCanSort()
@@ -330,13 +291,13 @@ function RecipeTableLoaded({
                   <Filter column={header.column} table={table} />
                 </div>
               ) : null}
-            </>
+            </div>
           );
         } else if (header.column.columnDef.meta?.headerKind === 'tickable') {
           filters.push(
-            <>
+            <div key={header.column.columnDef.id}>
               <TickFilter column={header.column} table={table} />
-            </>
+            </div>
           );
         }
       }
@@ -358,7 +319,6 @@ function RecipeTableLoaded({
       >
         {rows}
       </div>
-      {objectEditor}
     </div>
   );
 }

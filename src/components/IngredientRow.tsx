@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { MonthBar } from './MonthBar';
+import { MonthBarOld } from './MonthBarOld';
 import { MonthsDb, Ingredient } from '../db-types';
 
 export function IngredientRow({
@@ -17,7 +17,7 @@ export function IngredientRow({
   const nameCell = <td key="name">{ingredient.name}</td>;
   const monthsCell = (
     <td key="months">
-      <MonthBar months={months} recipeMonthsId={ingredient.months ?? {}} />
+      <MonthBarOld months={months} recipeMonthsId={ingredient.months ?? {}} />
     </td>
   );
 

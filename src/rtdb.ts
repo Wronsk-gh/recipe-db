@@ -14,9 +14,10 @@ import {
   IngredientsDb,
   RecipesDb,
   Ingredient,
-  Recipe,
   RecipeDb,
 } from './db-types';
+
+import { Recipe } from './models/Recipe';
 
 export interface RtdbCred {
   user: User | null;
@@ -70,27 +71,7 @@ export async function updateRecipeDisplayUserDb(
       ? rtdbCred.displayUserId
       : rtdbCred.user.uid;
   const recipeRef = ref(rtdbCred.db, `users/${uid}/recipes/${newRecipe.id}`);
-  // type tempo = RecipeDb & { id: string, thumbnailLink: string }
-  // const {
-  //   id: removedRecipeId,
-  //   thumbnailLink: removedThumbnailLink,
-  //   ...newDbRecipe
-  // }: tempo = newRecipe;
-  const newDbRecipe: RecipeDb = {
-    name: newRecipe.name,
-    google_id: newRecipe.google_id,
-    ingredients: {},
-  };
-  for (const ingredientId in newRecipe.ingredients) {
-    newDbRecipe.ingredients![ingredientId] = true;
-  }
-  // const {
-  //   id: removedRecipeId,
-  //   thumbnailLink: removedThumbnailLink,
-  //   ...newDbRecipe
-  // }: { id: string, thumbnailLink: string } & RecipeDb = newRecipe;
-  // const newDbRecipe
-  await set(recipeRef, newDbRecipe);
+  await set(recipeRef, newRecipe.getDbRepr());
 }
 
 export async function updateIngredientDisplayUserDb(

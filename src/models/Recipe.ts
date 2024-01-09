@@ -1,4 +1,4 @@
-import { RecipesDb } from '../db-types';
+import { RecipeDb, RecipesDb } from '../db-types';
 import { IdItemCollection } from './IdItemCollection';
 import { Month } from './Month';
 import { Ingredient } from './Ingredient';
@@ -10,12 +10,14 @@ export class Recipe {
   id: string;
   name: string;
   google_id: string;
+  thumbnailLink: string;
   ingredients: IdItemCollection<Ingredient>;
   months: IdItemCollection<Month>;
 
   constructor(
     id: string,
     recipesDb: RecipesDb,
+    thumbnailLink: string,
     allIngredients: IdItemCollection<Ingredient>,
     allMonths: IdItemCollection<Month>
   ) {
@@ -24,13 +26,70 @@ export class Recipe {
     this.allMonths = allMonths;
     this.id = id;
     this.name = recipesDb[id].name;
-    this.google_id = recipesDb[id].name;
+    this.google_id = recipesDb[id].google_id;
+    this.thumbnailLink = thumbnailLink;
     this.ingredients = getRecipeIngredients(id, recipesDb, allIngredients);
     this.months = getRecipeMonths(this.ingredients, allMonths);
   }
+
+  getDbRepr(): RecipeDb {
+    const recipeDb: RecipeDb = {
+      name: this.name,
+      google_id: this.google_id,
+      ingredients: {},
+    };
+    for (const ingredientId of this.ingredients.IdsAsArray()) {
+      recipeDb.ingredients![ingredientId] = true;
+    }
+
+    return recipeDb;
+  }
+
+  getCopy(): Recipe {
+    return new Recipe(
+      this.id,
+      this.recipesDb,
+      this.thumbnailLink,
+      this.allIngredients,
+      this.allMonths
+    );
+  }
+
+  isEqual(otherRecipe: Recipe): boolean {
+    // No comparison of recipesDb
+    // if (this.recipesDb !== otherRecipe.recipesDb) {
+    //   return false;
+    // }
+    if (!this.allIngredients.hasSameIdsList(otherRecipe.allIngredients)) {
+      return false;
+    }
+    if (!this.allMonths.hasSameIdsList(otherRecipe.allMonths)) {
+      return false;
+    }
+    if (this.id !== otherRecipe.id) {
+      return false;
+    }
+    if (this.name !== otherRecipe.name) {
+      return false;
+    }
+    if (this.google_id !== otherRecipe.google_id) {
+      return false;
+    }
+    // No comparison of thumbnailLink
+    // if (this.thumbnailLink !== otherRecipe.thumbnailLink) {
+    //   return false;
+    // }
+    if (!this.ingredients.hasSameIdsList(otherRecipe.ingredients)) {
+      return false;
+    }
+    if (!this.months.hasSameIdsList(otherRecipe.months)) {
+      return false;
+    }
+    return true;
+  }
 }
 
-export function getRecipeIngredients(
+function getRecipeIngredients(
   recipeId: string,
   recipesDb: RecipesDb,
   allIngredients: IdItemCollection<Ingredient>
@@ -49,7 +108,7 @@ export function getRecipeIngredients(
   return ingredients;
 }
 
-export function getRecipeMonths(
+function getRecipeMonths(
   ingredients: IdItemCollection<Ingredient>,
   allMonths: IdItemCollection<Month>
 ) {
@@ -58,7 +117,7 @@ export function getRecipeMonths(
     // Assume month is present by default
     let isPresent = true;
     for (const ingredient of ingredients.asArray()) {
-      if (ingredient.months.isItemIn(month)) {
+      if (!ingredient.months.isItemIn(month)) {
         // Remove the month if it's not present for one ingredient
         isPresent = false;
       }

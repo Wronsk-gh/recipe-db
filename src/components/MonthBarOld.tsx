@@ -1,27 +1,28 @@
 import React from 'react';
-import { Month } from '../models/Month';
-import { IdItemCollection } from '../models/IdItemCollection';
+import { MonthsDb } from '../db-types';
 
-export function MonthBar({
-  selectedMonths,
-  allMonths,
+export function MonthBarOld({
+  months,
+  recipeMonthsId,
 }: {
-  selectedMonths: IdItemCollection<Month>;
-  allMonths: IdItemCollection<Month>;
+  months: MonthsDb;
+  recipeMonthsId: {
+    [monthId: string]: boolean | string;
+  };
 }) {
-  const tableData = allMonths.asArray().map((month) => {
+  const tableData = Object.keys(months).map((monthKey) => {
     const cellStyle: React.CSSProperties = {
       border: '1px solid black',
       overflow: 'scroll',
       height: '26px',
       textAlign: 'center',
     };
-    if (selectedMonths.isItemIn(month)) {
+    if (Boolean(recipeMonthsId[monthKey]) === true) {
       cellStyle['background'] = 'green';
     }
     return (
-      <td key={month.id} style={cellStyle} className="month-bar">
-        {month.name[0]}
+      <td key={monthKey} style={cellStyle} className="month-bar">
+        {months[monthKey].name[0]}
       </td>
     );
   });
