@@ -134,33 +134,30 @@ export function RecipeEditModal({
           </div>
 
           <br />
-          <button onClick={onClose}>Cancel edit</button>
-          <button
-            onClick={() => {
-              // Check that the upstrem object is still identical to the initial one
-              if (displayedObject.isEqual(initialObject)) {
-                alert('Object was modified by another user !!!');
-              } else {
-                if (recipeMutation.isIdle) {
-                  recipeMutation.mutate(displayedObject);
-                  onClose();
-                } else {
-                  alert('Object is already being modified !!!');
-                }
-              }
-            }}
-          >
-            Submit
-          </button>
         </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>
           Cancel
         </Button>
-        {/* <Button variant="primary" onClick={handleRemoveAccept}>
-            Remove
-          </Button> */}
+        <Button
+          variant="primary"
+          onClick={() => {
+            // Check that the upstream object is still identical to the initial one
+            if (displayedObject.isEqual(initialObject)) {
+              alert('Object was modified by another user !!!');
+            } else {
+              if (recipeMutation.isIdle) {
+                recipeMutation.mutate(displayedObject);
+                onClose();
+              } else {
+                alert('Object is already being modified !!!');
+              }
+            }
+          }}
+        >
+          Submit
+        </Button>
       </Modal.Footer>
     </Modal>
   );
