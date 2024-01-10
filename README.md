@@ -47,4 +47,4 @@ Bugs :
     * did not occur when the recipes query key was not directly reset after addind the recipes to the database
     * seems like it occurs if the recipe is added, removed, then added again
     * Solved by invalidating the thumbnail queries of the added recipes
-- [] When modifying a recipe, the thumbnail disappears
+- [X] When modifying a recipe, the thumbnail disappears
