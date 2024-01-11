@@ -29,17 +29,18 @@ export function ComboSelect({
   itemsArray,
   label,
   onNewSelectedItems,
+  initialItems = [],
 }: {
   itemsArray: (ObjectWithName & ObjectWithId)[];
   label: string;
   onNewSelectedItems: (
     newSelectedItems: (ObjectWithName & ObjectWithId)[]
   ) => void;
+  initialItems?: (ObjectWithName & ObjectWithId)[];
 }) {
   const [inputValue, setInputValue] = useState('');
-  const [selectedItems, setSelectedItems] = useState<
-    (ObjectWithName & ObjectWithId)[]
-  >([]);
+  const [selectedItems, setSelectedItems] =
+    useState<(ObjectWithName & ObjectWithId)[]>(initialItems);
 
   // const dropdownListItems = useMemo(
   //   () => getFilteredItems(selectedItems, inputValue),

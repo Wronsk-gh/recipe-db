@@ -40,6 +40,7 @@ Backlog :
 - [ ] auto login without pressing Auth button
 - [ ] Embbed full list of ingredients in the database with servings, allow selecting some recipes and compute shopping list based on it
 - [ ] Unauthorised calls (to gapi or firebase) must trigger a re-auth automatically
+- [ ] Decide if using useMemo for 'dropdownListItems' of component ComboSelect
 
 Bugs :
 ------

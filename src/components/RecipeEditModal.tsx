@@ -7,6 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { TagBox } from './TagBox';
 import { Tag } from '../db-types';
+import { ComboSelect } from './ComboSelect';
 
 export function RecipeEditModal({
   recipe,
@@ -40,6 +41,16 @@ export function RecipeEditModal({
     // Force an update of the recipes
     queryClient.invalidateQueries({ queryKey: ['recipes'] });
   }
+
+  const ingredientsArray = recipe.allIngredients.asArray().sort((a, b) => {
+    if (a.name > b.name) {
+      return 1;
+    }
+    if (b.name > a.name) {
+      return -1;
+    }
+    return 0;
+  });
 
   const options = recipe.allIngredients
     .asArray()
@@ -107,6 +118,18 @@ export function RecipeEditModal({
                 {options}
               </select>
             </form>
+            <ComboSelect
+              itemsArray={ingredientsArray}
+              initialItems={recipe.ingredients.asArray()}
+              label={'Ingredients'}
+              onNewSelectedItems={(newSelectedItems) => {
+                // TODO
+                // column.setFilterValue(newSelectedItems.map((item) => item.id));
+                const newDisplayedObject = displayedObject.getCopy();
+                newDisplayedObject.ingredients =
+                  setDisplayedObject(newDisplayedObject);
+              }}
+            />
             {ingredientsTags}
             <button
               onClick={() => {
