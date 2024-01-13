@@ -10,38 +10,35 @@ function itemToId(item: (ObjectWithName & ObjectWithId) | null) {
   return item ? item.id : '';
 }
 
-function getFilteredItems(
-  selectedItems: (ObjectWithName & ObjectWithId)[],
-  itemsArray: (ObjectWithName & ObjectWithId)[],
-  inputValue: string
-): (ObjectWithName & ObjectWithId)[] {
-  const lowerCasedInputValue = inputValue.toLowerCase();
-
-  return itemsArray.filter(function filterItems(item) {
-    return (
-      !selectedItems.map(itemToId).includes(item.id) &&
-      item.name.toLowerCase().includes(lowerCasedInputValue)
-    );
-  });
-}
-
-export function ComboSelect({
+//ObjectWithName & ObjectWithId
+export function ComboSelect<T extends ObjectWithName & ObjectWithId>({
   itemsArray,
   label,
   onNewSelectedItems,
   initialItems = [],
 }: {
-  itemsArray: (ObjectWithName & ObjectWithId)[];
+  itemsArray: T[];
   label: string;
-  onNewSelectedItems: (
-    newSelectedItems: (ObjectWithName & ObjectWithId)[]
-  ) => void;
-  initialItems?: (ObjectWithName & ObjectWithId)[];
+  onNewSelectedItems: (newSelectedItems: T[]) => void;
+  initialItems?: T[];
 }) {
   const [inputValue, setInputValue] = useState('');
-  const [selectedItems, setSelectedItems] =
-    useState<(ObjectWithName & ObjectWithId)[]>(initialItems);
+  const [selectedItems, setSelectedItems] = useState<T[]>(initialItems);
 
+  function getFilteredItems(
+    selectedItems: T[],
+    itemsArray: T[],
+    inputValue: string
+  ): T[] {
+    const lowerCasedInputValue = inputValue.toLowerCase();
+
+    return itemsArray.filter(function filterItems(item) {
+      return (
+        !selectedItems.map(itemToId).includes(item.id) &&
+        item.name.toLowerCase().includes(lowerCasedInputValue)
+      );
+    });
+  }
   // const dropdownListItems = useMemo(
   //   () => getFilteredItems(selectedItems, inputValue),
   //   [selectedItems, inputValue]

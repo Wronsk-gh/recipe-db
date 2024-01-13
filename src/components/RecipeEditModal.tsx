@@ -18,7 +18,7 @@ export function RecipeEditModal({
 }) {
   const [initialObject, setInitialObject] = useState<Recipe>(recipe);
   const [displayedObject, setDisplayedObject] = useState<Recipe>(recipe);
-  const [selectedIngredient, setSelectedIngredient] = useState<string>('');
+  // const [selectedIngredient, setSelectedIngredient] = useState<string>('');
   // Get QueryClient from the context
   const queryClient = useQueryClient();
   // Get the Rtdb from the context
@@ -52,43 +52,43 @@ export function RecipeEditModal({
     return 0;
   });
 
-  const options = recipe.allIngredients
-    .asArray()
-    .sort((a, b) => {
-      if (a.name > b.name) {
-        return 1;
-      }
-      if (b.name > a.name) {
-        return -1;
-      }
-      return 0;
-    })
-    .map((ingredient) => (
-      <option value={ingredient.id} key={ingredient.id}>
-        {ingredient.name}
-      </option>
-    ));
+  // const options = recipe.allIngredients
+  //   .asArray()
+  //   .sort((a, b) => {
+  //     if (a.name > b.name) {
+  //       return 1;
+  //     }
+  //     if (b.name > a.name) {
+  //       return -1;
+  //     }
+  //     return 0;
+  //   })
+  //   .map((ingredient) => (
+  //     <option value={ingredient.id} key={ingredient.id}>
+  //       {ingredient.name}
+  //     </option>
+  //   ));
 
-  const ingredientsTags = displayedObject.ingredients
-    .asArray()
-    .map((ingredient) => {
-      return (
-        <TagBox
-          tag={{ id: ingredient.id, name: ingredient.name }}
-          onClose={(tag: Tag) => {
-            const newDisplayedObject = displayedObject.getCopy();
-            newDisplayedObject.ingredients.removeItem(tag.id);
-            setDisplayedObject(newDisplayedObject);
-          }}
-          key={ingredient.id}
-        />
-      );
-    });
+  // const ingredientsTags = displayedObject.ingredients
+  //   .asArray()
+  //   .map((ingredient) => {
+  //     return (
+  //       <TagBox
+  //         tag={{ id: ingredient.id, name: ingredient.name }}
+  //         onClose={(tag: Tag) => {
+  //           const newDisplayedObject = displayedObject.getCopy();
+  //           newDisplayedObject.ingredients.removeItem(tag.id);
+  //           setDisplayedObject(newDisplayedObject);
+  //         }}
+  //         key={ingredient.id}
+  //       />
+  //     );
+  //   });
 
   return (
     <Modal show={true} onHide={onClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Remove</Modal.Title>
+        <Modal.Title>Edit recipe</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {/* <ObjectEditor
@@ -104,7 +104,7 @@ export function RecipeEditModal({
           <br />
 
           <div>
-            <form>
+            {/* <form>
               <label htmlFor="ingredients">Choose an ingredient:</label>
               <select
                 name="ingredients"
@@ -117,7 +117,7 @@ export function RecipeEditModal({
                 </option>
                 {options}
               </select>
-            </form>
+            </form> */}
             <ComboSelect
               itemsArray={ingredientsArray}
               initialItems={recipe.ingredients.asArray()}
@@ -126,11 +126,11 @@ export function RecipeEditModal({
                 // TODO
                 // column.setFilterValue(newSelectedItems.map((item) => item.id));
                 const newDisplayedObject = displayedObject.getCopy();
-                newDisplayedObject.ingredients =
-                  setDisplayedObject(newDisplayedObject);
+                newDisplayedObject.ingredients.setFromArray(newSelectedItems);
+                setDisplayedObject(newDisplayedObject);
               }}
             />
-            {ingredientsTags}
+            {/* {ingredientsTags}
             <button
               onClick={() => {
                 if (selectedIngredient !== '') {
@@ -153,7 +153,7 @@ export function RecipeEditModal({
               }}
             >
               Add
-            </button>
+            </button> */}
           </div>
 
           <br />

@@ -51,4 +51,22 @@ export class IdItemCollection<T extends ItemWithId> {
     }
     return true;
   }
+
+  setFromArray(itemArray: T[]) {
+    const newCollection: { [id: string]: T } = {};
+    for (const item of itemArray) {
+      newCollection[item.id] = item;
+    }
+    this.collection = newCollection;
+  }
+
+  // static buildFromArray<T extends ItemWithId>(
+  //   itemArray: T[]
+  // ): IdItemCollection<T> {
+  //   const newCollection = new IdItemCollection<T>();
+  //   for (const item of itemArray) {
+  //     newCollection.addItem(item);
+  //   }
+  //   return newCollection;
+  // }
 }
