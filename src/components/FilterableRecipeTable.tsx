@@ -1,24 +1,33 @@
 import { useState } from 'react';
-import { MonthsDb, IngredientsDb, RecipesDb, RecipesThumbnails } from '../db-types';
+import {
+  MonthsDb,
+  IngredientsDb,
+  RecipesDb,
+  RecipesThumbnails,
+} from '../db-types';
 import { SearchBar } from './SearchBar';
 import { RecipeTable } from './RecipeTable';
 import { useOutletContext } from 'react-router-dom';
-import { RecipeManagerContext } from './RecipeManager';
+import { useGetAllRecipes } from '../hooks/useGetAllRecipes';
+import { useGetAllMonths } from '../hooks/useGetAllMonths';
+import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
 
-export function FilterableRecipeTable({ } // months,
-  // ingredients,
-  // recipes,
-  // recipesThumbnails,
-  : {
-    // months: MonthsDb;
-    // ingredients: IngredientsDb;
-    // recipes: RecipesDb;
-    // recipesThumbnails: RecipesThumbnails;
-  }) {
+export function FilterableRecipeTable({} // months,
+// ingredients,
+// recipes,
+// recipesThumbnails,
+: {
+  // months: MonthsDb;
+  // ingredients: IngredientsDb;
+  // recipes: RecipesDb;
+  // recipesThumbnails: RecipesThumbnails;
+}) {
   const [filterText, setFilterText] = useState('');
   const [selectedMonth, setSelectedMonth] = useState<string>('');
-  const { months, ingredients, recipes, recipesThumbnails } =
-    useOutletContext<RecipeManagerContext>();
+  const recipes = useGetAllRecipes();
+  const months = useGetAllMonths();
+  const ingredients = useGetAllIngredients();
+
   if (
     months === undefined ||
     ingredients === undefined ||

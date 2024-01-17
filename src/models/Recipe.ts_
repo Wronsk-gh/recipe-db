@@ -1,35 +1,34 @@
-import { RecipeDb, RecipesDb } from '../db-types';
+import {
+  RecipeDb,
+  RecipesDb,
+  MonthsDb,
+  IngredientsDb,
+  IdsDict,
+} from '../db-types';
 import { IdItemCollection } from './IdItemCollection';
 import { Month } from './Month';
 import { Ingredient } from './Ingredient';
 
 export class Recipe {
-  recipesDb: RecipesDb;
-  allIngredients: IdItemCollection<Ingredient>;
-  allMonths: IdItemCollection<Month>;
   id: string;
   name: string;
   google_id: string;
   thumbnailLink: string;
-  ingredients: IdItemCollection<Ingredient>;
-  months: IdItemCollection<Month>;
+  ingredients: IdsDict;
+  months: IdsDict;
 
   constructor(
     id: string,
     recipesDb: RecipesDb,
-    thumbnailLink: string,
-    allIngredients: IdItemCollection<Ingredient>,
-    allMonths: IdItemCollection<Month>
+    ingredientsDb: IngredientsDb,
+    thumbnailLink: string
   ) {
-    this.recipesDb = recipesDb;
-    this.allIngredients = allIngredients;
-    this.allMonths = allMonths;
     this.id = id;
     this.name = recipesDb[id].name;
     this.google_id = recipesDb[id].google_id;
     this.thumbnailLink = thumbnailLink;
-    this.ingredients = getRecipeIngredients(id, recipesDb, allIngredients);
-    this.months = getRecipeMonths(this.ingredients, allMonths);
+    this.ingredients = recipesDb[id].ingredients || {};
+    this.months = getRecipeMonths(id, recipesDb, ingredientsDb);
   }
 
   getDbRepr(): RecipeDb {
@@ -87,45 +86,21 @@ export class Recipe {
     }
     return true;
   }
-}
 
-function getRecipeIngredients(
-  recipeId: string,
-  recipesDb: RecipesDb,
-  allIngredients: IdItemCollection<Ingredient>
-) {
-  const ingredients = new IdItemCollection<Ingredient>();
-  for (const ingredientId in recipesDb[recipeId].ingredients) {
-    const ingredient = allIngredients.getItem(ingredientId);
-    if (ingredient !== undefined) {
-      ingredients.addItem(ingredient);
-    } else {
-      console.error(
-        `Recipe ${recipesDb[recipeId].name} has an ingredientId ${ingredientId} which could not be found in the list of ingredients.`
-      );
-    }
-  }
-  return ingredients;
-}
-
-function getRecipeMonths(
-  ingredients: IdItemCollection<Ingredient>,
-  allMonths: IdItemCollection<Month>
-) {
-  const months = new IdItemCollection<Month>();
-  for (const month of allMonths.asArray()) {
-    // Assume month is present by default
-    let isPresent = true;
-    for (const ingredient of ingredients.asArray()) {
-      if (!ingredient.months.isItemIn(month)) {
-        // Remove the month if it's not present for one ingredient
-        isPresent = false;
+  static getRecipeMonths(
+    recipeId: string,
+    recipesDb: RecipesDb,
+    ingredientsDb: IngredientsDb
+  ) {
+    const recipeMonths: string[] = [];
+    for (const ingredientId in getRecipeIngredients(recipeId, recipesDb)) {
+      const ingredientMonths = getIngredientMonths(ingredientId, ingredientsDb);
+      for (const monthId in ingredientMonths) {
+        if (recipeMonths.includes(monthId)) {
+          recipeMonths.push(monthId);
+        }
       }
     }
-    if (isPresent) {
-      months.addItem(month);
-    }
+    return recipeMonths;
   }
-
-  return months;
 }

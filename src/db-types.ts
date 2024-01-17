@@ -1,3 +1,9 @@
+export type IdsDict = {
+  [id: string]: boolean;
+};
+
+export type IdsList = string[];
+
 export type MonthsDb = {
   [monthId: string]: {
     name: string;
@@ -43,20 +49,32 @@ export type RecipesThumbnails = {
 
 export type Tag = ObjectWithName & ObjectWithId;
 
-export type Month = ObjectWithName & ObjectWithId;
+export type Month = {
+  id: string;
+  name: string;
+};
 
-export type Ingredient = ObjectWithName &
-  ObjectWithId & {
-    months: ObjectWithNamedIds;
-  };
+export type Ingredient = {
+  id: string;
+  name: string;
+  months: IdsList;
+};
 
-export type Recipe = ObjectWithId &
-  ObjectWithName & {
-    ingredients: ObjectWithNamedIds;
-    months: ObjectWithNamedIds;
-    google_id: string;
-    thumbnailLink: string;
-  };
+// export type Recipe = ObjectWithId &
+//   ObjectWithName & {
+//     ingredients: ObjectWithNamedIds;
+//     months: ObjectWithNamedIds;
+//     google_id: string;
+//     thumbnailLink: string;
+//   };
+
+export type Recipe = {
+  id: string;
+  name: string;
+  google_id: string;
+  ingredients: IdsList;
+  months: IdsList;
+};
 
 export function getIngredientMonths(
   ingredientId: string,

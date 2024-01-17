@@ -11,14 +11,16 @@ import {
 } from '../rtdb';
 import { useContext } from 'react';
 import { RtdbContext } from './RtdbContext';
+import { useGetRecipesDbQuery } from '../hooks/useGetRecipesDbQuery';
 
 interface RecipeMutationData {
   google_id: string;
   name: string;
 }
 
-export function DriveSyncButton({ recipes }: { recipes: RecipesDb | undefined }) {
+export function DriveSyncButton() {
   const rtdbCred = useContext(RtdbContext);
+  const { data: recipes } = useGetRecipesDbQuery();
   const [show, setShow] = useState<'nothing' | 'add' | 'remove'>('nothing');
   const [listToAdd, setListToAdd] = useState<{ [id: string]: string }>({});
   const [listToRemove, setListToRemove] = useState<{ [id: string]: string }>(
@@ -39,7 +41,7 @@ export function DriveSyncButton({ recipes }: { recipes: RecipesDb | undefined })
     onError: () => {
       window.alert('Could not create new recipes...');
     },
-    onSuccess: () => { },
+    onSuccess: () => {},
     onSettled: () => {
       newRecipesMutation.reset();
     },

@@ -1,4 +1,3 @@
-import { Recipe } from '../models/Recipe';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import Row from 'react-bootstrap/Row';
@@ -9,18 +8,19 @@ import Container from 'react-bootstrap/Container';
 import { RecipeEditModal } from './RecipeEditModal';
 import Card from 'react-bootstrap/Card';
 import { MonthBar } from './MonthBar';
+import { useGetRecipe } from '../hooks/useGetRecipe';
+import { useGetIngredientsDb } from '../hooks/useGetIngredientsDb';
 
-export function RecipeRow({ recipe }: { recipe: Recipe }) {
+export function RecipeRow({ recipeId }: { recipeId: string }) {
   const [showModal, setShowModal] = useState<boolean>(false);
-  const recipeMonthsId: {
-    [monthId: string]: boolean;
-  } = {};
+  const recipe = useGetRecipe(recipeId);
+  const ingredientsDb = useGetIngredientsDb();
 
   // Create a badge for each ingredient of the recipe
-  const recipeIngredients = recipe.ingredients.asArray().map((ingredient) => {
+  const recipeIngredients = recipe.ingredients.map((ingredientId) => {
     return (
-      <Badge pill bg="primary" key={ingredient.id}>
-        {ingredient.name}
+      <Badge pill bg="primary" key={ingredientId}>
+        {ingredientsDb[ingredientId].name}
       </Badge>
     );
   });
@@ -49,10 +49,7 @@ export function RecipeRow({ recipe }: { recipe: Recipe }) {
             </a>
           </h5>
           <div className="mb-2 text-center">
-            <MonthBar
-              selectedMonths={recipe.months}
-              allMonths={recipe.allMonths}
-            />
+            <MonthBar selectedMonths={recipe.months} />
           </div>
           {recipeIngredients}
           <Card.Text></Card.Text>

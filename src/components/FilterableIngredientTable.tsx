@@ -3,7 +3,9 @@ import { MonthsDb, IngredientsDb } from '../db-types';
 import { SearchBar } from './SearchBar';
 import { IngredientTable } from './IngredientTable';
 import { useOutletContext } from 'react-router-dom';
-import { RecipeManagerContext } from './RecipeManager';
+import { useGetAllRecipes } from '../hooks/useGetAllRecipes';
+import { useGetAllMonths } from '../hooks/useGetAllMonths';
+import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
 
 export function FilterableIngredientTable({} // months,
 // ingredients,
@@ -12,8 +14,9 @@ export function FilterableIngredientTable({} // months,
   // ingredients: IngredientsDb;
 }) {
   const [filterText, setFilterText] = useState('');
-  const { months, ingredients, recipes, recipesThumbnails } =
-    useOutletContext<RecipeManagerContext>();
+  const recipes = useGetAllRecipes();
+  const months = useGetAllMonths();
+  const ingredients = useGetAllIngredients();
   if (
     months === undefined ||
     ingredients === undefined ||

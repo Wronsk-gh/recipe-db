@@ -1,22 +1,19 @@
 import React from 'react';
 import { Month } from '../models/Month';
 import { IdItemCollection } from '../models/IdItemCollection';
+import { IdsList } from '../db-types';
+import { useGetAllMonths } from '../hooks/useGetAllMonths';
 
-export function MonthBar({
-  selectedMonths,
-  allMonths,
-}: {
-  selectedMonths: IdItemCollection<Month>;
-  allMonths: IdItemCollection<Month>;
-}) {
-  const tableData = allMonths.asArray().map((month) => {
+export function MonthBar({ selectedMonths }: { selectedMonths: IdsList }) {
+  const allMonths = useGetAllMonths();
+  const tableData = allMonths.map((month) => {
     const cellStyle: React.CSSProperties = {
       border: '1px solid black',
       overflow: 'scroll',
       height: '26px',
       textAlign: 'center',
     };
-    if (selectedMonths.isItemIn(month)) {
+    if (selectedMonths.includes(month.id)) {
       cellStyle['background'] = 'green';
     }
     return (

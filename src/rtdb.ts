@@ -15,9 +15,9 @@ import {
   RecipesDb,
   Ingredient,
   RecipeDb,
+  Recipe,
+  IdsDict,
 } from './db-types';
-
-import { Recipe } from './models/Recipe';
 
 export interface RtdbCred {
   user: User | null;
@@ -71,6 +71,16 @@ export async function updateRecipeDisplayUserDb(
       ? rtdbCred.displayUserId
       : rtdbCred.user.uid;
   const recipeRef = ref(rtdbCred.db, `users/${uid}/recipes/${newRecipe.id}`);
+  const newRecipeDb: RecipeDb = {
+    ingredients: newRecipe.ingredients.reduce<IdsDict>(
+      (ingredientsAcc, ingredientId) => {
+        return (ingredientsAcc[ingredientId] = true);
+      },
+      {}
+    ),
+    name: newRecipe.name,
+    google_id: newRecipe.google_id,
+  };
   await set(recipeRef, newRecipe.getDbRepr());
 }
 

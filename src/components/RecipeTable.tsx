@@ -1,20 +1,20 @@
 import '../App.css';
 import { useState, useContext, useMemo } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { RecipeManagerContext } from './RecipeManager';
+import { useQuery, useQueries } from '@tanstack/react-query';
 import {
   MonthsDb,
   IngredientsDb,
   RecipesDb,
   getRecipeIngredients,
+  RecipesThumbnails,
   getRecipeMonths,
   getIngredientMonths,
   ObjectWithName,
   ObjectWithId,
+  Recipe,
 } from '../db-types';
 import { Month } from '../models/Month';
 import { Ingredient } from '../models/Ingredient';
-import { Recipe } from '../models/Recipe';
 import { IdItemCollection } from '../models/IdItemCollection';
 import { RecipeRow } from './RecipeRow';
 import { ObjectEditor } from './ObjectEditor';
@@ -40,6 +40,10 @@ import {
   RowData,
   getFilteredRowModel,
 } from '@tanstack/react-table';
+import { useGetRecipesDbQuery } from '../hooks/useGetRecipesDbQuery';
+import { useGetAllRecipes } from '../hooks/useGetAllRecipes';
+import { useGetAllMonths } from '../hooks/useGetAllMonths';
+import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
 
 import { useSelect } from 'downshift';
 
@@ -87,68 +91,112 @@ const arrIncludesAllIdFilter: FilterFn<any[]> = (
 };
 
 export function RecipeTable() {
-  const { months, ingredients, recipes, recipesThumbnails } =
-    useOutletContext<RecipeManagerContext>();
+  // const { months, ingredients, recipes, recipesThumbnails } =
+  //   useOutletContext<RecipeManagerContext>();
+  const { data: recipesData } = useGetRecipesDbQuery();
+
+  async function fetchThumbnail(googleId: string): Promise<string> {
+    const response = await gapi.client.drive.files.get({
+      fileId: googleId,
+      fields: 'id, name, thumbnailLink',
+    });
+    if (response.result.thumbnailLink !== undefined) {
+      // const thumbnailResult = await fetch(
+      //   response.result.thumbnailLink +
+      //     '&access_token=' +
+      //     gapi.client.getToken().access_token
+      // );
+      const thumbnailResult = await fetch(response.result.thumbnailLink);
+      // const thumbnailResult = await fetch(response.result.thumbnailLink, {
+      //   headers: {
+      //     Authorization: `Bearer {gapi.client.getToken().access_token}`,
+      //   },
+      // });
+      const blob = await thumbnailResult.blob();
+      const imageUrl = URL.createObjectURL(blob);
+      return imageUrl;
+    } else {
+      return '';
+    }
+  }
+
+  const thumbnailsQueries = useQueries({
+    queries:
+      recipesData && Object.entries(recipesData)
+        ? Object.entries(recipesData).map(([recipeId, recipe]) => {
+            return {
+              queryKey: ['thumbnail', recipe.google_id],
+              queryFn: async () => {
+                const recipeIdThumbnail: RecipesThumbnails = {};
+                recipeIdThumbnail[recipeId] = await fetchThumbnail(
+                  recipe.google_id
+                );
+                return recipeIdThumbnail;
+              },
+              enabled: !!recipesData,
+              staleTime: 10 * 60 * 1000, // 10 minute
+            };
+          })
+        : [], // if recipesData is undefined or entries in recipesData is null, an empty array is returned
+  });
+
+  const recipesThumbnails: RecipesThumbnails = {};
+
+  thumbnailsQueries.map((query) => {
+    if (query.data !== undefined) {
+      Object.assign(recipesThumbnails, query.data);
+    }
+  });
+
   // Display loading animation in case the data are not yet fetched
-  if (
-    months === undefined ||
-    ingredients === undefined ||
-    recipes === undefined
-  ) {
-    return <p>Loading...</p>;
-  }
+  // if (
+  //   months === undefined ||
+  //   ingredients === undefined ||
+  //   recipes === undefined
+  // ) {
+  //   return <p>Loading...</p>;
+  // }
 
-  const allMonths = new IdItemCollection<Month>();
-  for (const monthId in months) {
-    const month = new Month(monthId, months);
-    allMonths.addItem(month);
-  }
-  const allIngredients = new IdItemCollection<Ingredient>();
-  for (const ingredientId in ingredients) {
-    const ingredient = new Ingredient(ingredientId, ingredients, allMonths);
-    allIngredients.addItem(ingredient);
-  }
-  const allRecipes = new IdItemCollection<Recipe>();
-  for (const recipeId in recipes) {
-    const thumbnailLink = recipesThumbnails[recipeId] ?? '';
-    // const recipe: Recipe = {
-    //   id: recipeId,
-    //   name: recipes[recipeId].name,
-    //   ingredients: getRecipeIngredients(recipeId, recipes, ingredients),
-    //   months: getRecipeMonths(recipeId, recipes, ingredients, months),
-    //   google_id: recipes[recipeId].google_id,
-    //   thumbnailLink: thumbnailLink,
-    // };
-    const recipe = new Recipe(
-      recipeId,
-      recipes,
-      thumbnailLink,
-      allIngredients,
-      allMonths
-    );
-    allRecipes.addItem(recipe);
-  }
+  // const allMonths = new IdItemCollection<Month>();
+  // for (const monthId in months) {
+  //   const month = new Month(monthId, months);
+  //   allMonths.addItem(month);
+  // }
+  // const allIngredients = new IdItemCollection<Ingredient>();
+  // for (const ingredientId in ingredients) {
+  //   const ingredient = new Ingredient(ingredientId, ingredients, allMonths);
+  //   allIngredients.addItem(ingredient);
+  // }
+  // const allRecipes = new IdItemCollection<Recipe>();
+  // for (const recipeId in recipes) {
+  //   const thumbnailLink = recipesThumbnails[recipeId] ?? '';
+  //   // const recipe: Recipe = {
+  //   //   id: recipeId,
+  //   //   name: recipes[recipeId].name,
+  //   //   ingredients: getRecipeIngredients(recipeId, recipes, ingredients),
+  //   //   months: getRecipeMonths(recipeId, recipes, ingredients, months),
+  //   //   google_id: recipes[recipeId].google_id,
+  //   //   thumbnailLink: thumbnailLink,
+  //   // };
+  //   const recipe = new Recipe(
+  //     recipeId,
+  //     recipes,
+  //     thumbnailLink,
+  //     allIngredients,
+  //     allMonths
+  //   );
+  //   allRecipes.addItem(recipe);
+  // }
 
-  return (
-    <RecipeTableLoaded
-      allMonths={allMonths}
-      allIngredients={allIngredients}
-      allRecipes={allRecipes}
-    />
-  );
+  return <RecipeTableLoaded />;
 }
 
-function RecipeTableLoaded({
-  allMonths,
-  allIngredients,
-  allRecipes,
-}: {
-  allMonths: IdItemCollection<Month>;
-  allIngredients: IdItemCollection<Ingredient>;
-  allRecipes: IdItemCollection<Recipe>;
-}) {
+function RecipeTableLoaded({}: {}) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const recipes = useGetAllRecipes();
+  const months = useGetAllMonths();
+  const ingredients = useGetAllIngredients();
 
   // Get the Rtdb from the context
   const rtdbCred = useContext(RtdbContext);
@@ -168,7 +216,7 @@ function RecipeTableLoaded({
       },
       {
         accessorFn: (recipe) => {
-          return recipe.ingredients.IdsAsArray();
+          return recipe.ingredients;
         },
         id: 'recipeIngredients',
         cell: (info) => info.getValue(),
@@ -176,7 +224,7 @@ function RecipeTableLoaded({
         filterFn: 'arrIncludesAllId',
         meta: {
           headerKind: 'tickable',
-          tickOptions: allIngredients.asArray().sort((x, y) => {
+          tickOptions: ingredients.sort((x, y) => {
             if (x.name.toLowerCase() > y.name.toLowerCase()) {
               return 1;
             }
@@ -189,7 +237,7 @@ function RecipeTableLoaded({
       },
       {
         accessorFn: (recipe) => {
-          return recipe.months.IdsAsArray();
+          return recipe.months;
         },
         id: 'recipeMonths',
         cell: (info) => info.getValue(),
@@ -197,7 +245,7 @@ function RecipeTableLoaded({
         filterFn: 'arrIncludesAllId',
         meta: {
           headerKind: 'tickable',
-          tickOptions: allMonths.asArray(),
+          tickOptions: months,
         },
       },
     ],
@@ -205,7 +253,7 @@ function RecipeTableLoaded({
   );
 
   const table = useReactTable({
-    data: allRecipes.asArray(),
+    data: recipes,
     columns: columns,
     state: {
       sorting,
@@ -226,7 +274,7 @@ function RecipeTableLoaded({
   const rows = table
     .getRowModel()
     .rows.map((tableRow) => (
-      <RecipeRow key={tableRow.original.id} recipe={tableRow.original} />
+      <RecipeRow key={tableRow.original.id} recipe={tableRow.original.id} />
     ));
 
   // const rows = [];
