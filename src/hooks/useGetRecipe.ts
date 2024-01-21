@@ -9,12 +9,7 @@ export function useGetRecipe(recipeId: string): Recipe {
   const { data: ingredientsDb } = useGetIngredientsDbQuery();
   const { data: recipesDb } = useGetRecipesDbQuery();
 
-  return getRecipe(
-    recipeId,
-    recipesDb || {},
-    ingredientsDb || {},
-    monthsDb || {}
-  );
+  return getRecipe(recipeId, recipesDb, ingredientsDb, monthsDb);
 }
 
 function getRecipe(

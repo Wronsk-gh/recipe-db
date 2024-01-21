@@ -8,7 +8,7 @@ export function useGetRecipeMonthsIds(id: string) {
   const { data: ingredientsDbData } = useGetIngredientsDbQuery();
   const { data: recipesDbData } = useGetRecipesDbQuery();
 
-  return getRecipeMonths(id, recipesDbData || {}, ingredientsDbData || {});
+  return getRecipeMonths(id, recipesDbData, ingredientsDbData);
 }
 
 function getIngredientMonths(

@@ -22,10 +22,10 @@ export function useGetAllMonths(): Month[] {
   // for (const recipeId in recipesDbData) {
   // }
 
-  return Object.keys(monthsDb || {}).map((monthId) => {
+  return Object.keys(monthsDb).map((monthId) => {
     const month: Month = {
       id: monthId,
-      name: (monthsDb || {})[monthId].name,
+      name: monthsDb[monthId].name,
     };
     return month;
   });

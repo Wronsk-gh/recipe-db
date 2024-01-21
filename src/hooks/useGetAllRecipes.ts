@@ -9,13 +9,8 @@ export function useGetAllRecipes(): Recipe[] {
   const { data: ingredientsDb } = useGetIngredientsDbQuery();
   const { data: recipesDb } = useGetRecipesDbQuery();
 
-  return Object.keys(recipesDb || {}).map((recipeId) => {
-    return getRecipe(
-      recipeId,
-      recipesDb || {},
-      ingredientsDb || {},
-      monthsDb || {}
-    );
+  return Object.keys(recipesDb).map((recipeId) => {
+    return getRecipe(recipeId, recipesDb, ingredientsDb, monthsDb);
   });
 }
 

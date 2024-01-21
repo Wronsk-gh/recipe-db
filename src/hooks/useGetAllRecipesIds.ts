@@ -3,7 +3,7 @@ import { useGetIngredientsDbQuery } from './useGetIngredientsDbQuery';
 import { useGetRecipesDbQuery } from './useGetRecipesDbQuery';
 import { MonthsDb, IngredientsDb, RecipesDb } from '../db-types';
 
-export function useGetAllRecipesIds() {
+export function useGetAllRecipesIds(): string[] {
   // const { data: monthsDbData } = useGetMonthsDbQuery();
   // const { data: ingredientsDbData } = useGetIngredientsDbQuery();
   const { data: recipesDbData } = useGetRecipesDbQuery();

@@ -74,14 +74,15 @@ export async function updateRecipeDisplayUserDb(
   const newRecipeDb: RecipeDb = {
     ingredients: newRecipe.ingredients.reduce<IdsDict>(
       (ingredientsAcc, ingredientId) => {
-        return (ingredientsAcc[ingredientId] = true);
+        ingredientsAcc[ingredientId] = true;
+        return ingredientsAcc;
       },
       {}
     ),
     name: newRecipe.name,
     google_id: newRecipe.google_id,
   };
-  await set(recipeRef, newRecipe.getDbRepr());
+  await set(recipeRef, newRecipeDb);
 }
 
 export async function updateIngredientDisplayUserDb(

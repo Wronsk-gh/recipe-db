@@ -2,22 +2,32 @@ import { useState, useContext, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RtdbContext } from './RtdbContext';
 import { updateRecipeDisplayUserDb } from '../rtdb';
-import { Recipe } from '../models/Recipe';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { TagBox } from './TagBox';
 import { Tag } from '../db-types';
 import { ComboSelect } from './ComboSelect';
+import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
+import { useGetIngredientsDbQuery } from '../hooks/useGetIngredientsDbQuery';
+import { useGetRecipe } from '../hooks/useGetRecipe';
+import { Recipe } from '../db-types';
+import cloneDeep from 'lodash/cloneDeep';
+import isEqual from 'lodash/isEqual';
 
 export function RecipeEditModal({
-  recipe,
+  recipeId,
   onClose,
 }: {
-  recipe: Recipe;
+  recipeId: string;
   onClose: () => void;
 }) {
-  const [initialObject, setInitialObject] = useState<Recipe>(recipe);
-  const [displayedObject, setDisplayedObject] = useState<Recipe>(recipe);
+  const recipe = useGetRecipe(recipeId);
+  const [initialObject, setInitialObject] = useState<Recipe>(cloneDeep(recipe));
+  const [displayedObject, setDisplayedObject] = useState<Recipe>(
+    cloneDeep(recipe)
+  );
+  const { data: ingredientsDb } = useGetIngredientsDbQuery();
+  const allIngredients = useGetAllIngredients();
   // const [selectedIngredient, setSelectedIngredient] = useState<string>('');
   // Get QueryClient from the context
   const queryClient = useQueryClient();
@@ -42,7 +52,7 @@ export function RecipeEditModal({
     queryClient.invalidateQueries({ queryKey: ['recipes'] });
   }
 
-  const ingredientsArray = recipe.allIngredients.asArray().sort((a, b) => {
+  const ingredientsArray = allIngredients.sort((a, b) => {
     if (a.name > b.name) {
       return 1;
     }
@@ -120,12 +130,14 @@ export function RecipeEditModal({
             </form> */}
             <ComboSelect
               itemsArray={ingredientsArray}
-              initialItems={recipe.ingredients.asArray()}
+              initialItems={recipe.ingredients.map((id) => {
+                return { id: ingredientsDb[id].name };
+              })}
               label={'Ingredients'}
               onNewSelectedItems={(newSelectedItems) => {
                 // TODO
                 // column.setFilterValue(newSelectedItems.map((item) => item.id));
-                const newDisplayedObject = displayedObject.getCopy();
+                const newDisplayedObject = cloneDeep(displayedObject);
                 newDisplayedObject.ingredients.setFromArray(newSelectedItems);
                 setDisplayedObject(newDisplayedObject);
               }}
@@ -167,7 +179,7 @@ export function RecipeEditModal({
           variant="primary"
           onClick={() => {
             // Check that the upstream object is still identical to the initial one
-            if (displayedObject.isEqual(initialObject)) {
+            if (isEqual(recipe, initialObject)) {
               alert('Object was modified by another user !!!');
             } else {
               if (recipeMutation.isIdle) {

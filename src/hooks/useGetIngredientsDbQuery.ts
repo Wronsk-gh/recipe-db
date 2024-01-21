@@ -14,5 +14,5 @@ export function useGetIngredientsDbQuery() {
     enabled: !!rtdbCred.db,
   });
 
-  return query;
+  return { ...query, data: query.data || {} };
 }

@@ -9,12 +9,12 @@ import { RecipeEditModal } from './RecipeEditModal';
 import Card from 'react-bootstrap/Card';
 import { MonthBar } from './MonthBar';
 import { useGetRecipe } from '../hooks/useGetRecipe';
-import { useGetIngredientsDb } from '../hooks/useGetIngredientsDb';
+import { useGetIngredientsDbQuery } from '../hooks/useGetIngredientsDbQuery';
 
 export function RecipeRow({ recipeId }: { recipeId: string }) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const recipe = useGetRecipe(recipeId);
-  const ingredientsDb = useGetIngredientsDb();
+  const { data: ingredientsDb } = useGetIngredientsDbQuery();
 
   // Create a badge for each ingredient of the recipe
   const recipeIngredients = recipe.ingredients.map((ingredientId) => {
@@ -57,7 +57,8 @@ export function RecipeRow({ recipeId }: { recipeId: string }) {
         </Card.Body>
         <div className="text-center">
           <img
-            src={recipe.thumbnailLink}
+            // src={recipe.thumbnailLink}
+            src={''}
             className="card-img-bottom"
             alt="Loading..."
             style={{ objectFit: 'cover', width: '200px' }}
@@ -67,7 +68,7 @@ export function RecipeRow({ recipeId }: { recipeId: string }) {
       {showModal &&
         createPortal(
           <RecipeEditModal
-            recipe={recipe}
+            recipeId={recipe.id}
             onClose={() => setShowModal(false)}
           />,
           document.body
