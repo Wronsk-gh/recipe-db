@@ -41,6 +41,8 @@ import { useGetRecipesDbQuery } from '../hooks/useGetRecipesDbQuery';
 import { useGetAllRecipes } from '../hooks/useGetAllRecipes';
 import { useGetAllMonths } from '../hooks/useGetAllMonths';
 import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
+import { useGetRecipesThumbnails } from '../hooks/useGetRecipesThumbnails';
+import { useGetIsRecipesLoading } from '../hooks/useGetIsRecipesLoading';
 
 import { useSelect } from 'downshift';
 
@@ -88,102 +90,66 @@ const arrIncludesAllIdFilter: FilterFn<any[]> = (
 };
 
 export function RecipeTable() {
-  // const { months, ingredients, recipes, recipesThumbnails } =
-  //   useOutletContext<RecipeManagerContext>();
-  const { data: recipesData } = useGetRecipesDbQuery();
+  // const { data: recipesData } = useGetRecipesDbQuery();
 
-  async function fetchThumbnail(googleId: string): Promise<string> {
-    const response = await gapi.client.drive.files.get({
-      fileId: googleId,
-      fields: 'id, name, thumbnailLink',
-    });
-    if (response.result.thumbnailLink !== undefined) {
-      // const thumbnailResult = await fetch(
-      //   response.result.thumbnailLink +
-      //     '&access_token=' +
-      //     gapi.client.getToken().access_token
-      // );
-      const thumbnailResult = await fetch(response.result.thumbnailLink);
-      // const thumbnailResult = await fetch(response.result.thumbnailLink, {
-      //   headers: {
-      //     Authorization: `Bearer {gapi.client.getToken().access_token}`,
-      //   },
-      // });
-      const blob = await thumbnailResult.blob();
-      const imageUrl = URL.createObjectURL(blob);
-      return imageUrl;
-    } else {
-      return '';
-    }
-  }
+  // async function fetchThumbnail(googleId: string): Promise<string> {
+  //   const response = await gapi.client.drive.files.get({
+  //     fileId: googleId,
+  //     fields: 'id, name, thumbnailLink',
+  //   });
+  //   if (response.result.thumbnailLink !== undefined) {
+  //     // const thumbnailResult = await fetch(
+  //     //   response.result.thumbnailLink +
+  //     //     '&access_token=' +
+  //     //     gapi.client.getToken().access_token
+  //     // );
+  //     const thumbnailResult = await fetch(response.result.thumbnailLink);
+  //     // const thumbnailResult = await fetch(response.result.thumbnailLink, {
+  //     //   headers: {
+  //     //     Authorization: `Bearer {gapi.client.getToken().access_token}`,
+  //     //   },
+  //     // });
+  //     const blob = await thumbnailResult.blob();
+  //     const imageUrl = URL.createObjectURL(blob);
+  //     return imageUrl;
+  //   } else {
+  //     return '';
+  //   }
+  // }
 
-  const thumbnailsQueries = useQueries({
-    queries:
-      recipesData && Object.entries(recipesData)
-        ? Object.entries(recipesData).map(([recipeId, recipe]) => {
-            return {
-              queryKey: ['thumbnail', recipe.google_id],
-              queryFn: async () => {
-                const recipeIdThumbnail: RecipesThumbnails = {};
-                recipeIdThumbnail[recipeId] = await fetchThumbnail(
-                  recipe.google_id
-                );
-                return recipeIdThumbnail;
-              },
-              enabled: !!recipesData,
-              staleTime: 10 * 60 * 1000, // 10 minute
-            };
-          })
-        : [], // if recipesData is undefined or entries in recipesData is null, an empty array is returned
-  });
+  // const thumbnailsQueries = useQueries({
+  //   queries:
+  //     recipesData && Object.entries(recipesData)
+  //       ? Object.entries(recipesData).map(([recipeId, recipe]) => {
+  //           return {
+  //             queryKey: ['thumbnail', recipe.google_id],
+  //             queryFn: async () => {
+  //               const recipeIdThumbnail: RecipesThumbnails = {};
+  //               recipeIdThumbnail[recipeId] = await fetchThumbnail(
+  //                 recipe.google_id
+  //               );
+  //               return recipeIdThumbnail;
+  //             },
+  //             enabled: !!recipesData,
+  //             staleTime: 10 * 60 * 1000, // 10 minute
+  //           };
+  //         })
+  //       : [], // if recipesData is undefined or entries in recipesData is null, an empty array is returned
+  // });
 
-  const recipesThumbnails: RecipesThumbnails = {};
+  // const recipesThumbnails: RecipesThumbnails = {};
 
-  thumbnailsQueries.map((query) => {
-    if (query.data !== undefined) {
-      Object.assign(recipesThumbnails, query.data);
-    }
-  });
+  // thumbnailsQueries.map((query) => {
+  //   if (query.data !== undefined) {
+  //     Object.assign(recipesThumbnails, query.data);
+  //   }
+  // });
 
+  const isLoading = useGetIsRecipesLoading();
   // Display loading animation in case the data are not yet fetched
-  // if (
-  //   months === undefined ||
-  //   ingredients === undefined ||
-  //   recipes === undefined
-  // ) {
-  //   return <p>Loading...</p>;
-  // }
-
-  // const allMonths = new IdItemCollection<Month>();
-  // for (const monthId in months) {
-  //   const month = new Month(monthId, months);
-  //   allMonths.addItem(month);
-  // }
-  // const allIngredients = new IdItemCollection<Ingredient>();
-  // for (const ingredientId in ingredients) {
-  //   const ingredient = new Ingredient(ingredientId, ingredients, allMonths);
-  //   allIngredients.addItem(ingredient);
-  // }
-  // const allRecipes = new IdItemCollection<Recipe>();
-  // for (const recipeId in recipes) {
-  //   const thumbnailLink = recipesThumbnails[recipeId] ?? '';
-  //   // const recipe: Recipe = {
-  //   //   id: recipeId,
-  //   //   name: recipes[recipeId].name,
-  //   //   ingredients: getRecipeIngredients(recipeId, recipes, ingredients),
-  //   //   months: getRecipeMonths(recipeId, recipes, ingredients, months),
-  //   //   google_id: recipes[recipeId].google_id,
-  //   //   thumbnailLink: thumbnailLink,
-  //   // };
-  //   const recipe = new Recipe(
-  //     recipeId,
-  //     recipes,
-  //     thumbnailLink,
-  //     allIngredients,
-  //     allMonths
-  //   );
-  //   allRecipes.addItem(recipe);
-  // }
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
   return <RecipeTableLoaded />;
 }
@@ -194,6 +160,7 @@ function RecipeTableLoaded({}: {}) {
   const recipes = useGetAllRecipes();
   const months = useGetAllMonths();
   const ingredients = useGetAllIngredients();
+  const thumbnails = useGetRecipesThumbnails();
 
   // Get the Rtdb from the context
   const rtdbCred = useContext(RtdbContext);
@@ -268,45 +235,14 @@ function RecipeTableLoaded({}: {}) {
     getFilteredRowModel: getFilteredRowModel(),
   });
 
+  // Get all the rows to be displayed
   const rows = table
     .getRowModel()
     .rows.map((tableRow) => (
       <RecipeRow key={tableRow.original.id} recipeId={tableRow.original.id} />
     ));
 
-  // const rows = [];
-  // for (const tableRow of table.getRowModel().rows) {
-  //   rows.push(
-  //     <RecipeRow
-  //       key={tableRow.original.id}
-  //       recipe={tableRow.original}
-  //     />
-  //   );
-  // }
-
-  // Insert the recipe editor popup if needed
-  // const objectEditor =
-  //   editedObject !== undefined ? (
-  //     <PopUp>
-  //       <ObjectEditor
-  //         objectToEdit={editedObject}
-  //         objectMutation={recipeMutation}
-  //         renderEditForm={(props) => {
-  //           return <RecipeEditForm {...props} ingredients={ingredients} />;
-  //         }}
-  //         onEditEnd={() => {
-  //           setEditedObject(undefined);
-  //         }}
-  //       />
-  //     </PopUp>
-  //   ) : null;
-
-  // const options = Object.entries(months).map(([monthId, month]) => (
-  //   <option value={monthId} key={monthId}>
-  //     {month.name}
-  //   </option>
-  // ));
-
+  // Build all the filters inputs
   const filters = [];
   for (const headerGroup of table.getHeaderGroups()) {
     for (const header of headerGroup.headers) {

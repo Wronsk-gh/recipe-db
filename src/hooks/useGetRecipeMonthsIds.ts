@@ -15,11 +15,11 @@ function getIngredientMonths(
   ingredientId: string,
   ingredientsDb: IngredientsDb
 ): string[] {
-  return Object.keys(ingredientsDb[ingredientId].months || []);
+  return Object.keys(ingredientsDb[ingredientId]?.months || []);
 }
 
 function getRecipeIngredients(recipeId: string, recipesDb: RecipesDb) {
-  return Object.keys(recipesDb[recipeId].ingredients || []);
+  return Object.keys(recipesDb[recipeId]?.ingredients || []);
 }
 
 function getRecipeMonths(

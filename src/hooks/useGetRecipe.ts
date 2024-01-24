@@ -20,8 +20,8 @@ function getRecipe(
 ) {
   const recipe: Recipe = {
     id: recipeId,
-    name: recipesDb[recipeId].name,
-    google_id: recipesDb[recipeId].google_id,
+    name: recipesDb[recipeId]?.name,
+    google_id: recipesDb[recipeId]?.google_id,
     ingredients: getRecipeIngredients(recipeId, recipesDb),
     months: getRecipeMonths(recipeId, recipesDb, ingredientsDb, monthsDb),
   };
@@ -29,14 +29,14 @@ function getRecipe(
 }
 
 function getRecipeIngredients(recipeId: string, recipesDb: RecipesDb): IdsList {
-  return Object.keys(recipesDb[recipeId].ingredients || {});
+  return Object.keys(recipesDb[recipeId]?.ingredients || {});
 }
 
 function getIngredientMonths(
   ingredientId: string,
   ingredientsDb: IngredientsDb
 ): IdsList {
-  return Object.keys(ingredientsDb[ingredientId].months || {});
+  return Object.keys(ingredientsDb[ingredientId]?.months || {});
 }
 
 function getRecipeMonths(

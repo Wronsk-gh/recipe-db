@@ -133,7 +133,7 @@ export function RecipeEditModal({
               initialItems={recipe.ingredients.map((id) => {
                 return {
                   id: id,
-                  name: ingredientsDb[id].name,
+                  name: ingredientsDb[id]?.name,
                 };
               })}
               label={'Ingredients'}
