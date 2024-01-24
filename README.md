@@ -49,3 +49,7 @@ Bugs :
     * seems like it occurs if the recipe is added, removed, then added again
     * Solved by invalidating the thumbnail queries of the added recipes
 - [X] When modifying a recipe, the thumbnail disappears
+    * Was because the googleId was wrongly set in the DB -> solved by writing correctly the DB
+- [X] When filtering the recipes by name, the page hangs infinitely
+    * Problem comes because a new table data object is generated at each re-render of the react-query table (thus infinite state modification, filter triggers re-render, which creates new object ref, which triggers filter, which triggers re-render, etc)
+    * Solved by pushing the creation of the data object to a prop being managed one level higher

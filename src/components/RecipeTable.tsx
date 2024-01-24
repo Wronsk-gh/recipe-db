@@ -90,6 +90,8 @@ const arrIncludesAllIdFilter: FilterFn<any[]> = (
 };
 
 export function RecipeTable() {
+  const recipes = useGetAllRecipes();
+
   // const { data: recipesData } = useGetRecipesDbQuery();
 
   // async function fetchThumbnail(googleId: string): Promise<string> {
@@ -151,13 +153,12 @@ export function RecipeTable() {
     return <p>Loading...</p>;
   }
 
-  return <RecipeTableLoaded />;
+  return <RecipeTableLoaded recipes={recipes} />;
 }
 
-function RecipeTableLoaded({}: {}) {
+function RecipeTableLoaded({ recipes }: { recipes: Recipe[] }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const recipes = useGetAllRecipes();
   const months = useGetAllMonths();
   const ingredients = useGetAllIngredients();
   const thumbnails = useGetRecipesThumbnails();
