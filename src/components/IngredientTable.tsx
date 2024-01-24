@@ -10,65 +10,45 @@ import {
   Month,
   getIngredientMonths,
 } from '../db-types';
-import { RecipeManagerContext } from './RecipeManager';
 import { AddIngredientButton } from './AddIngredientButton';
 import { updateIngredientDisplayUserDb } from '../rtdb';
 import { ObjectEditor } from './ObjectEditor';
 import { PopUp } from './PopUp';
 import { IngredientEditForm } from './IngredientEditForm';
 import { RtdbContext } from './RtdbContext';
+import { useGetMonthsDbQuery } from '../hooks/useGetMonthsDbQuery';
+import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
 
 export function IngredientTable() {
-  const { months, ingredients, recipes, recipesThumbnails } =
-    useOutletContext<RecipeManagerContext>();
+  const { data: months } = useGetMonthsDbQuery();
+  const ingredients = useGetAllIngredients();
   // Display loading animation in case the data are not yet fetched
-  if (
-    months === undefined ||
-    ingredients === undefined ||
-    recipes === undefined
-  ) {
-    return <p>Loading...</p>;
-  }
+  // if (
+  //   months === undefined ||
+  //   ingredients === undefined ||
+  //   recipes === undefined
+  // ) {
+  //   return <p>Loading...</p>;
+  // }
 
-  const monthsArray: Month[] = [];
-  for (const monthId in months) {
-    const month: Month = {
-      id: monthId,
-      name: months[monthId].name,
-    };
-    monthsArray.push(month);
-  }
-  const ingredientsArray: Ingredient[] = [];
-  for (const ingredientId in ingredients) {
-    const ingredient: Ingredient = {
-      id: ingredientId,
-      name: ingredients[ingredientId].name,
-      months: getIngredientMonths(ingredientId, ingredients, months),
-    };
-    ingredientsArray.push(ingredient);
-  }
+  // const monthsArray: Month[] = [];
+  // for (const monthId in months) {
+  //   const month: Month = {
+  //     id: monthId,
+  //     name: months[monthId].name,
+  //   };
+  //   monthsArray.push(month);
+  // }
+  // const ingredientsArray: Ingredient[] = [];
+  // for (const ingredientId in ingredients) {
+  //   const ingredient: Ingredient = {
+  //     id: ingredientId,
+  //     name: ingredients[ingredientId].name,
+  //     months: getIngredientMonths(ingredientId, ingredients, months),
+  //   };
+  //   ingredientsArray.push(ingredient);
+  // }
 
-  return (
-    <IngredientTableLoaded
-      months={months}
-      ingredients={ingredients}
-      monthsArray={monthsArray}
-      ingredientsArray={ingredientsArray}
-    />
-  );
-}
-
-export function IngredientTableLoaded({
-  months,
-  ingredients,
-  monthsArray,
-  ingredientsArray,
-}: {
-  months: MonthsDb;
-  ingredients: IngredientsDb;
-  monthsArray: Month[];
-  ingredientsArray: Ingredient[];
-}) {
   const [editedObject, setEditedObject] = useState<Ingredient | undefined>(
     undefined
   );
@@ -117,11 +97,10 @@ export function IngredientTableLoaded({
   //   );
   // }
 
-  for (const ingredient of ingredientsArray) {
+  for (const ingredient of ingredients) {
     rows.push(
       <IngredientRow
         key={ingredient.id}
-        months={months}
         ingredient={ingredient}
         onEdit={setEditedObject}
       />

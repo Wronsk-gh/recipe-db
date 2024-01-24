@@ -30,30 +30,33 @@ export function RecipeEditForm({
       </option>
     ));
 
-  const ingredientsTags = Object.keys(
-    displayedObject.ingredients !== undefined ? displayedObject.ingredients : {}
-  ).map((ingredientId: string) => {
-    if (ingredientId in ingredients) {
-      return (
-        <TagBox
-          tag={{ id: ingredientId, name: ingredients[ingredientId].name }}
-          onClose={(tag: Tag) => {
-            const { [tag.id]: removed, ...newIngredients } = {
-              ...displayedObject.ingredients,
-            };
-            const newDisplayedObject = {
-              ...displayedObject,
-              ingredients: newIngredients,
-            };
-            onDisplayedObjectChange(newDisplayedObject);
-          }}
-          key={ingredientId}
-        />
-      );
-    } else {
-      return null;
+  const ingredientsTags = displayedObject.ingredients.map(
+    (ingredientId: string) => {
+      if (ingredientId in ingredients) {
+        return (
+          <TagBox
+            tag={{ id: ingredientId, name: ingredients[ingredientId].name }}
+            onClose={(tag: Tag) => {
+              // const { [tag.id]: removed, ...newIngredients } = {
+              //   ...displayedObject.ingredients,
+              // };
+              const newIngredients = [...displayedObject.ingredients].splice(
+                displayedObject.ingredients.indexOf(tag.id)
+              );
+              const newDisplayedObject = {
+                ...displayedObject,
+                ingredients: newIngredients,
+              };
+              onDisplayedObjectChange(newDisplayedObject);
+            }}
+            key={ingredientId}
+          />
+        );
+      } else {
+        return null;
+      }
     }
-  });
+  );
 
   return (
     <div>
@@ -82,15 +85,13 @@ export function RecipeEditForm({
             //   };
             //   onDisplayedObjectChange(newDisplayedObject);
             // } else
-            if (
-              displayedObject.ingredients[selectedIngredient] === undefined
-            ) {
-              const newDisplayedObject = {
+            if (!displayedObject.ingredients.includes(selectedIngredient)) {
+              const newDisplayedObject: Recipe = {
                 ...displayedObject,
-                ingredients: {
-                  [selectedIngredient]: ingredients[selectedIngredient].name,
+                ingredients: [
                   ...displayedObject.ingredients,
-                },
+                  selectedIngredient,
+                ],
               };
               onDisplayedObjectChange(newDisplayedObject);
             }

@@ -40,7 +40,7 @@ import {
 import { useGetRecipesDbQuery } from '../hooks/useGetRecipesDbQuery';
 import { useGetAllRecipes } from '../hooks/useGetAllRecipes';
 import { useGetAllMonths } from '../hooks/useGetAllMonths';
-import { useGetAllIngredientsId } from '../hooks/useGetAllIngredientsId';
+import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
 
 import { useSelect } from 'downshift';
 
@@ -193,7 +193,7 @@ function RecipeTableLoaded({}: {}) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const recipes = useGetAllRecipes();
   const months = useGetAllMonths();
-  const ingredients = useGetAllIngredientsId();
+  const ingredients = useGetAllIngredients();
 
   // Get the Rtdb from the context
   const rtdbCred = useContext(RtdbContext);

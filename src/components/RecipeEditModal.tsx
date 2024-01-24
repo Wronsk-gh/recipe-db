@@ -131,14 +131,19 @@ export function RecipeEditModal({
             <ComboSelect
               itemsArray={ingredientsArray}
               initialItems={recipe.ingredients.map((id) => {
-                return { id: ingredientsDb[id].name };
+                return {
+                  id: id,
+                  name: ingredientsDb[id].name,
+                };
               })}
               label={'Ingredients'}
               onNewSelectedItems={(newSelectedItems) => {
                 // TODO
                 // column.setFilterValue(newSelectedItems.map((item) => item.id));
                 const newDisplayedObject = cloneDeep(displayedObject);
-                newDisplayedObject.ingredients.setFromArray(newSelectedItems);
+                newDisplayedObject.ingredients = newSelectedItems.map(
+                  (selItem) => selItem.id
+                );
                 setDisplayedObject(newDisplayedObject);
               }}
             />

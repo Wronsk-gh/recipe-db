@@ -28,9 +28,9 @@ export function IngredientEditForm({
         <TagBox
           tag={{ id: monthId, name: months[monthId].name }}
           onClose={(tag: Tag) => {
-            const { [tag.id]: removed, ...newMonths } = {
-              ...displayedObject.months,
-            };
+            const newMonths = [...displayedObject.months].splice(
+              displayedObject.months.indexOf(tag.id)
+            );
             const newDisplayedObject = {
               ...displayedObject,
               months: newMonths,
@@ -73,15 +73,16 @@ export function IngredientEditForm({
         onClick={() => {
           if (selectedMonth !== '') {
             if (displayedObject.months === undefined) {
-              displayedObject.months = {};
+              displayedObject.months = [];
             }
-            if (displayedObject.months[selectedMonth] === undefined) {
+            if (!displayedObject.months.includes(selectedMonth)) {
               const newDisplayedObject: Ingredient = {
                 ...displayedObject,
-                months: {
-                  [selectedMonth]: months[selectedMonth].name,
-                  ...displayedObject.months,
-                },
+                // months: {
+                //   [selectedMonth]: months[selectedMonth].name,
+                //   ...displayedObject.months,
+                // },
+                months: [...displayedObject.months, selectedMonth],
               };
               onDisplayedObjectChange(newDisplayedObject);
             }

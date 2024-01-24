@@ -9,7 +9,7 @@ export function useGetAllIngredients(): Ingredient[] {
   return Object.keys(ingredientsDb).map((id) => {
     return {
       id: id,
-      name: ingredientsDb[id].name,
+      name: ingredientsDb[id]?.name,
       months: getIngredientMonths(id, ingredientsDb),
     } as Ingredient;
   });
@@ -19,5 +19,5 @@ function getIngredientMonths(
   ingredientId: string,
   ingredientsDb: IngredientsDb
 ): string[] {
-  return Object.keys(ingredientsDb[ingredientId].months || []);
+  return Object.keys(ingredientsDb[ingredientId]?.months || []);
 }

@@ -1,6 +1,4 @@
 import React from 'react';
-import { Month } from '../models/Month';
-import { IdItemCollection } from '../models/IdItemCollection';
 import { IdsList } from '../db-types';
 import { useGetAllMonths } from '../hooks/useGetAllMonths';
 
