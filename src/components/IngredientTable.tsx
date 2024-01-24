@@ -3,13 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useOutletContext } from 'react-router-dom';
 import { IngredientRow } from './IngredientRow';
 import { useState, useContext } from 'react';
-import {
-  MonthsDb,
-  IngredientsDb,
-  Ingredient,
-  Month,
-  getIngredientMonths,
-} from '../db-types';
+import { MonthsDb, IngredientsDb, Ingredient, Month } from '../db-types';
 import { AddIngredientButton } from './AddIngredientButton';
 import { updateIngredientDisplayUserDb } from '../rtdb';
 import { ObjectEditor } from './ObjectEditor';

@@ -1,15 +1,11 @@
 import { useGetMonthsDbQuery } from './useGetMonthsDbQuery';
-import { useGetIngredientsDbQuery } from './useGetIngredientsDbQuery';
-import { useGetRecipesDbQuery } from './useGetRecipesDbQuery';
-import { MonthsDb, IngredientsDb, RecipesDb, Month } from '../db-types';
+import { Month } from '../db-types';
+import { getMonth } from '../models/RecipeUtils';
 
 export function useGetAllMonths(): Month[] {
   const { data: monthsDb } = useGetMonthsDbQuery();
 
-  return Object.keys(monthsDb).map((monthId) => {
-    return {
-      id: monthId,
-      name: monthsDb[monthId]?.name,
-    } as Month;
+  return Object.keys(monthsDb).map((id) => {
+    return getMonth(id, monthsDb);
   });
 }
