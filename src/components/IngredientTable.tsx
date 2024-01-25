@@ -1,6 +1,5 @@
 import '../App.css';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useOutletContext } from 'react-router-dom';
 import { IngredientRow } from './IngredientRow';
 import { useState, useContext } from 'react';
 import { MonthsDb, IngredientsDb, Ingredient, Month } from '../db-types';
@@ -16,36 +15,9 @@ import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
 export function IngredientTable() {
   const { data: months } = useGetMonthsDbQuery();
   const ingredients = useGetAllIngredients();
-  // Display loading animation in case the data are not yet fetched
-  // if (
-  //   months === undefined ||
-  //   ingredients === undefined ||
-  //   recipes === undefined
-  // ) {
-  //   return <p>Loading...</p>;
-  // }
-
-  // const monthsArray: Month[] = [];
-  // for (const monthId in months) {
-  //   const month: Month = {
-  //     id: monthId,
-  //     name: months[monthId].name,
-  //   };
-  //   monthsArray.push(month);
-  // }
-  // const ingredientsArray: Ingredient[] = [];
-  // for (const ingredientId in ingredients) {
-  //   const ingredient: Ingredient = {
-  //     id: ingredientId,
-  //     name: ingredients[ingredientId].name,
-  //     months: getIngredientMonths(ingredientId, ingredients, months),
-  //   };
-  //   ingredientsArray.push(ingredient);
-  // }
-
-  const [editedObject, setEditedObject] = useState<Ingredient | undefined>(
-    undefined
-  );
+  // const [editedObject, setEditedObject] = useState<Ingredient | undefined>(
+  //   undefined
+  // );
 
   // Get the Rtdb from the context
   const rtdbCred = useContext(RtdbContext);
@@ -76,47 +48,32 @@ export function IngredientTable() {
   headers.push(<th key="months">MonthsDb</th>);
   headers.push(<th key="edit"></th>);
 
-  // for (const ingredientId in ingredients) {
-  //   const ingredient: Ingredient = {
-  //     ...ingredients[ingredientId],
-  //     id: ingredientId,
-  //   };
-  //   rows.push(
-  //     <IngredientRow
-  //       key={ingredientId}
-  //       months={months}
-  //       ingredient={ingredient}
-  //       onEdit={setEditedObject}
-  //     />
-  //   );
-  // }
-
   for (const ingredient of ingredients) {
     rows.push(
       <IngredientRow
         key={ingredient.id}
         ingredient={ingredient}
-        onEdit={setEditedObject}
+        // onEdit={setEditedObject}
       />
     );
   }
 
-  // Insert the recipe editor popup if needed
-  const objectEditor =
-    editedObject !== undefined ? (
-      <PopUp>
-        <ObjectEditor
-          objectToEdit={editedObject}
-          objectMutation={ingredientMutation}
-          renderEditForm={(props) => {
-            return <IngredientEditForm {...props} months={months} />;
-          }}
-          onEditEnd={() => {
-            setEditedObject(undefined);
-          }}
-        />
-      </PopUp>
-    ) : null;
+  // // Insert the recipe editor popup if needed
+  // const objectEditor =
+  //   editedObject !== undefined ? (
+  //     <PopUp>
+  //       <ObjectEditor
+  //         objectToEdit={editedObject}
+  //         objectMutation={ingredientMutation}
+  //         renderEditForm={(props) => {
+  //           return <IngredientEditForm {...props} months={months} />;
+  //         }}
+  //         onEditEnd={() => {
+  //           setEditedObject(undefined);
+  //         }}
+  //       />
+  //     </PopUp>
+  //   ) : null;
 
   return (
     <div>
@@ -127,7 +84,7 @@ export function IngredientTable() {
         <tbody>{rows}</tbody>
       </table>
       <AddIngredientButton />
-      {objectEditor}
+      {/* {objectEditor} */}
     </div>
   );
 }
