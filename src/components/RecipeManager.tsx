@@ -32,10 +32,10 @@ export function RecipeManager() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="recipes">
-              RecipesDb
+              Recipes
             </Nav.Link>
             <Nav.Link as={Link} to="ingredients">
-              ingredients
+              Ingredients
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
