@@ -181,15 +181,21 @@ export function ComboSelect<T extends ObjectWithName & ObjectWithId>({
           </div>
         </div>
         <ul
-          className={`list-group d-inline-block ${
+          className={`list-group d-inline-block position-absolute ${
             !(isOpen && dropdownListItems.length) && 'hidden'
           }`}
+          style={{
+            zIndex: 2000,
+            maxHeight: '300px',
+            overflowY: 'scroll',
+            // marginBottom: '10px',
+          }}
           {...getMenuProps()}
         >
           {isOpen &&
             dropdownListItems.map((item, index) => (
               <li
-                className={`${highlightedIndex === index && 'active'} 
+                className={`${highlightedIndex === index && 'active'}
                 list-group-item`}
                 key={`${item.id}${index}`}
                 {...getItemProps({ item: item, index: index })}
