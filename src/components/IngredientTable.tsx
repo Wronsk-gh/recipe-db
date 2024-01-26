@@ -42,11 +42,11 @@ export function IngredientTable() {
   }
 
   const rows = [];
-  const headers = [];
+  // const headers = [];
 
-  headers.push(<th key="name">IngredientsDb</th>);
-  headers.push(<th key="months">MonthsDb</th>);
-  headers.push(<th key="edit"></th>);
+  // headers.push(<th key="name">IngredientsDb</th>);
+  // headers.push(<th key="months">MonthsDb</th>);
+  // headers.push(<th key="edit"></th>);
 
   for (const ingredient of ingredients) {
     rows.push(
@@ -77,12 +77,13 @@ export function IngredientTable() {
 
   return (
     <div>
-      <table>
+      {/* <table>
         <thead>
           <tr>{headers}</tr>
         </thead>
         <tbody>{rows}</tbody>
-      </table>
+      </table> */}
+      {rows}
       <AddIngredientButton />
       {/* {objectEditor} */}
     </div>

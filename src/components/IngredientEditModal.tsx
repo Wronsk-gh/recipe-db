@@ -139,12 +139,12 @@ export function IngredientEditModal({
                   name: monthsDb[id]?.name,
                 };
               })}
-              label={'Ingredients'}
+              label={'Months'}
               onNewSelectedItems={(newSelectedItems) => {
                 // TODO
                 // column.setFilterValue(newSelectedItems.map((item) => item.id));
                 const newDisplayedObject = cloneDeep(displayedObject);
-                newDisplayedObject.ingredients = newSelectedItems.map(
+                newDisplayedObject.months = newSelectedItems.map(
                   (selItem) => selItem.id
                 );
                 setDisplayedObject(newDisplayedObject);
@@ -187,11 +187,11 @@ export function IngredientEditModal({
           variant="primary"
           onClick={() => {
             // Check that the upstream object is still identical to the initial one
-            if (isEqual(recipe, initialObject)) {
+            if (!isEqual(ingredient, initialObject)) {
               alert('Object was modified by another user !!!');
             } else {
-              if (recipeMutation.isIdle) {
-                recipeMutation.mutate(displayedObject);
+              if (ingredientMutation.isIdle) {
+                ingredientMutation.mutate(displayedObject);
                 onClose();
               } else {
                 alert('Object is already being modified !!!');

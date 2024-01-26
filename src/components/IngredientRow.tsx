@@ -5,6 +5,7 @@ import { MonthBar } from './MonthBar';
 import { Ingredient } from '../db-types';
 import { useGetMonthsDbQuery } from '../hooks/useGetMonthsDbQuery';
 import Card from 'react-bootstrap/Card';
+import { IngredientEditModal } from './IngredientEditModal';
 
 export function IngredientRow({
   ingredient, // onEdit,
@@ -61,13 +62,21 @@ export function IngredientRow({
     <>
       <Card style={{ width: '22rem' }} bg="light">
         <Card.Body>
-          <h5 className="card-title mb-3">{ingredient.name}</h5>
-          <div className="mb-2 text-center">
-            <MonthBar selectedMonths={ingredient.months} />
+          <div className="row no-gutters">
+            <div className="col-md-6">
+              <h5 className="card-title mb-3">{ingredient.name}</h5>
+            </div>
+            <div className="col-md-12">
+              <MonthBar selectedMonths={ingredient.months} />
+            </div>
+            <div className="col-md-4">{editButton}</div>
           </div>
+          {/* <div className="mb-2 text-center">
+            <MonthBar selectedMonths={ingredient.months} />
+          </div> */}
           {/* {recipeIngredients} */}
           <Card.Text></Card.Text>
-          {editButton}
+          {/* {editButton} */}
         </Card.Body>
         {/* <div className="text-center">
           <img

@@ -184,7 +184,7 @@ export function RecipeEditModal({
           variant="primary"
           onClick={() => {
             // Check that the upstream object is still identical to the initial one
-            if (isEqual(recipe, initialObject)) {
+            if (!isEqual(recipe, initialObject)) {
               alert('Object was modified by another user !!!');
             } else {
               if (recipeMutation.isIdle) {
