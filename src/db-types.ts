@@ -10,13 +10,15 @@ export type MonthsDb = {
   };
 };
 
-export type IngredientsDb = {
-  [ingredientId: string]: {
-    months?: {
-      [monthId: string]: boolean;
-    };
-    name: string;
+export type IngredientDb = {
+  months?: {
+    [monthId: string]: boolean;
   };
+  name: string;
+};
+
+export type IngredientsDb = {
+  [ingredientId: string]: IngredientDb;
 };
 
 export type RecipeDb = {

@@ -19,6 +19,8 @@ import {
   IdsDict,
 } from './db-types';
 
+import { getRecipeDbRepr, getIngredientDbRepr } from './models/RecipeUtils';
+
 export interface RtdbCred {
   user: User | null;
   db: Database | null;
@@ -71,17 +73,7 @@ export async function updateRecipeDisplayUserDb(
       ? rtdbCred.displayUserId
       : rtdbCred.user.uid;
   const recipeRef = ref(rtdbCred.db, `users/${uid}/recipes/${newRecipe.id}`);
-  const newRecipeDb: RecipeDb = {
-    ingredients: newRecipe.ingredients.reduce<IdsDict>(
-      (ingredientsAcc, ingredientId) => {
-        ingredientsAcc[ingredientId] = true;
-        return ingredientsAcc;
-      },
-      {}
-    ),
-    name: newRecipe.name,
-    google_id: newRecipe.google_id,
-  };
+  const newRecipeDb = getRecipeDbRepr(newRecipe);
   await set(recipeRef, newRecipeDb);
 }
 
@@ -100,8 +92,8 @@ export async function updateIngredientDisplayUserDb(
     rtdbCred.db,
     `users/${uid}/ingredients/${newIngredient.id}`
   );
-  const { id: removed, ...newDbIngredient } = newIngredient;
-  await set(ingredientRef, newDbIngredient);
+  const newIngredientDb = getIngredientDbRepr(newIngredient);
+  await set(ingredientRef, newIngredientDb);
 }
 
 export async function updateDriveFolderIdDisplayUserDb(

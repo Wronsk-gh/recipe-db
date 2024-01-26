@@ -41,6 +41,7 @@ Backlog :
 - [ ] Embbed full list of ingredients in the database with servings, allow selecting some recipes and compute shopping list based on it
 - [ ] Unauthorised calls (to gapi or firebase) must trigger a re-auth automatically
 - [ ] Decide if using useMemo for 'dropdownListItems' of component ComboSelect
+- [ ] Make a difference in type between the ones that we receive from the DB (some fileds may be missing), and the ones to send (all fields must be present)
 
 Bugs :
 ------

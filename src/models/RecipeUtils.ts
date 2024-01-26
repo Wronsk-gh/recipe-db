@@ -1,5 +1,11 @@
-import { MonthsDb, IngredientsDb, RecipesDb, IdsList } from '../db-types';
-import { Recipe, Ingredient, Month } from '../db-types';
+import {
+  MonthsDb,
+  IngredientsDb,
+  RecipesDb,
+  IdsList,
+  IdsDict,
+} from '../db-types';
+import { Recipe, Ingredient, Month, IngredientDb, RecipeDb } from '../db-types';
 
 export function getRecipe(
   recipeId: string,
@@ -68,4 +74,29 @@ export function getRecipeMonths(
     }
   }
   return recipeMonths;
+}
+
+export function getIngredientDbRepr(ingredient: Ingredient): IngredientDb {
+  const ingredientDb: IngredientDb = {
+    name: ingredient.name,
+    months: convertIdsListToDict(ingredient.months),
+  };
+  return ingredientDb;
+}
+
+export function getRecipeDbRepr(recipe: Recipe): RecipeDb {
+  const recipeDb: RecipeDb = {
+    ingredients: convertIdsListToDict(recipe.ingredients),
+    name: recipe.name,
+    google_id: recipe.google_id,
+  };
+  return recipeDb;
+}
+
+export function convertIdsListToDict(list: IdsList): IdsDict {
+  const dict = list.reduce<IdsDict>((dict, id) => {
+    dict[id] = true;
+    return dict;
+  }, {});
+  return dict;
 }
