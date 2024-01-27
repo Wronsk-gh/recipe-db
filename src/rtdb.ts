@@ -10,6 +10,7 @@ import {
 } from 'firebase/database';
 
 import {
+  TagsDb,
   MonthsDb,
   IngredientsDb,
   RecipesDb,
@@ -19,7 +20,11 @@ import {
   IdsDict,
 } from './db-types';
 
-import { getRecipeDbRepr, getIngredientDbRepr } from './models/RecipeUtils';
+import {
+  getRecipeDbRepr,
+  getIngredientDbRepr,
+  getTagDbRepr,
+} from './models/RecipeUtils';
 
 export interface RtdbCred {
   user: User | null;
@@ -96,6 +101,19 @@ export async function updateIngredientDisplayUserDb(
   await set(ingredientRef, newIngredientDb);
 }
 
+export async function updateTagDisplayUserDb(rtdbCred: RtdbCred, newTag: Tag) {
+  if (rtdbCred.db === null || rtdbCred.user === null) {
+    throw new Error('No database connection available');
+  }
+  const uid =
+    rtdbCred.displayUserId !== null
+      ? rtdbCred.displayUserId
+      : rtdbCred.user.uid;
+  const tagRef = ref(rtdbCred.db, `users/${uid}/tags/${newTag.id}`);
+  const newTagDb = getTagDbRepr(newTag);
+  await set(tagRef, newTagDb);
+}
+
 export async function updateDriveFolderIdDisplayUserDb(
   rtdbCred: RtdbCred,
   driveFolderId: string
@@ -141,6 +159,20 @@ export async function createIngredientDisplayUserDb(rtdbCred: RtdbCred) {
     child(ref(rtdbCred.db), `users/${uid}/ingredients`),
     defaultIngredientDb
   );
+}
+
+export async function createTagDisplayUserDb(rtdbCred: RtdbCred) {
+  if (rtdbCred.db === null || rtdbCred.user === null) {
+    throw new Error('No database connection available');
+  }
+  const uid =
+    rtdbCred.displayUserId !== null
+      ? rtdbCred.displayUserId
+      : rtdbCred.user.uid;
+  const defaultTagDb = {
+    name: 'Nouveau Tag',
+  };
+  await push(child(ref(rtdbCred.db), `users/${uid}/tags`), defaultTagDb);
 }
 
 export async function createRecipeDisplayUserDb(
@@ -223,6 +255,10 @@ async function fetchFromRootDb<DataType>(
 
 export async function fetchMonths(rtdbCred: RtdbCred) {
   return await fetchFromRootDb<MonthsDb>(rtdbCred, 'months');
+}
+
+export async function fetchTags(rtdbCred: RtdbCred) {
+  return await fetchFromDisplayUserDb<TagsDb>(rtdbCred, 'tags');
 }
 
 export async function fetchIngredients(rtdbCred: RtdbCred) {

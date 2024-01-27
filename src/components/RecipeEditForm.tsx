@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import _ from 'lodash';
 import { TagBox } from './TagBox';
-import { IngredientsDb, Recipe, Tag } from '../db-types';
+import { IngredientsDb, Recipe, TagBadge } from '../db-types';
 
 export function RecipeEditForm({
   ingredients,
@@ -36,7 +36,7 @@ export function RecipeEditForm({
         return (
           <TagBox
             tag={{ id: ingredientId, name: ingredients[ingredientId].name }}
-            onClose={(tag: Tag) => {
+            onClose={(tag: TagBadge) => {
               // const { [tag.id]: removed, ...newIngredients } = {
               //   ...displayedObject.ingredients,
               // };

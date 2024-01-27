@@ -4,7 +4,6 @@ import { RtdbContext } from './RtdbContext';
 import { updateIngredientDisplayUserDb } from '../rtdb';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { TagBox } from './TagBox';
 import { Tag } from '../db-types';
 import { ComboSelect } from './ComboSelect';
 import { useGetAllMonths } from '../hooks/useGetAllMonths';
@@ -65,72 +64,24 @@ export function IngredientEditModal({
   // });
   const monthsArray = allMonths;
 
-  // const options = recipe.allIngredients
-  //   .asArray()
-  //   .sort((a, b) => {
-  //     if (a.name > b.name) {
-  //       return 1;
-  //     }
-  //     if (b.name > a.name) {
-  //       return -1;
-  //     }
-  //     return 0;
-  //   })
-  //   .map((ingredient) => (
-  //     <option value={ingredient.id} key={ingredient.id}>
-  //       {ingredient.name}
-  //     </option>
-  //   ));
-
-  // const ingredientsTags = displayedObject.ingredients
-  //   .asArray()
-  //   .map((ingredient) => {
-  //     return (
-  //       <TagBox
-  //         tag={{ id: ingredient.id, name: ingredient.name }}
-  //         onClose={(tag: Tag) => {
-  //           const newDisplayedObject = displayedObject.getCopy();
-  //           newDisplayedObject.ingredients.removeItem(tag.id);
-  //           setDisplayedObject(newDisplayedObject);
-  //         }}
-  //         key={ingredient.id}
-  //       />
-  //     );
-  //   });
-
   return (
     <Modal show={true} onHide={onClose}>
       <Modal.Header closeButton>
         <Modal.Title>Edit ingredient</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {/* <ObjectEditor
-          objectToEdit={recipe}
-          objectMutation={recipeMutation}
-          renderEditForm={(props) => {
-            return <RecipeEditForm {...props} ingredients={ingredients} />;
-          }}
-          onEditEnd={onClose}
-        /> */}
         <div>
-          {displayedObject.name}
+          <input
+            value={displayedObject.name}
+            onChange={(newValue) => {
+              const newDisplayedObject = cloneDeep(displayedObject);
+              newDisplayedObject.name = newValue.target.value;
+              setDisplayedObject(newDisplayedObject);
+            }}
+          />
           <br />
 
           <div>
-            {/* <form>
-              <label htmlFor="ingredients">Choose an ingredient:</label>
-              <select
-                name="ingredients"
-                onChange={(newValue) =>
-                  setSelectedIngredient(newValue.target.value)
-                }
-              >
-                <option value={''} key={''}>
-                  {'-'}
-                </option>
-                {options}
-              </select>
-            </form> */}
             <ComboSelect
               itemsArray={monthsArray}
               initialItems={ingredient.months.map((id) => {
@@ -150,32 +101,7 @@ export function IngredientEditModal({
                 setDisplayedObject(newDisplayedObject);
               }}
             />
-            {/* {ingredientsTags}
-            <button
-              onClick={() => {
-                if (selectedIngredient !== '') {
-                  if (!displayedObject.ingredients.isIdIn(selectedIngredient)) {
-                    const newDisplayedObject = displayedObject.getCopy();
-                    const newItem =
-                      newDisplayedObject.allIngredients.getItem(
-                        selectedIngredient
-                      );
-                    if (newItem) {
-                      newDisplayedObject.ingredients.addItem(newItem);
-                    } else {
-                      console.error(
-                        'Ingredient does not exist in all ingredient list'
-                      );
-                    }
-                    setDisplayedObject(newDisplayedObject);
-                  }
-                }
-              }}
-            >
-              Add
-            </button> */}
           </div>
-
           <br />
         </div>
       </Modal.Body>

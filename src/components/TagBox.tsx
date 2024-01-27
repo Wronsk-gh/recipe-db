@@ -1,11 +1,11 @@
-import { Tag } from '../db-types';
+import { TagBadge } from '../db-types';
 
-export function TagBox({
+export function TagBadgeBox({
   tag,
   onClose,
 }: {
-  tag: Tag;
-  onClose: (tag: Tag) => void;
+  tag: TagBadge;
+  onClose: (tag: TagBadge) => void;
 }) {
   return (
     <div>

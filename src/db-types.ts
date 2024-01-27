@@ -4,6 +4,14 @@ export type IdsDict = {
 
 export type IdsList = string[];
 
+export type TagDb = {
+  name: string;
+};
+
+export type TagsDb = {
+  [tagId: string]: TagDb;
+};
+
 export type MonthsDb = {
   [monthId: string]: {
     name: string;
@@ -49,7 +57,12 @@ export type RecipesThumbnails = {
   [recipeId: string]: string;
 };
 
-export type Tag = ObjectWithName & ObjectWithId;
+export type TagBadge = ObjectWithName & ObjectWithId;
+
+export type Tag = {
+  id: string;
+  name: string;
+};
 
 export type Month = {
   id: string;

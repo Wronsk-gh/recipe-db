@@ -5,7 +5,16 @@ import {
   IdsList,
   IdsDict,
 } from '../db-types';
-import { Recipe, Ingredient, Month, IngredientDb, RecipeDb } from '../db-types';
+import {
+  Recipe,
+  Ingredient,
+  Month,
+  IngredientDb,
+  RecipeDb,
+  TagsDb,
+  TagDb,
+  Tag,
+} from '../db-types';
 
 export function getRecipe(
   recipeId: string,
@@ -36,6 +45,13 @@ export function getMonth(monthId: string, monthsDb: MonthsDb) {
     id: monthId,
     name: monthsDb[monthId]?.name,
   } as Month;
+}
+
+export function getTag(tagId: string, tagsDb: TagsDb) {
+  return {
+    id: tagId,
+    name: tagsDb[tagId]?.name,
+  } as Tag;
 }
 
 export function getRecipeIngredients(
@@ -74,6 +90,13 @@ export function getRecipeMonths(
     }
   }
   return recipeMonths;
+}
+
+export function getTagDbRepr(tag: Tag): TagDb {
+  const tagDb: TagDb = {
+    name: tag.name,
+  };
+  return tagDb;
 }
 
 export function getIngredientDbRepr(ingredient: Ingredient): IngredientDb {

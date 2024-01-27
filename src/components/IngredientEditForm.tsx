@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import _ from 'lodash';
 import { TagBox } from './TagBox';
-import { MonthsDb, Ingredient, Tag } from '../db-types';
+import { MonthsDb, Ingredient, TagBadge } from '../db-types';
 
 export function IngredientEditForm({
   months,
@@ -27,7 +27,7 @@ export function IngredientEditForm({
       return (
         <TagBox
           tag={{ id: monthId, name: months[monthId].name }}
-          onClose={(tag: Tag) => {
+          onClose={(tag: TagBadge) => {
             const newMonths = [...displayedObject.months].splice(
               displayedObject.months.indexOf(tag.id)
             );

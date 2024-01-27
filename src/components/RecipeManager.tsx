@@ -37,6 +37,9 @@ export function RecipeManager() {
             <Nav.Link as={Link} to="ingredients">
               Ingredients
             </Nav.Link>
+            <Nav.Link as={Link} to="tags">
+              Tags
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
