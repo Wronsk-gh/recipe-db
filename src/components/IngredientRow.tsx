@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { MonthBarOld } from './MonthBarOld';
 import { MonthBar } from './MonthBar';
 import { Ingredient } from '../db-types';
 import { useGetMonthsDbQuery } from '../hooks/useGetMonthsDbQuery';

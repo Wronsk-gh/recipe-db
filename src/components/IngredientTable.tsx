@@ -1,13 +1,10 @@
 import '../App.css';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IngredientRow } from './IngredientRow';
-import { useState, useContext } from 'react';
-import { MonthsDb, IngredientsDb, Ingredient, Month } from '../db-types';
+import { useContext } from 'react';
+import { Ingredient } from '../db-types';
 import { AddIngredientButton } from './AddIngredientButton';
 import { updateIngredientDisplayUserDb } from '../rtdb';
-import { ObjectEditor } from './ObjectEditor';
-import { PopUp } from './PopUp';
-import { IngredientEditForm } from './IngredientEditForm';
 import { RtdbContext } from './RtdbContext';
 import { useGetMonthsDbQuery } from '../hooks/useGetMonthsDbQuery';
 import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
