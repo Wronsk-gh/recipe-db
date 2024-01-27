@@ -10,11 +10,13 @@ import Card from 'react-bootstrap/Card';
 import { MonthBar } from './MonthBar';
 import { useGetRecipe } from '../hooks/useGetRecipe';
 import { useGetIngredientsDbQuery } from '../hooks/useGetIngredientsDbQuery';
+import { useGetTagsDbQuery } from '../hooks/useGetTagsDbQuery';
 import { useGetRecipeThumbnail } from '../hooks/useGetRecipeThumbnail';
 
 export function RecipeRow({ recipeId }: { recipeId: string }) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const { data: ingredientsDb } = useGetIngredientsDbQuery();
+  const { data: tagsDb } = useGetTagsDbQuery();
   const recipe = useGetRecipe(recipeId);
   const thumbnail = useGetRecipeThumbnail(recipe);
 
@@ -23,6 +25,15 @@ export function RecipeRow({ recipeId }: { recipeId: string }) {
     return (
       <Badge pill bg="primary" key={ingredientId}>
         {ingredientsDb[ingredientId]?.name}
+      </Badge>
+    );
+  });
+
+  // Create a badge for each tag of the recipe
+  const recipeTags = recipe.tags.map((tagId) => {
+    return (
+      <Badge pill bg="secondary" key={tagId}>
+        {tagsDb[tagId]?.name}
       </Badge>
     );
   });
@@ -54,6 +65,7 @@ export function RecipeRow({ recipeId }: { recipeId: string }) {
             <MonthBar selectedMonths={recipe.months} />
           </div>
           {recipeIngredients}
+          {recipeTags}
           <Card.Text></Card.Text>
           {editButton}
         </Card.Body>

@@ -28,6 +28,7 @@ export function getRecipe(
     google_id: recipesDb[recipeId]?.google_id,
     ingredients: getRecipeIngredients(recipeId, recipesDb),
     months: getRecipeMonths(recipeId, recipesDb, ingredientsDb, monthsDb),
+    tags: getRecipeTags(recipeId, recipesDb),
   };
   return recipe;
 }
@@ -59,6 +60,10 @@ export function getRecipeIngredients(
   recipesDb: RecipesDb
 ): IdsList {
   return Object.keys(recipesDb[recipeId]?.ingredients || {});
+}
+
+export function getRecipeTags(recipeId: string, recipesDb: RecipesDb): IdsList {
+  return Object.keys(recipesDb[recipeId]?.tags || {});
 }
 
 export function getIngredientMonths(
@@ -110,6 +115,7 @@ export function getIngredientDbRepr(ingredient: Ingredient): IngredientDb {
 export function getRecipeDbRepr(recipe: Recipe): RecipeDb {
   const recipeDb: RecipeDb = {
     ingredients: convertIdsListToDict(recipe.ingredients),
+    tags: convertIdsListToDict(recipe.tags),
     name: recipe.name,
     google_id: recipe.google_id,
   };

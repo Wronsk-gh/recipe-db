@@ -1,6 +1,6 @@
 import { TagBadge } from '../db-types';
 
-export function TagBadgeBox({
+export function TagBox({
   tag,
   onClose,
 }: {

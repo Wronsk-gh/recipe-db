@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Tag } from '../db-types';
 import Card from 'react-bootstrap/Card';
+import { TagEditModal } from './TagEditModal';
 
 export function TagRow({
   tag, // onEdit,
@@ -34,14 +35,11 @@ export function TagRow({
           <Card.Text></Card.Text>
         </Card.Body>
       </Card>
-      {/* {showModal &&
+      {showModal &&
         createPortal(
-          <IngredientEditModal
-            ingredientId={ingredient.id}
-            onClose={() => setShowModal(false)}
-          />,
+          <TagEditModal tagId={tag.id} onClose={() => setShowModal(false)} />,
           document.body
-        )} */}
+        )}
     </>
   );
 }

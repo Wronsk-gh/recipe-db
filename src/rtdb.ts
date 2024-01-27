@@ -18,6 +18,7 @@ import {
   RecipeDb,
   Recipe,
   IdsDict,
+  Tag,
 } from './db-types';
 
 import {

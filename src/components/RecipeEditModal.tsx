@@ -4,7 +4,7 @@ import { RtdbContext } from './RtdbContext';
 import { updateRecipeDisplayUserDb } from '../rtdb';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { TagBadgeBox } from './TagBadgeBox';
+import { TagBox } from './TagBox';
 import { TagBadge } from '../db-types';
 import { ComboSelect } from './ComboSelect';
 import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
@@ -83,7 +83,7 @@ export function RecipeEditModal({
   //   .asArray()
   //   .map((ingredient) => {
   //     return (
-  //       <TagBadgeBox
+  //       <TagBox
   //         tag={{ id: ingredient.id, name: ingredient.name }}
   //         onClose={(tag: TagBadge) => {
   //           const newDisplayedObject = displayedObject.getCopy();

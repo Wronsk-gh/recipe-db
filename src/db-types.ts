@@ -33,6 +33,9 @@ export type RecipeDb = {
   ingredients?: {
     [ingredientId: string]: boolean;
   };
+  tags?: {
+    [tagId: string]: boolean;
+  };
   name: string;
   google_id: string;
 };
@@ -89,6 +92,7 @@ export type Recipe = {
   google_id: string;
   ingredients: IdsList;
   months: IdsList;
+  tags: IdsList;
 };
 
 // export function getIngredientMonths(
