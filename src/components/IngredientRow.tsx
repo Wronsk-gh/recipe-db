@@ -2,50 +2,25 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { MonthBar } from './MonthBar';
 import { Ingredient } from '../db-types';
-import { useGetMonthsDbQuery } from '../hooks/useGetMonthsDbQuery';
+import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import { IngredientEditModal } from './IngredientEditModal';
+import { useGetTagsDbQuery } from '../hooks/useGetTagsDbQuery';
+import { useGetIngredient } from '../hooks/useGetIngredient';
 
-export function IngredientRow({
-  ingredient, // onEdit,
-}: {
-  ingredient: Ingredient;
-  // onEdit: (ingredientToEdit: Ingredient) => void;
-}) {
+export function IngredientRow({ ingredientId }: { ingredientId: string }) {
   const [showModal, setShowModal] = useState<boolean>(false);
-  const { data: months } = useGetMonthsDbQuery();
+  const { data: tagsDb } = useGetTagsDbQuery();
+  const ingredient = useGetIngredient(ingredientId);
 
-  // const cells = [];
-  // const nameCell = <td key="name">{ingredient.name}</td>;
-  // const monthsCell = (
-  //   <td key="months">
-  //     <MonthBarOld
-  //       months={months}
-  //       recipeMonthsId={ingredient.months.reduce<{
-  //         [monthId: string]: boolean;
-  //       }>((monthsIds, monthId) => {
-  //         monthsIds[monthId] = true;
-  //         return monthsIds;
-  //       }, {})}
-  //     />
-  //   </td>
-  // );
-
-  // cells.push(nameCell);
-  // cells.push(monthsCell);
-  // cells.push(
-  //   <td key="editButton">
-  //     <button
-  //       onClick={() => {
-  //         onEdit(ingredient);
-  //       }}
-  //     >
-  //       Edit
-  //     </button>
-  //   </td>
-  // );
-
-  // return <tr>{cells}</tr>;
+  // Create a badge for each tag of the ingredient
+  const ingredientTags = ingredient.tags.map((tagId) => {
+    return (
+      <Badge pill bg="secondary" key={tagId}>
+        {tagsDb[tagId]?.name}
+      </Badge>
+    );
+  });
 
   const editButton = (
     <button
@@ -68,6 +43,7 @@ export function IngredientRow({
             <div className="col-md-12">
               <MonthBar selectedMonths={ingredient.months} />
             </div>
+            {ingredientTags}
             <div className="col-md-4">{editButton}</div>
           </div>
           {/* <div className="mb-2 text-center">
@@ -77,16 +53,6 @@ export function IngredientRow({
           <Card.Text></Card.Text>
           {/* {editButton} */}
         </Card.Body>
-        {/* <div className="text-center">
-          <img
-            // src={recipe.thumbnailLink}
-            // src={''}
-            src={thumbnail}
-            className="card-img-bottom"
-            alt="Loading..."
-            style={{ objectFit: 'cover', width: '200px' }}
-          />
-        </div> */}
       </Card>
       {showModal &&
         createPortal(

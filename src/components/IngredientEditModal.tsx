@@ -12,6 +12,8 @@ import { useGetIngredient } from '../hooks/useGetIngredient';
 import { Ingredient } from '../db-types';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
+import { useGetAllTags } from '../hooks/useGetAllTags';
+import { useGetTagsDbQuery } from '../hooks/useGetTagsDbQuery';
 
 export function IngredientEditModal({
   ingredientId,
@@ -28,12 +30,14 @@ export function IngredientEditModal({
     cloneDeep(ingredient)
   );
   const { data: monthsDb } = useGetMonthsDbQuery();
+  const { data: tagsDb } = useGetTagsDbQuery();
   const allMonths = useGetAllMonths();
   // const [selectedIngredient, setSelectedIngredient] = useState<string>('');
   // Get QueryClient from the context
   const queryClient = useQueryClient();
   // Get the Rtdb from the context
   const rtdbCred = useContext(RtdbContext);
+  const allTags = useGetAllTags();
 
   const ingredientMutation = useMutation({
     mutationFn: async (newIngredient: Ingredient) => {
@@ -63,6 +67,16 @@ export function IngredientEditModal({
   //   return 0;
   // });
   const monthsArray = allMonths;
+
+  const tagsArray = allTags.sort((a, b) => {
+    if (a.name > b.name) {
+      return 1;
+    }
+    if (b.name > a.name) {
+      return -1;
+    }
+    return 0;
+  });
 
   return (
     <Modal show={true} onHide={onClose}>
@@ -96,6 +110,26 @@ export function IngredientEditModal({
                 // column.setFilterValue(newSelectedItems.map((item) => item.id));
                 const newDisplayedObject = cloneDeep(displayedObject);
                 newDisplayedObject.months = newSelectedItems.map(
+                  (selItem) => selItem.id
+                );
+                setDisplayedObject(newDisplayedObject);
+              }}
+            />
+
+            <ComboSelect
+              itemsArray={tagsArray}
+              initialItems={ingredient.tags.map((id) => {
+                return {
+                  id: id,
+                  name: tagsDb[id]?.name,
+                };
+              })}
+              label={'Tags'}
+              onNewSelectedItems={(newSelectedItems) => {
+                // TODO
+                // column.setFilterValue(newSelectedItems.map((item) => item.id));
+                const newDisplayedObject = cloneDeep(displayedObject);
+                newDisplayedObject.tags = newSelectedItems.map(
                   (selItem) => selItem.id
                 );
                 setDisplayedObject(newDisplayedObject);

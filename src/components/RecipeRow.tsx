@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
-import Stack from 'react-bootstrap/Stack';
-import Container from 'react-bootstrap/Container';
 import { RecipeEditModal } from './RecipeEditModal';
 import Card from 'react-bootstrap/Card';
 import { MonthBar } from './MonthBar';
