@@ -5,7 +5,6 @@ import {
   RecipesDb,
   RecipesThumbnails,
 } from '../../db-types';
-import { SearchBar } from '../SearchBar';
 import { RecipeTable } from './RecipeTable';
 import { useOutletContext } from 'react-router-dom';
 import { useGetAllRecipes } from '../../hooks/recipe/useGetAllRecipes';
@@ -44,7 +43,7 @@ export function FilterableRecipeTable({} // months,
 
   return (
     <div>
-      <SearchBar filterText={filterText} onFilterTextChange={setFilterText} />
+      {/* <SearchBar filterText={filterText} onFilterTextChange={setFilterText} /> */}
       <form>
         <label htmlFor="month">Choose a month:</label>
         <select

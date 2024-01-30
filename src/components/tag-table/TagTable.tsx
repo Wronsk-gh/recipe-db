@@ -1,4 +1,4 @@
-import '../App.css';
+// import '../App.css';
 import { TagRow } from './TagRow';
 import { Tag } from '../../db-types';
 import { useGetAllTags } from '../../hooks/tag/useGetAllTags';

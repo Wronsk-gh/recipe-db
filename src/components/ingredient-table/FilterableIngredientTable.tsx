@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { MonthsDb, IngredientsDb } from '../../db-types';
-import { SearchBar } from '../SearchBar';
 import { IngredientTable } from './IngredientTable';
 import { useOutletContext } from 'react-router-dom';
 import { useGetAllRecipes } from '../../hooks/recipe/useGetAllRecipes';

@@ -1,4 +1,4 @@
-import '../App.css';
+// import '../App.css';
 import { Recipe } from '../../db-types';
 import { RecipeRow } from './RecipeRow';
 import { useGetAllRecipes } from '../../hooks/recipe/useGetAllRecipes';

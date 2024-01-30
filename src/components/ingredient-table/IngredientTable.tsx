@@ -1,4 +1,4 @@
-import '../App.css';
+// import '../App.css';
 import { IngredientRow } from './IngredientRow';
 import { Ingredient } from '../../db-types';
 import { AddIngredientButton } from './AddIngredientButton';
