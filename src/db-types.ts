@@ -39,6 +39,7 @@ export type RecipeDb = {
   tags?: {
     [tagId: string]: boolean;
   };
+  isFavourite?: boolean;
   name: string;
   google_id: string;
 };
@@ -86,6 +87,7 @@ export type Recipe = {
   id: string;
   name: string;
   google_id: string;
+  isFavourite: boolean;
   ingredients: IdsList;
   months: IdsList;
   tags: IdsList;

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
 import { RecipeEditModal } from './RecipeEditModal';
 import Card from 'react-bootstrap/Card';
@@ -8,13 +9,16 @@ import { useGetRecipe } from '../hooks/useGetRecipe';
 import { useGetIngredientsDbQuery } from '../hooks/useGetIngredientsDbQuery';
 import { useGetTagsDbQuery } from '../hooks/useGetTagsDbQuery';
 import { useGetRecipeThumbnail } from '../hooks/useGetRecipeThumbnail';
+import { useRecipeMutation } from '../hooks/useRecipeMutation';
 
 export function RecipeRow({ recipeId }: { recipeId: string }) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const { data: ingredientsDb } = useGetIngredientsDbQuery();
   const { data: tagsDb } = useGetTagsDbQuery();
   const recipe = useGetRecipe(recipeId);
+  const editableRecipe = useGetRecipe(recipeId);
   const thumbnail = useGetRecipeThumbnail(recipe);
+  const recipeMutation = useRecipeMutation();
 
   // Create a badge for each ingredient of the recipe
   const recipeIngredients = recipe.ingredients.map((ingredientId) => {
@@ -57,6 +61,19 @@ export function RecipeRow({ recipeId }: { recipeId: string }) {
               {recipe.name}
             </a>
           </h5>
+          <Button
+            variant={recipe.isFavourite ? 'primary' : 'secondary'}
+            onClick={() => {
+              editableRecipe.isFavourite = !recipe.isFavourite;
+              if (recipeMutation.isIdle) {
+                recipeMutation.mutate(editableRecipe);
+              } else {
+                alert('Object is already being modified !!!');
+              }
+            }}
+          >
+            Fav
+          </Button>
           <div className="mb-2 text-center">
             <MonthBar selectedMonths={recipe.months} />
           </div>

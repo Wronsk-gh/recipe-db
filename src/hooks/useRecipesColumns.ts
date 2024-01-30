@@ -3,9 +3,11 @@ import { useGetAllMonths } from '../hooks/useGetAllMonths';
 import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
 import { ColumnDef } from '@tanstack/react-table';
 import { Recipe } from '../db-types';
+import { useGetAllTags } from './useGetAllTags';
 
 export function useRecipesColumns() {
   const months = useGetAllMonths();
+  const tags = useGetAllTags();
   const ingredients = useGetAllIngredients();
 
   const columns = useMemo<ColumnDef<Recipe>[]>(
@@ -53,6 +55,32 @@ export function useRecipesColumns() {
         meta: {
           headerKind: 'tickable',
           tickOptions: months,
+        },
+      },
+      {
+        accessorFn: (recipe) => {
+          return recipe.tags;
+        },
+        id: 'recipeTags',
+        cell: (info) => info.getValue(),
+        header: () => 'TagsDb',
+        filterFn: 'equals',
+        meta: {
+          headerKind: 'tickable',
+          tickOptions: tags,
+        },
+      },
+      {
+        accessorFn: (recipe) => {
+          return recipe.isFavourite;
+        },
+        id: 'recipeIsFavourite',
+        cell: (info) => info.getValue(),
+        header: () => 'IsFavourite',
+        filterFn: 'selectBool',
+        meta: {
+          headerKind: 'boolean',
+          tickOptions: [],
         },
       },
     ],

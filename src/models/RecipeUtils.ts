@@ -26,6 +26,7 @@ export function getRecipe(
     id: recipeId,
     name: recipesDb[recipeId]?.name,
     google_id: recipesDb[recipeId]?.google_id,
+    isFavourite: recipesDb[recipeId]?.isFavourite || false,
     ingredients: getRecipeIngredients(recipeId, recipesDb),
     months: getRecipeMonths(recipeId, recipesDb, ingredientsDb, monthsDb),
     tags: getRecipeTags(recipeId, recipesDb, ingredientsDb),
@@ -141,6 +142,7 @@ export function getRecipeDbRepr(recipe: Recipe): RecipeDb {
     tags: convertIdsListToDict(recipe.tags),
     name: recipe.name,
     google_id: recipe.google_id,
+    isFavourite: recipe.isFavourite,
   };
   return recipeDb;
 }

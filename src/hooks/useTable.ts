@@ -16,9 +16,10 @@ declare module '@tanstack/table-core' {
   interface FilterFns {
     fuzzy: FilterFn<unknown>;
     arrIncludesAllId: FilterFn<unknown>;
+    selectBool: FilterFn<unknown>;
   }
   interface ColumnMeta<TData extends RowData, TValue> {
-    headerKind: 'searchable' | 'tickable';
+    headerKind: 'searchable' | 'tickable' | 'boolean';
     tickOptions: { id: string; name: string }[];
   }
 }
@@ -51,6 +52,23 @@ const arrIncludesAllIdFilter: FilterFn<any[]> = (
   });
 };
 
+const selectBoolFilter: FilterFn<any[]> = (
+  row,
+  columnId,
+  filterValue,
+  addMeta
+) => {
+  const itemValue: any[] = row.getValue(columnId);
+
+  // Return if the item should be filtered in/out
+  // If filter value is true, return only if true, otherwise return everything
+  if (filterValue === true) {
+    return Boolean(itemValue);
+  } else {
+    return true;
+  }
+};
+
 export function useTable<T>(items: T[], columns: ColumnDef<T>[]) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -65,6 +83,7 @@ export function useTable<T>(items: T[], columns: ColumnDef<T>[]) {
     filterFns: {
       fuzzy: fuzzyFilter,
       arrIncludesAllId: arrIncludesAllIdFilter,
+      selectBool: selectBoolFilter,
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),

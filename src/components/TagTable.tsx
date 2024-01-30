@@ -1,35 +1,43 @@
 import '../App.css';
 import { TagRow } from './TagRow';
+import { Tag } from '../db-types';
 import { useGetAllTags } from '../hooks/useGetAllTags';
 import { AddTagButton } from './AddTagButton';
 import { useGetIsRecipesLoading } from '../hooks/useGetIsRecipesLoading';
+import { useTagsColumns } from '../hooks/useTagsColumns';
+import { useTable } from '../hooks/useTable';
+import { TableFilters } from './TableFilters';
 
 export function TagTable() {
+  const tag = useGetAllTags();
+
   const isLoading = useGetIsRecipesLoading();
+  // Display loading animation in case the data are not yet fetched
   if (isLoading) {
     return <p>Loading...</p>;
   }
-  return <TagTableLoaded />;
+
+  return <TagTableLoaded tag={tag} />;
 }
 
-function TagTableLoaded() {
-  const tags = useGetAllTags();
-  const rows = [];
+function TagTableLoaded({ tag }: { tag: Tag[] }) {
+  const columns = useTagsColumns();
+  const table = useTable(tag, columns);
 
-  for (const tag of tags) {
-    rows.push(
-      <TagRow
-        key={tag.id}
-        tag={tag}
-        // onEdit={setEditedObject}
-      />
-    );
-  }
+  // Get all the rows to be displayed
+  const rows = table
+    .getRowModel()
+    .rows.map((tableRow) => (
+      <TagRow key={tableRow.original.id} tagId={tableRow.original.id} />
+    ));
 
   return (
-    <div>
-      {rows}
-      <AddTagButton />
-    </div>
+    <>
+      <TableFilters table={table} />
+      <div>
+        {rows}
+        <AddTagButton />
+      </div>
+    </>
   );
 }

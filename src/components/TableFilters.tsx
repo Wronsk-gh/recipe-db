@@ -42,6 +42,18 @@ export function TableFilters<T>({ table }: { table: Table<T> }) {
               <TickFilter column={header.column} table={table} />
             </div>
           );
+        } else if (header.column.columnDef.meta?.headerKind === 'boolean') {
+          filters.push(
+            <div key={header.column.columnDef.id}>
+              {header.column.id}
+              <input
+                type="checkbox"
+                onChange={(e) => {
+                  header.column.setFilterValue(e.target.checked);
+                }}
+              />
+            </div>
+          );
         }
       }
     }

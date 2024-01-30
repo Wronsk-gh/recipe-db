@@ -2,9 +2,11 @@ import { useMemo } from 'react';
 import { useGetAllMonths } from '../hooks/useGetAllMonths';
 import { ColumnDef } from '@tanstack/react-table';
 import { Ingredient } from '../db-types';
+import { useGetAllTags } from './useGetAllTags';
 
 export function useIngredientsColumns() {
   const months = useGetAllMonths();
+  const tags = useGetAllTags();
 
   const columns = useMemo<ColumnDef<Ingredient>[]>(
     () => [
@@ -30,6 +32,19 @@ export function useIngredientsColumns() {
         meta: {
           headerKind: 'tickable',
           tickOptions: months,
+        },
+      },
+      {
+        accessorFn: (recipe) => {
+          return recipe.tags;
+        },
+        id: 'recipeTags',
+        cell: (info) => info.getValue(),
+        header: () => 'TagsDb',
+        filterFn: 'arrIncludesAllId',
+        meta: {
+          headerKind: 'tickable',
+          tickOptions: tags,
         },
       },
     ],

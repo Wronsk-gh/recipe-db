@@ -3,18 +3,19 @@ Created with CodeSandbox
 
 Backlog :
 ---------
-- [ ] Implement "edit modals" with month/ingredient/tag selection using multi-select/combo-box
-- [ ] implement all modals using bootstrap
+- [X] implement custom tags for recipes + filter
+- [X] Implement "edit modals" with month/ingredient/tag selection using multi-select/combo-box
+- [X] implement all modals using bootstrap
 - [ ] Implement better UI for filters
-    * selection from combobox must be "on-top" of other UI instead of moving everything down
+    * [X] Selection from combobox must be "on-top" of other UI instead of moving everything down
 - [ ] Manage tags for ingredients as well, that recipes will also all inherit as "contain ..." tags
-    * Includes adding a filter to the recipe table for those tags
+    * [ ] Includes adding a filter to the recipe table for those tags
 - [ ] Implement a favourite button + filter
 - [ ] Implement a setting to give permission to another user to view own content and for the other user to configure another user content to visualize
-- [ ] refactor ingredients table using bootstrap cards, tanstack react table and filters
-- [ ] implement custom tags for recipes + filter
+- [X] refactor ingredients table using bootstrap cards, tanstack react table and filters
 - [ ] Delete ingredients button
-- [ ] Implement a Tag management page
+- [ ] Implement bette UI fo Tags table and ingredients table
+- [X] Implement a Tag management page
 - [X] Implement Filter multi select with also a text bar showing selected choices and auto completion (useMultipleSelection instead of useSelect ?)
     * https://www.downshift-js.com/use-multiple-selection#usage-with-combobox
 - [X] Implement powerfull filtering and sorting capabilities based on tags, names, etc

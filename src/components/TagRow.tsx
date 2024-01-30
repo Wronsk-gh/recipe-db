@@ -3,14 +3,11 @@ import { createPortal } from 'react-dom';
 import { Tag } from '../db-types';
 import Card from 'react-bootstrap/Card';
 import { TagEditModal } from './TagEditModal';
+import { useGetTag } from '../hooks/useGetTag';
 
-export function TagRow({
-  tag, // onEdit,
-}: {
-  tag: Tag;
-  // onEdit: (ingredientToEdit: Ingredient) => void;
-}) {
+export function TagRow({ tagId }: { tagId: string }) {
   const [showModal, setShowModal] = useState<boolean>(false);
+  const tag = useGetTag(tagId);
 
   const editButton = (
     <button
