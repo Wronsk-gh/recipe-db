@@ -9,12 +9,12 @@ Backlog :
 - [ ] Implement better UI for filters
     * [X] Selection from combobox must be "on-top" of other UI instead of moving everything down
 - [ ] Manage tags for ingredients as well, that recipes will also all inherit as "contain ..." tags
-    * [ ] Includes adding a filter to the recipe table for those tags
-- [ ] Implement a favourite button + filter
+    * [X] Includes adding a filter to the recipe table for those tags
+- [X] Implement a favourite button + filter
 - [ ] Implement a setting to give permission to another user to view own content and for the other user to configure another user content to visualize
 - [X] refactor ingredients table using bootstrap cards, tanstack react table and filters
 - [ ] Delete ingredients button
-- [ ] Implement bette UI fo Tags table and ingredients table
+- [ ] Implement better UI fo Tags table and ingredients table
 - [X] Implement a Tag management page
 - [X] Implement Filter multi select with also a text bar showing selected choices and auto completion (useMultipleSelection instead of useSelect ?)
     * https://www.downshift-js.com/use-multiple-selection#usage-with-combobox
@@ -36,7 +36,6 @@ Backlog :
 - [X] sort ingredients alphabetically
     * Will be covered by the ingredients table refactoring
 - [X] Redirect to the recipes page by default
-- [ ] use type : lol = 'pwet' | 'fart'
 - [ ] Implement correct error management in rtdb requests and auth
 - [ ] auto login without pressing Auth button
 - [ ] Embbed full list of ingredients in the database with servings, allow selecting some recipes and compute shopping list based on it
