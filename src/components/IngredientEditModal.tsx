@@ -1,10 +1,6 @@
-import { useState, useContext, useMemo } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RtdbContext } from './RtdbContext';
-import { updateIngredientDisplayUserDb } from '../rtdb';
+import { useState, useMemo } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { Tag } from '../db-types';
 import { ComboSelect } from './ComboSelect';
 import { useGetAllMonths } from '../hooks/useGetAllMonths';
 import { useGetMonthsDbQuery } from '../hooks/useGetMonthsDbQuery';
@@ -14,6 +10,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
 import { useGetAllTags } from '../hooks/useGetAllTags';
 import { useGetTagsDbQuery } from '../hooks/useGetTagsDbQuery';
+import { useIngredientMutation } from '../hooks/useIngredientMutation';
 
 export function IngredientEditModal({
   ingredientId,
@@ -32,40 +29,9 @@ export function IngredientEditModal({
   const { data: monthsDb } = useGetMonthsDbQuery();
   const { data: tagsDb } = useGetTagsDbQuery();
   const allMonths = useGetAllMonths();
-  // const [selectedIngredient, setSelectedIngredient] = useState<string>('');
-  // Get QueryClient from the context
-  const queryClient = useQueryClient();
-  // Get the Rtdb from the context
-  const rtdbCred = useContext(RtdbContext);
   const allTags = useGetAllTags();
+  const ingredientMutation = useIngredientMutation();
 
-  const ingredientMutation = useMutation({
-    mutationFn: async (newIngredient: Ingredient) => {
-      await updateIngredientDisplayUserDb(rtdbCred, newIngredient);
-    },
-    onError: () => {
-      window.alert('Could not update...');
-    },
-    onSuccess: onIngredientMutationSuccess,
-    onSettled: () => {
-      ingredientMutation.reset();
-    },
-  });
-
-  function onIngredientMutationSuccess() {
-    // Force an update of the ingredients
-    queryClient.invalidateQueries({ queryKey: ['ingredients'] });
-  }
-
-  // const monthsArray = allMonths.sort((a, b) => {
-  //   if (a.name > b.name) {
-  //     return 1;
-  //   }
-  //   if (b.name > a.name) {
-  //     return -1;
-  //   }
-  //   return 0;
-  // });
   const monthsArray = allMonths;
 
   const tagsArray = allTags.sort((a, b) => {

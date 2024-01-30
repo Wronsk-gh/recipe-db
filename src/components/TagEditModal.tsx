@@ -1,16 +1,11 @@
-import { useState, useContext, useMemo } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RtdbContext } from './RtdbContext';
-import { updateTagDisplayUserDb } from '../rtdb';
+import { useState, useMemo } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { Tag } from '../db-types';
-import { ComboSelect } from './ComboSelect';
-import { useGetAllMonths } from '../hooks/useGetAllMonths';
-import { useGetMonthsDbQuery } from '../hooks/useGetMonthsDbQuery';
 import { useGetTag } from '../hooks/useGetTag';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
+import { useTagMutation } from '../hooks/useTagMutation';
 
 export function TagEditModal({
   tagId,
@@ -22,28 +17,7 @@ export function TagEditModal({
   const tag = useGetTag(tagId);
   const [initialObject, setInitialObject] = useState<Tag>(cloneDeep(tag));
   const [displayedObject, setDisplayedObject] = useState<Tag>(cloneDeep(tag));
-  // Get QueryClient from the context
-  const queryClient = useQueryClient();
-  // Get the Rtdb from the context
-  const rtdbCred = useContext(RtdbContext);
-
-  const tagMutation = useMutation({
-    mutationFn: async (newTag: Tag) => {
-      await updateTagDisplayUserDb(rtdbCred, newTag);
-    },
-    onError: () => {
-      window.alert('Could not update...');
-    },
-    onSuccess: onTagMutationSuccess,
-    onSettled: () => {
-      tagMutation.reset();
-    },
-  });
-
-  function onTagMutationSuccess() {
-    // Force an update of the tags
-    queryClient.invalidateQueries({ queryKey: ['tags'] });
-  }
+  const tagMutation = useTagMutation();
 
   return (
     <Modal show={true} onHide={onClose}>

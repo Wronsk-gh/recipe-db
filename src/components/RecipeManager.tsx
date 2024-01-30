@@ -1,4 +1,4 @@
-import { RtdbCred, fetchMonths, fetchIngredients, fetchRecipes } from '../rtdb';
+import { RtdbCred } from '../rtdb';
 import { useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { DriveSyncButton } from './DriveSyncButton';
@@ -9,13 +9,6 @@ import { Auth } from './Auth';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-
-// export interface RecipeManagerContext {
-//   months: MonthsDb | undefined;
-//   ingredients: IngredientsDb | undefined;
-//   recipes: RecipesDb | undefined;
-//   recipesThumbnails: RecipesThumbnails;
-// }
 
 export function RecipeManager() {
   const [rtdbCred, setRtdbCred] = useState<RtdbCred>({
@@ -51,16 +44,7 @@ export function RecipeManager() {
         <br />
         <br />
         <br />
-        <Outlet
-        // context={
-        //   {
-        //     months: monthsData,
-        //     ingredients: ingredientsData,
-        //     recipes: recipesData,
-        //     recipesThumbnails: thumbnails,
-        //   } satisfies RecipeManagerContext
-        // }
-        />
+        <Outlet />
       </RtdbContext.Provider>
     </>
   );
