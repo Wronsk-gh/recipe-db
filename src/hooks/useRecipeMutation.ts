@@ -11,9 +11,12 @@ export function useRecipeMutation() {
   // Get the Rtdb from the context
   const rtdbCred = useContext(RtdbContext);
 
-  const recipeMutation = useMutation<RecipesDb, any, Recipe, RecipesDb>({
-    // When mutate is called:
+  const recipeMutation = useMutation({
     mutationFn: async (newRecipe: Recipe) => {
+      await updateRecipeDisplayUserDb(rtdbCred, newRecipe);
+    },
+    // When mutate is called:
+    onMutate: async (newRecipe: Recipe) => {
       // Cancel any outgoing refetches
       // (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({ queryKey: ['recipes'] });
@@ -27,12 +30,10 @@ export function useRecipeMutation() {
         return { ...oldDb, [newRecipe.id]: newRecipeDb };
       });
 
-      await updateRecipeDisplayUserDb(rtdbCred, newRecipe);
-
       return { previousRecipesDb };
     },
     onError: (err, newRecipe, context) => {
-      queryClient.setQueryData(['recipes'], context.previousRecipesDb);
+      queryClient.setQueryData(['recipes'], context?.previousRecipesDb);
       window.alert('Could not update...');
     },
     // onSuccess: onRecipeMutationSuccess,
@@ -42,11 +43,6 @@ export function useRecipeMutation() {
       queryClient.invalidateQueries({ queryKey: ['recipes'] });
     },
   });
-
-  // function onRecipeMutationSuccess() {
-  //   // Force an update of the recipes
-  //   queryClient.invalidateQueries({ queryKey: ['recipes'] });
-  // }
 
   return recipeMutation;
 }
