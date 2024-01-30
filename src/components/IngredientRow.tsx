@@ -5,8 +5,8 @@ import { Ingredient } from '../db-types';
 import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import { IngredientEditModal } from './IngredientEditModal';
-import { useGetTagsDbQuery } from '../hooks/useGetTagsDbQuery';
-import { useGetIngredient } from '../hooks/useGetIngredient';
+import { useGetTagsDbQuery } from '../hooks/tag/useGetTagsDbQuery';
+import { useGetIngredient } from '../hooks/ingredient/useGetIngredient';
 
 export function IngredientRow({ ingredientId }: { ingredientId: string }) {
   const [showModal, setShowModal] = useState<boolean>(false);

@@ -5,11 +5,11 @@ import Badge from 'react-bootstrap/Badge';
 import { RecipeEditModal } from './RecipeEditModal';
 import Card from 'react-bootstrap/Card';
 import { MonthBar } from './MonthBar';
-import { useGetRecipe } from '../hooks/useGetRecipe';
-import { useGetIngredientsDbQuery } from '../hooks/useGetIngredientsDbQuery';
-import { useGetTagsDbQuery } from '../hooks/useGetTagsDbQuery';
-import { useGetRecipeThumbnail } from '../hooks/useGetRecipeThumbnail';
-import { useRecipeMutation } from '../hooks/useRecipeMutation';
+import { useGetRecipe } from '../hooks/recipe/useGetRecipe';
+import { useGetIngredientsDbQuery } from '../hooks/ingredient/useGetIngredientsDbQuery';
+import { useGetTagsDbQuery } from '../hooks/tag/useGetTagsDbQuery';
+import { useGetRecipeThumbnail } from '../hooks/recipe/useGetRecipeThumbnail';
+import { useRecipeMutation } from '../hooks/recipe/useRecipeMutation';
 
 export function RecipeRow({ recipeId }: { recipeId: string }) {
   const [showModal, setShowModal] = useState<boolean>(false);

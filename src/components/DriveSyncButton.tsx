@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { RecipesDb } from '../db-types';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -11,41 +11,21 @@ import {
 } from '../rtdb';
 import { useContext } from 'react';
 import { RtdbContext } from './RtdbContext';
-import { useGetRecipesDbQuery } from '../hooks/useGetRecipesDbQuery';
-
-interface RecipeMutationData {
-  google_id: string;
-  name: string;
-}
+import { useGetRecipesDbQuery } from '../hooks/recipe/useGetRecipesDbQuery';
+import { useNewRecipesMutation } from '../hooks/recipe/useNewRecipesMutation';
 
 export function DriveSyncButton() {
-  const rtdbCred = useContext(RtdbContext);
   const { data: recipes } = useGetRecipesDbQuery();
   const [show, setShow] = useState<'nothing' | 'add' | 'remove'>('nothing');
   const [listToAdd, setListToAdd] = useState<{ [id: string]: string }>({});
   const [listToRemove, setListToRemove] = useState<{ [id: string]: string }>(
     {}
   );
+  // Get the Rtdb from the context
+  const rtdbCred = useContext(RtdbContext);
   // Get QueryClient from the context
   const queryClient = useQueryClient();
-  const newRecipesMutation = useMutation({
-    mutationFn: async (data: RecipeMutationData[]) => {
-      if (data.length > 0) {
-        await createRecipeDisplayUserDb(
-          rtdbCred,
-          data[0].google_id,
-          data[0].name
-        );
-      }
-    },
-    onError: () => {
-      window.alert('Could not create new recipes...');
-    },
-    onSuccess: () => {},
-    onSettled: () => {
-      newRecipesMutation.reset();
-    },
-  });
+  const newRecipesMutation = useNewRecipesMutation();
 
   async function onButtonClick() {
     if (recipes === undefined) {

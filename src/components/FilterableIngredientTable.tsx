@@ -3,9 +3,9 @@ import { MonthsDb, IngredientsDb } from '../db-types';
 import { SearchBar } from './SearchBar';
 import { IngredientTable } from './IngredientTable';
 import { useOutletContext } from 'react-router-dom';
-import { useGetAllRecipes } from '../hooks/useGetAllRecipes';
-import { useGetAllMonths } from '../hooks/useGetAllMonths';
-import { useGetIsRecipesLoading } from '../hooks/useGetIsRecipesLoading';
+import { useGetAllRecipes } from '../hooks/recipe/useGetAllRecipes';
+import { useGetAllMonths } from '../hooks/month/useGetAllMonths';
+import { useGetIsRecipesLoading } from '../hooks/useGetIsDbLoading';
 
 export function FilterableIngredientTable({} // months,
 // ingredients,

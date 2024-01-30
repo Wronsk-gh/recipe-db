@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RtdbContext } from '../components/RtdbContext';
-import { updateIngredientDisplayUserDb } from '../rtdb';
-import { Ingredient } from '../db-types';
+import { RtdbContext } from '../../components/RtdbContext';
+import { updateIngredientDisplayUserDb } from '../../rtdb';
+import { Ingredient } from '../../db-types';
 
 export function useIngredientMutation() {
   // Get QueryClient from the context

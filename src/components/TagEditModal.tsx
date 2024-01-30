@@ -2,10 +2,10 @@ import { useState, useMemo } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { Tag } from '../db-types';
-import { useGetTag } from '../hooks/useGetTag';
+import { useGetTag } from '../hooks/tag/useGetTag';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
-import { useTagMutation } from '../hooks/useTagMutation';
+import { useTagMutation } from '../hooks/tag/useTagMutation';
 
 export function TagEditModal({
   tagId,

@@ -2,15 +2,15 @@ import { useState, useMemo } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { ComboSelect } from './ComboSelect';
-import { useGetAllMonths } from '../hooks/useGetAllMonths';
-import { useGetMonthsDbQuery } from '../hooks/useGetMonthsDbQuery';
-import { useGetIngredient } from '../hooks/useGetIngredient';
+import { useGetAllMonths } from '../hooks/month/useGetAllMonths';
+import { useGetMonthsDbQuery } from '../hooks/month/useGetMonthsDbQuery';
+import { useGetIngredient } from '../hooks/ingredient/useGetIngredient';
 import { Ingredient } from '../db-types';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
-import { useGetAllTags } from '../hooks/useGetAllTags';
-import { useGetTagsDbQuery } from '../hooks/useGetTagsDbQuery';
-import { useIngredientMutation } from '../hooks/useIngredientMutation';
+import { useGetAllTags } from '../hooks/tag/useGetAllTags';
+import { useGetTagsDbQuery } from '../hooks/tag/useGetTagsDbQuery';
+import { useIngredientMutation } from '../hooks/ingredient/useIngredientMutation';
 
 export function IngredientEditModal({
   ingredientId,

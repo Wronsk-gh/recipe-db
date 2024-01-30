@@ -8,9 +8,9 @@ import {
 import { SearchBar } from './SearchBar';
 import { RecipeTable } from './RecipeTable';
 import { useOutletContext } from 'react-router-dom';
-import { useGetAllRecipes } from '../hooks/useGetAllRecipes';
-import { useGetAllMonths } from '../hooks/useGetAllMonths';
-import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
+import { useGetAllRecipes } from '../hooks/recipe/useGetAllRecipes';
+import { useGetAllMonths } from '../hooks/month/useGetAllMonths';
+import { useGetAllIngredients } from '../hooks/ingredient/useGetAllIngredients';
 
 export function FilterableRecipeTable({} // months,
 // ingredients,

@@ -1,11 +1,11 @@
 import '../App.css';
 import { TagRow } from './TagRow';
 import { Tag } from '../db-types';
-import { useGetAllTags } from '../hooks/useGetAllTags';
+import { useGetAllTags } from '../hooks/tag/useGetAllTags';
 import { AddTagButton } from './AddTagButton';
-import { useGetIsRecipesLoading } from '../hooks/useGetIsRecipesLoading';
-import { useTagsColumns } from '../hooks/useTagsColumns';
-import { useTable } from '../hooks/useTable';
+import { useGetIsRecipesLoading } from '../hooks/useGetIsDbLoading';
+import { useTagsColumns } from '../hooks/tag/useTagsColumns';
+import { useTable } from '../hooks/table/useTable';
 import { TableFilters } from './TableFilters';
 
 export function TagTable() {

@@ -1,11 +1,11 @@
 import '../App.css';
 import { Recipe } from '../db-types';
 import { RecipeRow } from './RecipeRow';
-import { useGetAllRecipes } from '../hooks/useGetAllRecipes';
-import { useGetRecipesThumbnails } from '../hooks/useGetRecipesThumbnails';
-import { useGetIsRecipesLoading } from '../hooks/useGetIsRecipesLoading';
-import { useRecipesColumns } from '../hooks/useRecipesColumns';
-import { useTable } from '../hooks/useTable';
+import { useGetAllRecipes } from '../hooks/recipe/useGetAllRecipes';
+import { useGetRecipesThumbnails } from '../hooks/recipe/useGetRecipesThumbnails';
+import { useGetIsRecipesLoading } from '../hooks/useGetIsDbLoading';
+import { useRecipesColumns } from '../hooks/recipe/useRecipesColumns';
+import { useTable } from '../hooks/table/useTable';
 import { TableFilters } from './TableFilters';
 
 export function RecipeTable() {

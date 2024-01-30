@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { Tag } from '../db-types';
 import Card from 'react-bootstrap/Card';
 import { TagEditModal } from './TagEditModal';
-import { useGetTag } from '../hooks/useGetTag';
+import { useGetTag } from '../hooks/tag/useGetTag';
 
 export function TagRow({ tagId }: { tagId: string }) {
   const [showModal, setShowModal] = useState<boolean>(false);

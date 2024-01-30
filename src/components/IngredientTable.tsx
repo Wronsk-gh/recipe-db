@@ -2,10 +2,10 @@ import '../App.css';
 import { IngredientRow } from './IngredientRow';
 import { Ingredient } from '../db-types';
 import { AddIngredientButton } from './AddIngredientButton';
-import { useGetAllIngredients } from '../hooks/useGetAllIngredients';
-import { useGetIsRecipesLoading } from '../hooks/useGetIsRecipesLoading';
-import { useIngredientsColumns } from '../hooks/useIngredientsColumns';
-import { useTable } from '../hooks/useTable';
+import { useGetAllIngredients } from '../hooks/ingredient/useGetAllIngredients';
+import { useGetIsRecipesLoading } from '../hooks/useGetIsDbLoading';
+import { useIngredientsColumns } from '../hooks/ingredient/useIngredientsColumns';
+import { useTable } from '../hooks/table/useTable';
 import { TableFilters } from './TableFilters';
 
 export function IngredientTable() {

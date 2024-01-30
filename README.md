@@ -4,6 +4,7 @@ Created with CodeSandbox
 
 ## Backlog :
 
+- [ ] refactor DriveSyncButton.tsx to use mutations instead of inline DB calls
 - [x] implement custom tags for recipes + filter
 - [x] Implement "edit modals" with month/ingredient/tag selection using multi-select/combo-box
 - [x] implement all modals using bootstrap
