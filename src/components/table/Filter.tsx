@@ -1,4 +1,4 @@
-import { DebouncedInput } from './DebouncedInput';
+import { DebouncedInput } from '../ui/DebouncedInput';
 import { Column, Table } from '@tanstack/react-table';
 import { useMemo } from 'react';
 

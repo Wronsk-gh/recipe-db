@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RecipeManager } from './components/RecipeManager';
-import { FilterableIngredientTable } from './components/FilterableIngredientTable';
-import { RecipeTable } from './components/RecipeTable';
-import { TagTable } from './components/TagTable';
+import { RecipeManager } from './components/main-page/RecipeManager';
+import { FilterableIngredientTable } from './components/ingredient-table/FilterableIngredientTable';
+import { RecipeTable } from './components/recipe-table/RecipeTable';
+import { TagTable } from './components/tag-table/TagTable';
 import {
   createBrowserRouter,
   RouterProvider,

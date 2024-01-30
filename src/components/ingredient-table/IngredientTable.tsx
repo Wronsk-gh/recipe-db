@@ -1,12 +1,12 @@
 import '../App.css';
 import { IngredientRow } from './IngredientRow';
-import { Ingredient } from '../db-types';
+import { Ingredient } from '../../db-types';
 import { AddIngredientButton } from './AddIngredientButton';
-import { useGetAllIngredients } from '../hooks/ingredient/useGetAllIngredients';
-import { useGetIsRecipesLoading } from '../hooks/useGetIsDbLoading';
-import { useIngredientsColumns } from '../hooks/ingredient/useIngredientsColumns';
-import { useTable } from '../hooks/table/useTable';
-import { TableFilters } from './TableFilters';
+import { useGetAllIngredients } from '../../hooks/ingredient/useGetAllIngredients';
+import { useGetIsRecipesLoading } from '../../hooks/db/useGetIsDbLoading';
+import { useIngredientsColumns } from '../../hooks/ingredient/useIngredientsColumns';
+import { useTable } from '../../hooks/table/useTable';
+import { TableFilters } from '../table/TableFilters';
 
 export function IngredientTable() {
   const ingredients = useGetAllIngredients();

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useContext } from 'react';
-import { RtdbContext } from '../../components/RtdbContext';
+import { RtdbContext } from '../../components/auth/RtdbContext';
 import { fetchTags } from '../../rtdb';
 
 export function useGetTagsDbQuery() {

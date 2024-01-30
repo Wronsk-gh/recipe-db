@@ -1,11 +1,11 @@
-import { RtdbCred } from '../rtdb';
+import { RtdbCred } from '../../rtdb';
 import { useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { DriveSyncButton } from './DriveSyncButton';
 import { SettingsButton } from './SettingsButton';
 
-import { RtdbContext } from './RtdbContext';
-import { Auth } from './Auth';
+import { RtdbContext } from '../auth/RtdbContext';
+import { Auth } from '../auth/Auth';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';

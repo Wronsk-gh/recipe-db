@@ -1,4 +1,4 @@
-import { TagBadge } from '../db-types';
+import { TagBadge } from '../../db-types';
 
 export function TagBox({
   tag,

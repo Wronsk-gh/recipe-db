@@ -1,7 +1,7 @@
-import { useGetMonthsDbQuery } from './month/useGetMonthsDbQuery';
-import { useGetIngredientsDbQuery } from './ingredient/useGetIngredientsDbQuery';
-import { useGetRecipesDbQuery } from './recipe/useGetRecipesDbQuery';
-import { useGetTagsDbQuery } from './tag/useGetTagsDbQuery';
+import { useGetMonthsDbQuery } from '../month/useGetMonthsDbQuery';
+import { useGetIngredientsDbQuery } from '../ingredient/useGetIngredientsDbQuery';
+import { useGetRecipesDbQuery } from '../recipe/useGetRecipesDbQuery';
+import { useGetTagsDbQuery } from '../tag/useGetTagsDbQuery';
 
 export function useGetIsRecipesLoading(): boolean {
   const { isLoading: isMonthsDbLoading } = useGetMonthsDbQuery();

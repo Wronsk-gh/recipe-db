@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RtdbContext } from '../../components/RtdbContext';
+import { RtdbContext } from '../../components/auth/RtdbContext';
 import { createRecipeDisplayUserDb } from '../../rtdb';
 import { RecipeDb } from '../../db-types';
 

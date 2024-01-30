@@ -1,36 +1,36 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createTagDisplayUserDb } from '../rtdb';
+import { createIngredientDisplayUserDb } from '../../rtdb';
 
 import { useContext } from 'react';
-import { RtdbContext } from './RtdbContext';
+import { RtdbContext } from '../auth/RtdbContext';
 
-export function AddTagButton() {
+export function AddIngredientButton() {
   // Get QueryClient from the context
   const queryClient = useQueryClient();
   // Get the Rtdb from the context
   const rtdbCred = useContext(RtdbContext);
 
-  const newTagMutation = useMutation({
+  const newIngredientMutation = useMutation({
     mutationFn: async () => {
-      await createTagDisplayUserDb(rtdbCred);
+      await createIngredientDisplayUserDb(rtdbCred);
     },
     onError: () => {
-      window.alert('Could not create new tag...');
+      window.alert('Could not create new ingredient...');
     },
     onSuccess: onMutationSuccess,
     onSettled: () => {
-      newTagMutation.reset();
+      newIngredientMutation.reset();
     },
   });
 
   function onMutationSuccess() {
     // Force an update of the ingredients
-    queryClient.invalidateQueries({ queryKey: ['tags'] });
+    queryClient.invalidateQueries({ queryKey: ['ingredients'] });
   }
 
   function onButtonClick() {
-    newTagMutation.mutate();
+    newIngredientMutation.mutate();
   }
 
-  return <button onClick={onButtonClick}>Add Tag</button>;
+  return <button onClick={onButtonClick}>Add Ingredient</button>;
 }

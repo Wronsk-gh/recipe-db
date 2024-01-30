@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { MonthsDb, IngredientsDb } from '../db-types';
-import { SearchBar } from './SearchBar';
+import { MonthsDb, IngredientsDb } from '../../db-types';
+import { SearchBar } from '../SearchBar';
 import { IngredientTable } from './IngredientTable';
 import { useOutletContext } from 'react-router-dom';
-import { useGetAllRecipes } from '../hooks/recipe/useGetAllRecipes';
-import { useGetAllMonths } from '../hooks/month/useGetAllMonths';
-import { useGetIsRecipesLoading } from '../hooks/useGetIsDbLoading';
+import { useGetAllRecipes } from '../../hooks/recipe/useGetAllRecipes';
+import { useGetAllMonths } from '../../hooks/month/useGetAllMonths';
+import { useGetIsRecipesLoading } from '../../hooks/db/useGetIsDbLoading';
 
 export function FilterableIngredientTable({} // months,
 // ingredients,
