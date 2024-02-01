@@ -64,7 +64,7 @@ export function useRecipesColumns() {
         id: 'recipeTags',
         cell: (info) => info.getValue(),
         header: () => 'TagsDb',
-        filterFn: 'equals',
+        filterFn: 'arrIncludesAllId',
         meta: {
           headerKind: 'tickable',
           tickOptions: tags,
