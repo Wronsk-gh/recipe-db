@@ -4,6 +4,8 @@ Created with CodeSandbox
 
 ## Backlog :
 
+- [ ] When modifying a recipe, the inherited tags should'nt show in the list of the recipe tags. Or at least they should be separated.
+  - This means that the inherited tags should be stored differently in the Recipe object
 - [ ] refactor DriveSyncButton.tsx to use mutations instead of inline DB calls
 - [x] implement custom tags for recipes + filter
 - [x] Implement "edit modals" with month/ingredient/tag selection using multi-select/combo-box
