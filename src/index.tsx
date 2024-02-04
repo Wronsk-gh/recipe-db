@@ -17,6 +17,9 @@ const root = ReactDOM.createRoot(rootElement);
 // Importing the Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+// Importing the custom App CSS
+import './App.css';
+
 // Create a client for react-query
 const queryClient = new QueryClient();
 
