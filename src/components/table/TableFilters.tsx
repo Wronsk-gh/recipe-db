@@ -59,5 +59,5 @@ export function TableFilters<T>({ table }: { table: Table<T> }) {
     }
   }
 
-  return filters;
+  return <>{filters}</>;
 }

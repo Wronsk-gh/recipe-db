@@ -4,6 +4,7 @@ Created with CodeSandbox
 
 ## Backlog :
 
+- [ ] Integrate github AI into vscode env for this project (especially to write tests !)
 - [ ] When modifying a recipe, the inherited tags should'nt show in the list of the recipe tags. Or at least they should be separated.
   - This means that the inherited tags should be stored differently in the Recipe object
 - [ ] refactor DriveSyncButton.tsx to use mutations instead of inline DB calls
@@ -46,6 +47,17 @@ Created with CodeSandbox
 - [ ] Unauthorised calls (to gapi or firebase) must trigger a re-auth automatically
 - [ ] Decide if using useMemo for 'dropdownListItems' of component ComboSelect
 - [ ] Make a difference in type between the ones that we receive from the DB (some fileds may be missing), and the ones to send (all fields must be present)
+- [ ] Introduce a delay in DB access functions, to validate loading behavior
+
+code matthias :
+
+function login(email: string, password: string): Promise<UserCredential> {
+return signInWithEmailAndPassword(auth, email, password);
+}
+
+    function loginGoogle(): Promise<UserCredential> {
+        return signInWithPopup(auth, provider);
+    }
 
 ## Bugs :
 
