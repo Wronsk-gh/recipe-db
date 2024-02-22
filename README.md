@@ -4,8 +4,9 @@ Created with CodeSandbox
 
 ## Backlog :
 
-- [ ] Integrate github AI into vscode env for this project (especially to write tests !)
-- [ ] When modifying a recipe, the inherited tags should'nt show in the list of the recipe tags. Or at least they should be separated.
+- [ ] Ensure that the refresh token of a user is not visible by the client
+- [x] Integrate github AI into vscode env for this project (especially to write tests !)
+- [ ] When modifying a recipe, the inherited tags shouldn't show in the list of the recipe tags. Or at least they should be separated.
   - This means that the inherited tags should be stored differently in the Recipe object
 - [ ] refactor DriveSyncButton.tsx to use mutations instead of inline DB calls
 - [x] implement custom tags for recipes + filter

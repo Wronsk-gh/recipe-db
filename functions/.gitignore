@@ -1,0 +1,15 @@
+# Compiled JavaScript files
+lib/**/*.js
+lib/**/*.js.map
+
+# TypeScript v1 declaration files
+typings/
+
+# Node.js dependency directory
+node_modules/
+
+# Key for the project (https://console.firebase.google.com/u/0/project/oca-drive-manage/settings/serviceaccounts/adminsdk - Create a new service account and download the key as JSON file. Rename it to serviceAccountKey.json and put it in the root of the project.)
+serviceAccountKey.json
+
+# Client secret for the project (TODO URL - Create a new OAuth 2.0 client ID and download the JSON file. Rename it to client_secret.json and put it in the root of the project.)
+client_secret.json

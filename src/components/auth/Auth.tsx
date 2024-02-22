@@ -12,8 +12,7 @@ import {
   User,
   onAuthStateChanged,
 } from 'firebase/auth';
-
-import axios from 'axios';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
@@ -43,6 +42,13 @@ export function Auth({
 
   const firebaseApp = initializeApp(FIREBASE_CONFIG);
   const firebaseAuth = getAuth(firebaseApp);
+  const firebaseFunctions = getFunctions(firebaseApp);
+  const getRefreshedAccessToken = httpsCallable<
+    unknown,
+    {
+      access_token: string;
+    }
+  >(firebaseFunctions, 'getRefreshedAccessToken');
 
   async function handleUserChange(user: User | null) {
     console.log('this is the user : ');
@@ -51,102 +57,9 @@ export function Auth({
       // const uid = user.uid;
       // User is signed in
       // ...
-      const idToken = await user.getIdToken();
+      // const idToken = await user.getIdToken();
 
-      const auth2 = gapi.auth2.getAuthInstance();
-
-      // if (!auth2.isSignedIn.get()) {
-      //   // The user is not signed in with gapi, so sign them in
-      //   const id_token = auth.currentUser.getIdToken(/* forceRefresh */ true).then(idToken => {
-      //     const googleUser = new gapi.auth2.GoogleAuth();
-      //     googleUser.getAuthResponse().id_token = idToken;
-      //     auth2.signIn(googleUser);
-      //   });
-      // }
-
-      if (!auth2.isSignedIn.get()) {
-        // The user is not signed in, so try to sign them in
-        auth2.signIn();
-      }
-
-      // getting refresh token
-      // final url = Uri.parse('https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=$apiKey');
-
-      // final response = await http.post(
-      //   url,
-      //   headers: {'Content-type': 'application/json'},
-      //   body: jsonEncode({
-      //     'postBody': 'id_token=$token&providerId=$provider',
-      //     'requestUri': 'http://localhost',
-      //     'returnIdpCredential': true,
-      //     'returnSecureToken': true
-      //   })
-      // );
-      // if (response.statusCode != 200) {
-      //   throw 'Refresh token request failed: ${response.statusCode}';
-      // }
-
-      // final data = Map<String, dynamic>.of(jsonDecode(response.body));
-      // if (data.containsKey('refreshToken')) {
-      //    // here is your refresh token, store it in a secure way
-      // } else {
-      //   throw 'No refresh token in response';
-      // }
-
-      // // // // let accessTokenRequest = await axios.request({
-      // // // //   method: 'post',
-      // // // //   url:
-      // // // //     'https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=' +
-      // // // //     FIREBASE_CONFIG.apiKey,
-      // // // //   headers: { 'content-type': 'application/json' },
-      // // // //   params: {
-      // // // //     postBody: 'id_token=' + idToken + '&providerId=google.com',
-      // // // //     requestUri: 'http://localhost',
-      // // // //     returnIdpCredential: true,
-      // // // //     returnSecureToken: true,
-      // // // //   },
-      // // // // });
-
-      // // // // let refreshToken = accessTokenRequest.data['refreshToken'];
-
-      // // // // console.log('refresh token !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-      // // // // console.log(refreshToken);
-
-      // // // // // Exchanging refresh token for access code
-
-      // // // // let tokenRequest = await axios.request({
-      // // // //   method: 'post',
-      // // // //   url: 'https://oauth2.googleapis.com/token',
-      // // // //   headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      // // // //   params: {
-      // // // //     client_id:
-      // // // //       '387763281186-iidr7l3a8ocesogpdt3nvgfodphi631h.apps.googleusercontent.com',
-      // // // //     client_secret: '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',
-      // // // //     refresh_token: user.refreshToken,
-      // // // //     grant_type: 'refresh_token',
-      // // // //   },
-      // // // // });
-
-      // // // // let accessToken = tokenRequest.data['access_token'];
-      // // // // console.log('access token !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-      // // // // console.log(accessToken);
-
-      // // // // gapi.client.setToken({ access_token: accessToken });
-      // gapi.client.setToken({ access_token: idToken });
       firebaseDb = getDatabase(firebaseApp);
-
-      // // This gives you a Google Access Token.
-      // const credential = GoogleAuthProvider.credential(idToken);
-      // if (credential !== null) {
-      //   const token = credential.accessToken;
-      //   if (token !== undefined) {
-      //     console.log('I received a token !');
-      //     console.log(token);
-      //     gapi.client.setToken({ access_token: token });
-      //     firebaseDb = getDatabase(firebaseApp);
-      //     console.log(firebaseDb);
-      //   }
-      // }
 
       const rtdbCred: RtdbCred = {
         user: user,
@@ -157,6 +70,10 @@ export function Auth({
         rtdbCred.displayUserId = await fetchDisplay(rtdbCred);
       }
       setRtdbCred(rtdbCred);
+
+      const access_token = (await getRefreshedAccessToken()).data;
+      console.log(access_token);
+      gapi.client.setToken(access_token);
     } else {
       // User is signed out
       // ...
@@ -167,55 +84,57 @@ export function Auth({
   useEffect(() => {
     // Set the user observer
     onAuthStateChanged(firebaseAuth, handleUserChange);
-
-    const onHandlePageLoad = async () => {
-      const [user, db] = await handlePageLoad();
-      // const rtdbCred: RtdbCred = { user: user, db: db, displayUserId: null };
-      // if (db !== null) {
-      //   rtdbCred.displayUserId = await fetchDisplay(rtdbCred);
-      // }
-      // setRtdbCred(rtdbCred);
-      // console.log('user');
-      // console.log(user);
-      // console.log('db');
-      // console.log(db);
-
-      // if (user === null) {
-      //   await handleAuthClick();
-      // }
-
-      // const rtdbCred = { user: user, db: db };
-      // if (db !== null) {
-      //   rtdbCred.db = db;
-      // }
-      // if (user !== null) {
-      //   setUser(user);
-      //   console.log(user.uid);
-      // }
-    };
-    onHandlePageLoad().catch((error) => {
-      console.error(error);
-    });
+    getRedirectResult(firebaseAuth);
+    // const onHandlePageLoad = async () => {
+    //   const [user, db] = await handlePageLoad();
+    // };
+    // onHandlePageLoad().catch((error) => {
+    //   console.error(error);
+    // });
   }, []);
 
-  async function handlePageLoad(): Promise<[User | null, Database | null]> {
-    getRedirectResult(firebaseAuth);
+  // async function handlePageLoad(): Promise<[User | null, Database | null]> {
+  //   getRedirectResult(firebaseAuth);
 
-    return [firebaseUser, firebaseDb];
-  }
+  //   return [firebaseUser, firebaseDb];
+  // }
 
   /** Sign in the user upon button click.*/
-  async function handleAuthClick() {
+  function handleAuthClick() {
     // const auth = getAuth();
     const provider = new GoogleAuthProvider();
+    //    Google
+    //
+    //    When a user signs in with Google, the following credentials will be passed:
+    //
+    //        ID token
+    //        Access token
+    //        Refresh token: Only provided if the following custom parameters are requested:
+    //            access_type=offline
+    //            prompt=consent , if the user previously consented and no new scope was requested
+    provider.setCustomParameters({
+      access_type: 'offline',
+      prompt: 'consent',
+    });
     provider.addScope(DOCS_SCOPES);
     provider.addScope(DRIVE_SCOPES);
     signInWithRedirect(firebaseAuth, provider);
   }
 
   async function onButtonClick() {
-    await handleAuthClick();
+    handleAuthClick();
   }
 
-  return <button onClick={onButtonClick}>Auth</button>;
+  async function onTokenButtonClick() {
+    const access_token = await getRefreshedAccessToken();
+    console.log('MYYYYYYYY access token !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    console.log(access_token);
+  }
+
+  return (
+    <>
+      <button onClick={onButtonClick}>Auth</button>
+      <button onClick={onTokenButtonClick}>get token</button>
+    </>
+  );
 }
