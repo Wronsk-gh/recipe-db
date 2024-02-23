@@ -1,6 +1,4 @@
-const DRIVE_CLIENT_ID =
-  '387763281186-iidr7l3a8ocesogpdt3nvgfodphi631h.apps.googleusercontent.com';
-const DRIVE_API_KEY = 'AIzaSyA1kUO5D0N0KAyNP4QVruujJocM7YM6IQc';
+const appKeys = require('../client_secret.json');
 
 // Discovery doc URL for APIs used by the quickstart
 const DRIVE_DISCOVERY_DOC =
@@ -13,7 +11,7 @@ export function setupGapiAndRenderApp(renderApp: () => void) {
     gapi.load('client:auth2', () => {
       gapi.client
         .init({
-          apiKey: DRIVE_API_KEY,
+          apiKey: appKeys.client_secret,
           discoveryDocs: [DRIVE_DISCOVERY_DOC, DOCS_DISCOVERY_DOC],
         })
         .then(() => {
