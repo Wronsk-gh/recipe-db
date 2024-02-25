@@ -22,7 +22,7 @@ export function RecipeTable() {
 
 function RecipeTableLoaded({ recipes }: { recipes: Recipe[] }) {
   // Pre-fetch the thumbnails when loading the table for performance
-  const thumbnails = useGetRecipesThumbnails();
+  // const thumbnails = useGetRecipesThumbnails();
 
   const columns = useRecipesColumns();
   const table = useTable(recipes, columns);

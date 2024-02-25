@@ -38,7 +38,6 @@ export function Auth({
   // An effect triggered at page load is needed to act after the redirect
   // Note: an empty dependency array means the useEffect hook will run once when the component mounts
   let firebaseDb: Database | null = null;
-  let firebaseUser: User | null = null;
 
   const firebaseApp = initializeApp(FIREBASE_CONFIG);
   const firebaseAuth = getAuth(firebaseApp);
@@ -126,9 +125,12 @@ export function Auth({
   }
 
   async function onTokenButtonClick() {
-    const access_token = await getRefreshedAccessToken();
+    console.log('HERE');
+    // const access_token = await getRefreshedAccessToken();
+    const access_token = (await getRefreshedAccessToken()).data;
     console.log('MYYYYYYYY access token !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     console.log(access_token);
+    gapi.client.setToken(access_token);
   }
 
   return (
