@@ -83,7 +83,15 @@ export function Auth({
   useEffect(() => {
     // Set the user observer
     onAuthStateChanged(firebaseAuth, handleUserChange);
+    // Get the redirect result
     getRedirectResult(firebaseAuth);
+    // Set the initial gapi client token
+    getRefreshedAccessToken().then((result) => {
+      gapi.client.setToken(result.data);
+    });
+    // const access_token = (await getRefreshedAccessToken()).data;
+    // gapi.client.setToken(access_token);
+
     // const onHandlePageLoad = async () => {
     //   const [user, db] = await handlePageLoad();
     // };

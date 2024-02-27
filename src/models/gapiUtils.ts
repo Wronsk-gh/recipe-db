@@ -97,7 +97,7 @@ export async function fetchThumbnail(googleId: string): Promise<string> {
       const thumbnailResult = await fetch(response.result.thumbnailLink);
       // const thumbnailResult = await fetch(response.result.thumbnailLink, {
       //   headers: {
-      //     Authorization: `Bearer {gapi.client.getToken().access_token}`,
+      //     Authorization: `Bearer ${gapi.client.getToken().access_token}`,
       //   },
       // });
       const blob = await thumbnailResult.blob();
