@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Recipe } from '../../db-types';
-import { fetchThumbnail } from '../../gapiUtils';
+import { fetchThumbnail, isRefreshingToken } from '../../models/gapiUtils';
 
 export function useGetRecipeThumbnail(recipe: Recipe): string {
   const thumbnailQuery = useQuery({
@@ -11,7 +11,7 @@ export function useGetRecipeThumbnail(recipe: Recipe): string {
       // return recipeIdThumbnail;
       return await fetchThumbnail(recipe.google_id);
     },
-    // enabled: !!recipesData,
+    enabled: !isRefreshingToken,
     staleTime: 10 * 60 * 1000, // 10 minute
   });
 

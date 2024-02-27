@@ -5,7 +5,7 @@ import { RecipeManager } from './components/main-page/RecipeManager';
 import { FilterableIngredientTable } from './components/ingredient-table/FilterableIngredientTable';
 import { RecipeTable } from './components/recipe-table/RecipeTable';
 import { TagTable } from './components/tag-table/TagTable';
-import { setupGapiAndRenderApp } from './gapiUtils';
+import { setupGapiAndRenderApp } from './models/gapiUtils';
 import {
   createBrowserRouter,
   RouterProvider,
