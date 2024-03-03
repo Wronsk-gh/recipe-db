@@ -50,14 +50,6 @@ const router = createBrowserRouter([
   },
 ]);
 
-// root.render(
-//   <React.StrictMode>
-//     <QueryClientProvider client={queryClient}>
-//       <RouterProvider router={router} />
-//     </QueryClientProvider>
-//   </React.StrictMode>
-// );
-
 setupGapiAndRenderApp(() => {
   root.render(
     <React.StrictMode>

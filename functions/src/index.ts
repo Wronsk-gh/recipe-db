@@ -13,11 +13,6 @@
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-
 import {
   beforeUserCreated,
   beforeUserSignedIn,
@@ -49,7 +44,6 @@ const client_secret = appKeys.client_secret;
 const grant_type = 'refresh_token';
 
 export const beforecreated = beforeUserCreated((event) => {
-  debug('beforecreated');
   const user = event.data;
   // Store the refresh token for later offline use.
   // These will only be returned if refresh tokens credentials are included
@@ -58,19 +52,20 @@ export const beforecreated = beforeUserCreated((event) => {
 });
 
 export const beforesignedin = beforeUserSignedIn((event) => {
-  // // TODO
-  debug('beforesignedin');
   const user = event.data;
+  // Store the refresh token for later offline use.
+  // These will only be returned if refresh tokens credentials are included
+  // (enabled by Cloud console).
   return saveUserRefreshToken(user.uid, event.credential?.refreshToken ?? '');
 });
 
 async function saveUserRefreshToken(userUid: string, refreshToken: string) {
-  const ref = db.ref('restricted_access/secret_document');
+  const ref = db.ref(`users/${userUid}/_admin`);
   await ref.set({ refreshToken: refreshToken });
 }
 
 async function getUserRefreshToken(userUid: string) {
-  const ref = db.ref('restricted_access/secret_document');
+  const ref = db.ref(`users/${userUid}/_admin`);
   return (await ref.get()).val().refreshToken;
 }
 

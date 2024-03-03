@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { RtdbCred, fetchDisplay } from '../../rtdb';
-// import { handleAuthClick, handlePageLoad } from '../../auth';
 
 import { initializeApp } from 'firebase/app';
 import { getDatabase, Database } from 'firebase/database';
@@ -68,15 +67,23 @@ export function Auth({
       if (firebaseDb !== null) {
         rtdbCred.displayUserId = await fetchDisplay(rtdbCred);
       }
-      setRtdbCred(rtdbCred);
 
+      // Set the initial gapi client token
       const access_token = (await getRefreshedAccessToken()).data;
       console.log(access_token);
       gapi.client.setToken(access_token);
+
+      setRtdbCred(rtdbCred);
     } else {
       // User is signed out
       // ...
       // TODO sign-in again
+      const rtdbCred: RtdbCred = {
+        user: null,
+        db: null,
+        displayUserId: null,
+      };
+      setRtdbCred(rtdbCred);
     }
   }
 
@@ -85,26 +92,7 @@ export function Auth({
     onAuthStateChanged(firebaseAuth, handleUserChange);
     // Get the redirect result
     getRedirectResult(firebaseAuth);
-    // Set the initial gapi client token
-    getRefreshedAccessToken().then((result) => {
-      gapi.client.setToken(result.data);
-    });
-    // const access_token = (await getRefreshedAccessToken()).data;
-    // gapi.client.setToken(access_token);
-
-    // const onHandlePageLoad = async () => {
-    //   const [user, db] = await handlePageLoad();
-    // };
-    // onHandlePageLoad().catch((error) => {
-    //   console.error(error);
-    // });
   }, []);
-
-  // async function handlePageLoad(): Promise<[User | null, Database | null]> {
-  //   getRedirectResult(firebaseAuth);
-
-  //   return [firebaseUser, firebaseDb];
-  // }
 
   /** Sign in the user upon button click.*/
   function handleAuthClick() {
@@ -134,7 +122,6 @@ export function Auth({
 
   async function onTokenButtonClick() {
     console.log('HERE');
-    // const access_token = await getRefreshedAccessToken();
     const access_token = (await getRefreshedAccessToken()).data;
     console.log('MYYYYYYYY access token !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     console.log(access_token);

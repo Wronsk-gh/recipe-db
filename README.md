@@ -4,6 +4,8 @@ Created with CodeSandbox
 
 ## Backlog :
 
+- [x] Prevent loading and api access before a user is initialised
+- [ ] Implement a persistent cache for the thumbnails such that they aren't all fetched at every refresh (e.g. with persistQueryClient plugin)
 - [ ] Ensure that the refresh token of a user is not visible by the client
 - [x] Integrate github AI into vscode env for this project (especially to write tests !)
 - [ ] When modifying a recipe, the inherited tags shouldn't show in the list of the recipe tags. Or at least they should be separated.

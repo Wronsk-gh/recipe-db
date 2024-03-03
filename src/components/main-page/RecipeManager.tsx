@@ -44,7 +44,7 @@ export function RecipeManager() {
         <br />
         <br />
         <br />
-        <Outlet />
+        {rtdbCred.user ? <Outlet /> : <div>Please log in !</div>}
       </RtdbContext.Provider>
     </>
   );

@@ -58,30 +58,6 @@ export function setupGapiAndRenderApp(renderApp: () => void) {
 }
 
 export async function fetchThumbnail(googleId: string): Promise<string> {
-  // let response;
-  // try {
-  //   response = await gapi.client.drive.files.get({
-  //     fileId: googleId,
-  //     fields: 'id, name, thumbnailLink',
-  //   });
-  // } catch (error) {
-  //   const firebaseFunctions = getFunctions(firebaseApp);
-  //   const getRefreshedAccessToken = httpsCallable<
-  //     unknown,
-  //     {
-  //       access_token: string;
-  //     }
-  //   >(firebaseFunctions, 'getRefreshedAccessToken');
-
-  //   // const access_token = (await getRefreshedAccessToken()).data;
-  //   // console.log(access_token);
-  //   // gapi.client.setToken(access_token);
-  //   // console.error('Error fetching thumbnail: ', error);
-  //   return '';
-  // }
-
-  // I need to stop all querying to reauthorize -> maybe manage the token and its expiration separately in a global var
-
   return apiCallWrapper(async () => {
     const response = await gapi.client.drive.files.get({
       fileId: googleId,
@@ -89,17 +65,7 @@ export async function fetchThumbnail(googleId: string): Promise<string> {
     });
 
     if (response.result.thumbnailLink !== undefined) {
-      // const thumbnailResult = await fetch(
-      //   response.result.thumbnailLink +
-      //     '&access_token=' +
-      //     gapi.client.getToken().access_token
-      // );
       const thumbnailResult = await fetch(response.result.thumbnailLink);
-      // const thumbnailResult = await fetch(response.result.thumbnailLink, {
-      //   headers: {
-      //     Authorization: `Bearer ${gapi.client.getToken().access_token}`,
-      //   },
-      // });
       const blob = await thumbnailResult.blob();
       const imageUrl = URL.createObjectURL(blob);
       return imageUrl;
