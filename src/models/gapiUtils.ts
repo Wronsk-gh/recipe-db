@@ -79,7 +79,7 @@ async function apiCallWrapper(apiCall: () => Promise<any>): Promise<any> {
   try {
     return await apiCall();
   } catch (error: any) {
-    if (error?.status === 404) {
+    if (error?.status === 404 || error?.status === 401) {
       if (!isRefreshingToken) {
         isRefreshingToken = true;
         const refreshedAccessToken = await getRefreshedAccessToken();
