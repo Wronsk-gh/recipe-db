@@ -75,6 +75,21 @@ export async function fetchThumbnail(googleId: string): Promise<string> {
   });
 }
 
+export async function fetchThumbnailLink(googleId: string): Promise<string> {
+  return apiCallWrapper(async () => {
+    const response = await gapi.client.drive.files.get({
+      fileId: googleId,
+      fields: 'id, name, thumbnailLink',
+    });
+
+    if (response.result.thumbnailLink !== undefined) {
+      return response.result.thumbnailLink;
+    } else {
+      return '';
+    }
+  });
+}
+
 async function apiCallWrapper(apiCall: () => Promise<any>): Promise<any> {
   try {
     return await apiCall();
