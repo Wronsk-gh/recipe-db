@@ -11,7 +11,7 @@ import {
   User,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { refreshGapiAccessToken } from '../../models/gapiUtils';
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
@@ -40,13 +40,6 @@ export function Auth({
 
   const firebaseApp = initializeApp(FIREBASE_CONFIG);
   const firebaseAuth = getAuth(firebaseApp);
-  const firebaseFunctions = getFunctions(firebaseApp);
-  const getRefreshedAccessToken = httpsCallable<
-    unknown,
-    {
-      access_token: string;
-    }
-  >(firebaseFunctions, 'getRefreshedAccessToken');
 
   async function handleUserChange(user: User | null) {
     console.log('this is the user : ');
@@ -69,9 +62,7 @@ export function Auth({
       }
 
       // Set the initial gapi client token
-      const access_token = (await getRefreshedAccessToken()).data;
-      console.log(access_token);
-      gapi.client.setToken(access_token);
+      await refreshGapiAccessToken();
 
       setRtdbCred(rtdbCred);
     } else {
@@ -121,11 +112,7 @@ export function Auth({
   }
 
   async function onTokenButtonClick() {
-    console.log('HERE');
-    const access_token = (await getRefreshedAccessToken()).data;
-    console.log('MYYYYYYYY access token !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    console.log(access_token);
-    gapi.client.setToken(access_token);
+    await refreshGapiAccessToken();
   }
 
   return (

@@ -30,9 +30,14 @@ const getRefreshedAccessToken = httpsCallable<
 >(firebaseFunctions, 'getRefreshedAccessToken');
 
 export let isRefreshingToken = false;
+export let gapiAuthorized = false;
 
-export function setupGapiAndRenderApp(renderApp: () => void) {
-  function loadGapiAndRenderApp(renderApp: () => void) {
+let gapiInited = false;
+
+let gapi_access_token = { access_token: '' };
+
+export function setupGapi() {
+  if (window.gapi) {
     gapi.load('client:auth2', () => {
       gapi.client
         .init({
@@ -40,20 +45,25 @@ export function setupGapiAndRenderApp(renderApp: () => void) {
           discoveryDocs: [DRIVE_DISCOVERY_DOC, DOCS_DISCOVERY_DOC],
         })
         .then(() => {
-          renderApp();
+          gapiInited = true;
+          // Check if access token is already set and set it to gapi client
+          if (gapi_access_token.access_token !== '') {
+            gapi.client.setToken(gapi_access_token);
+          }
         });
     });
-  }
-
-  // Check if gapi is not loaded then load script
-
-  if (!window.gapi) {
-    const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/platform.js';
-    script.onload = () => loadGapiAndRenderApp(renderApp);
-    document.head.appendChild(script);
   } else {
-    loadGapiAndRenderApp(renderApp);
+    console.log('ERROR gapi not loaded');
+  }
+}
+
+export async function refreshGapiAccessToken() {
+  const access_token = (await getRefreshedAccessToken()).data;
+  console.log(access_token);
+  // Check if gapi is initialized and set the token
+  if (gapiInited === true) {
+    gapi.client.setToken(access_token);
+    gapiAuthorized = true;
   }
 }
 
@@ -97,8 +107,7 @@ async function apiCallWrapper(apiCall: () => Promise<any>): Promise<any> {
     if (error?.status === 404 || error?.status === 401) {
       if (!isRefreshingToken) {
         isRefreshingToken = true;
-        const refreshedAccessToken = await getRefreshedAccessToken();
-        gapi.client.setToken(refreshedAccessToken.data);
+        await refreshGapiAccessToken();
         isRefreshingToken = false;
         return await apiCall();
       }

@@ -1,7 +1,11 @@
 import { useGetRecipesDbQuery } from './useGetRecipesDbQuery';
 import { RecipesThumbnails } from '../../db-types';
 import { useQueries } from '@tanstack/react-query';
-import { fetchThumbnail, isRefreshingToken } from '../../models/gapiUtils';
+import {
+  fetchThumbnail,
+  isRefreshingToken,
+  gapiAuthorized,
+} from '../../models/gapiUtils';
 
 export function useGetRecipesThumbnails(): RecipesThumbnails {
   const { data: recipesData } = useGetRecipesDbQuery();
@@ -19,7 +23,7 @@ export function useGetRecipesThumbnails(): RecipesThumbnails {
                 );
                 return recipeIdThumbnail;
               },
-              enabled: !!recipesData && !isRefreshingToken,
+              enabled: !!recipesData && !isRefreshingToken && gapiAuthorized,
               staleTime: 10 * 60 * 1000, // 10 minute
             };
           })
