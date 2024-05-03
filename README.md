@@ -4,6 +4,7 @@ Created with CodeSandbox
 
 ## Backlog :
 
+- [ ] Cache the access_token to avoid
 - [ ] Optimise page load time (e.g. do not wait for gapi script to be loaded before proceeding with react rendering...)
 - [x] Prevent loading and api access before a user is initialised
 - [ ] Implement a persistent cache for the thumbnails such that they aren't all fetched at every refresh (e.g. with persistQueryClient plugin)

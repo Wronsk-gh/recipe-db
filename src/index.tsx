@@ -11,12 +11,20 @@ import {
   RouterProvider,
   Navigate,
 } from 'react-router-dom';
+import { setupGapi } from './models/gapiUtils';
 
 // Importing the Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Importing the custom App CSS
 import './App.css';
+
+const script = document.createElement('script');
+script.src = 'https://apis.google.com/js/platform.js';
+script.onload = setupGapi;
+script.defer = true;
+script.async = true;
+document.head.appendChild(script);
 
 const rootElement = document.getElementById('root')!;
 const root = ReactDOM.createRoot(rootElement);

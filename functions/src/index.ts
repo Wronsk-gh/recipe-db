@@ -43,21 +43,27 @@ const client_id = appKeys.client_id;
 const client_secret = appKeys.client_secret;
 const grant_type = 'refresh_token';
 
-export const beforecreated = beforeUserCreated((event) => {
-  const user = event.data;
-  // Store the refresh token for later offline use.
-  // These will only be returned if refresh tokens credentials are included
-  // (enabled by Cloud console).
-  return saveUserRefreshToken(user.uid, event.credential?.refreshToken ?? '');
-});
+export const beforecreated = beforeUserCreated(
+  { region: 'europe-west1' },
+  (event) => {
+    const user = event.data;
+    // Store the refresh token for later offline use.
+    // These will only be returned if refresh tokens credentials are included
+    // (enabled by Cloud console).
+    return saveUserRefreshToken(user.uid, event.credential?.refreshToken ?? '');
+  }
+);
 
-export const beforesignedin = beforeUserSignedIn((event) => {
-  const user = event.data;
-  // Store the refresh token for later offline use.
-  // These will only be returned if refresh tokens credentials are included
-  // (enabled by Cloud console).
-  return saveUserRefreshToken(user.uid, event.credential?.refreshToken ?? '');
-});
+export const beforesignedin = beforeUserSignedIn(
+  { region: 'europe-west1' },
+  (event) => {
+    const user = event.data;
+    // Store the refresh token for later offline use.
+    // These will only be returned if refresh tokens credentials are included
+    // (enabled by Cloud console).
+    return saveUserRefreshToken(user.uid, event.credential?.refreshToken ?? '');
+  }
+);
 
 async function saveUserRefreshToken(userUid: string, refreshToken: string) {
   const ref = db.ref(`users/${userUid}/_admin`);
@@ -70,6 +76,7 @@ async function getUserRefreshToken(userUid: string) {
 }
 
 export const getRefreshedAccessToken = onCall(
+  { region: 'europe-west1' },
   // TODO manage cors for added security -> should be with firebaseapp domain for prod, and local host for development
   // { cors: false },
   async (request) => {

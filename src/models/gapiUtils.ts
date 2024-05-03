@@ -21,7 +21,7 @@ const FIREBASE_CONFIG = {
 };
 
 const firebaseApp = initializeApp(FIREBASE_CONFIG);
-const firebaseFunctions = getFunctions(firebaseApp);
+const firebaseFunctions = getFunctions(firebaseApp, 'europe-west1');
 const getRefreshedAccessToken = httpsCallable<
   unknown,
   {
@@ -37,6 +37,7 @@ let gapiInited = false;
 let gapi_access_token = { access_token: '' };
 
 export function setupGapi() {
+  console.log('Setting up gapi');
   if (window.gapi) {
     gapi.load('client:auth2', () => {
       gapi.client
@@ -57,13 +58,25 @@ export function setupGapi() {
   }
 }
 
+// Attach setupGapi to the window object
+(window as any).setupGapi = setupGapi;
+(window as any)['setupGapi'] = setupGapi;
+
+// (require as any).ensure([], () => {
+//   window['require'] = (module) => require(module);
+// });
+
 export async function refreshGapiAccessToken() {
+  console.log('Refreshing gapi access token');
   const access_token = (await getRefreshedAccessToken()).data;
   console.log(access_token);
   // Check if gapi is initialized and set the token
   if (gapiInited === true) {
+    console.log('Setting gapi token');
     gapi.client.setToken(access_token);
     gapiAuthorized = true;
+  } else {
+    console.log('Gapi is not initialized, setting token for later');
   }
 }
 
