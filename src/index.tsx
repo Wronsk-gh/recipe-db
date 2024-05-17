@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { QueryClient } from '@tanstack/react-query';
 import { RecipeManager } from './components/main-page/RecipeManager';
 import { FilterableIngredientTable } from './components/ingredient-table/FilterableIngredientTable';
 import { RecipeTable } from './components/recipe-table/RecipeTable';
@@ -30,7 +32,17 @@ const rootElement = document.getElementById('root')!;
 const root = ReactDOM.createRoot(rootElement);
 
 // Create a client for react-query
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours
+    },
+  },
+});
+
+const persister = createSyncStoragePersister({
+  storage: window.localStorage,
+});
 
 // Define the routes
 const router = createBrowserRouter([
@@ -60,8 +72,11 @@ const router = createBrowserRouter([
 
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister }}
+    >
       <RouterProvider router={router} />
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   </React.StrictMode>
 );
