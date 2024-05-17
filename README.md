@@ -4,6 +4,7 @@ Created with CodeSandbox
 
 ## Backlog :
 
+- [ ] Implement a check that the user is logged in to stop displaying the app via a modal if not logged in
 - [ ] I could avoid the "Please log in" then "Loading..." messages :
   - I could be OK with display the app content before being logged in, I only need to protect the calls inside
   - I could also have the query be initialised with some data from the user (previous data stored in cache ???) (with persistQueryClient ???)
