@@ -4,7 +4,12 @@ Created with CodeSandbox
 
 ## Backlog :
 
-- [ ] Cache the access_token to avoid
+- [ ] I could avoid the "Please log in" then "Loading..." messages :
+  - I could be OK with display the app content before being logged in, I only need to protect the calls inside
+  - I could also have the query be initialised with some data from the user (previous data stored in cache ???) (with persistQueryClient ???)
+- [ ] Add the user ID in the query keys to avoid mixing up user data in case of persitent query cache
+- [ ] Check how google drive web app handles the auth and keeps the token, etc
+- [ ] Cache the access_token to avoid reauth
 - [ ] Optimise page load time (e.g. do not wait for gapi script to be loaded before proceeding with react rendering...)
 - [x] Prevent loading and api access before a user is initialised
 - [ ] Implement a persistent cache for the thumbnails such that they aren't all fetched at every refresh (e.g. with persistQueryClient plugin)
@@ -75,3 +80,9 @@ return signInWithEmailAndPassword(auth, email, password);
 - [x] When filtering the recipes by name, the page hangs infinitely
   - Problem comes because a new table data object is generated at each re-render of the react-query table (thus infinite state modification, filter triggers re-render, which creates new object ref, which triggers filter, which triggers re-render, etc)
   - Solved by pushing the creation of the data object to a prop being managed one level higher
+- [ ] My gapi access token is not valid, thus I am sending a request to my firebase function to retrieve a new one.
+      However, what the firebase function returns is :
+      Refreshing gapi access token gapiUtils.ts:70:10
+      Object { error: "invalid_grant", error_description: "Token has been expired or revoked." } gapiUtils.ts:72:10
+      I understand it as that the refresh token is expired in the database of the function doesn't get a new one
+      I should track the refresh token duration and ask the user to reauth in case it is no longer valid
