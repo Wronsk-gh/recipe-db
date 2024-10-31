@@ -4,6 +4,7 @@ Created with CodeSandbox
 
 ## Backlog :
 
+- [ ] Add the tag 'New' to newly added recipes
 - [ ] Implement a check that the user is logged in to stop displaying the app via a modal if not logged in
 - [ ] I could avoid the "Please log in" then "Loading..." messages :
   - I could be OK with display the app content before being logged in, I only need to protect the calls inside
