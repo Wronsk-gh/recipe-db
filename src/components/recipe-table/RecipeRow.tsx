@@ -8,7 +8,6 @@ import { MonthBar } from '../ui/MonthBar';
 import { useGetRecipe } from '../../hooks/recipe/useGetRecipe';
 import { useGetIngredientsDbQuery } from '../../hooks/ingredient/useGetIngredientsDbQuery';
 import { useGetTagsDbQuery } from '../../hooks/tag/useGetTagsDbQuery';
-// import { useGetRecipeThumbnail } from '../../hooks/recipe/useGetRecipeThumbnail';
 import { useGetRecipeThumbnailLink } from '../../hooks/recipe/useGetRecipeThumbnailLink';
 import { useRecipeMutation } from '../../hooks/recipe/useRecipeMutation';
 
@@ -18,7 +17,6 @@ export function RecipeRow({ recipeId }: { recipeId: string }) {
   const { data: tagsDb } = useGetTagsDbQuery();
   const recipe = useGetRecipe(recipeId);
   const editableRecipe = useGetRecipe(recipeId);
-  // const thumbnail = useGetRecipeThumbnail(recipe);
   const thumbnail = useGetRecipeThumbnailLink(recipe);
   const recipeMutation = useRecipeMutation();
 

@@ -80,24 +80,6 @@ export async function refreshGapiAccessToken() {
   }
 }
 
-export async function fetchThumbnail(googleId: string): Promise<string> {
-  return apiCallWrapper(async () => {
-    const response = await gapi.client.drive.files.get({
-      fileId: googleId,
-      fields: 'id, name, thumbnailLink',
-    });
-
-    if (response.result.thumbnailLink !== undefined) {
-      const thumbnailResult = await fetch(response.result.thumbnailLink);
-      const blob = await thumbnailResult.blob();
-      const imageUrl = URL.createObjectURL(blob);
-      return imageUrl;
-    } else {
-      return '';
-    }
-  });
-}
-
 export async function fetchThumbnailLink(googleId: string): Promise<string> {
   return apiCallWrapper(async () => {
     const response = await gapi.client.drive.files.get({
