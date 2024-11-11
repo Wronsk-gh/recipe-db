@@ -2,7 +2,6 @@
 import { Recipe } from '../../db-types';
 import { RecipeRow } from './RecipeRow';
 import { useGetAllRecipes } from '../../hooks/recipe/useGetAllRecipes';
-import { useGetRecipesThumbnails } from '../../hooks/recipe/useGetRecipesThumbnails';
 import { useGetIsRecipesLoading } from '../../hooks/db/useGetIsDbLoading';
 import { useRecipesColumns } from '../../hooks/recipe/useRecipesColumns';
 import { useTable } from '../../hooks/table/useTable';
@@ -21,9 +20,6 @@ export function RecipeTable() {
 }
 
 function RecipeTableLoaded({ recipes }: { recipes: Recipe[] }) {
-  // Pre-fetch the thumbnails when loading the table for performance
-  // const thumbnails = useGetRecipesThumbnails();
-
   const columns = useRecipesColumns();
   const table = useTable(recipes, columns);
 

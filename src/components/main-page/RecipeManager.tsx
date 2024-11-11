@@ -14,6 +14,7 @@ export function RecipeManager() {
   const [rtdbCred, setRtdbCred] = useState<RtdbCred>({
     user: null,
     db: null,
+    storage: null,
     displayUserId: null,
   });
 

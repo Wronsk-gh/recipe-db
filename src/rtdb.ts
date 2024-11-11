@@ -8,6 +8,7 @@ import {
   push,
   remove,
 } from 'firebase/database';
+import { FirebaseStorage } from 'firebase/storage';
 
 import {
   TagsDb,
@@ -30,6 +31,7 @@ import {
 export interface RtdbCred {
   user: User | null;
   db: Database | null;
+  storage: FirebaseStorage | null;
   displayUserId: string | null;
 }
 

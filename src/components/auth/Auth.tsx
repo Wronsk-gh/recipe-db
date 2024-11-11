@@ -3,6 +3,7 @@ import { RtdbCred, fetchDisplay } from '../../rtdb';
 
 import { initializeApp } from 'firebase/app';
 import { getDatabase, Database } from 'firebase/database';
+import { getStorage, FirebaseStorage } from 'firebase/storage';
 import {
   GoogleAuthProvider,
   getAuth,
@@ -28,6 +29,7 @@ export function Auth({
   // An effect triggered at page load is needed to act after the redirect
   // Note: an empty dependency array means the useEffect hook will run once when the component mounts
   let firebaseDb: Database | null = null;
+  let firebaseStorage: FirebaseStorage | null = null;
 
   const firebaseApp = initializeApp(FIREBASE_CONFIG);
   const firebaseAuth = getAuth(firebaseApp);
@@ -42,10 +44,12 @@ export function Auth({
       // const idToken = await user.getIdToken();
 
       firebaseDb = getDatabase(firebaseApp);
+      firebaseStorage = getStorage(firebaseApp);
 
       const rtdbCred: RtdbCred = {
         user: user,
         db: firebaseDb,
+        storage: firebaseStorage,
         displayUserId: null,
       };
       if (firebaseDb !== null) {
@@ -63,6 +67,7 @@ export function Auth({
       const rtdbCred: RtdbCred = {
         user: null,
         db: null,
+        storage: null,
         displayUserId: null,
       };
       setRtdbCred(rtdbCred);
