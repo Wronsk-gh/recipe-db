@@ -1,6 +1,8 @@
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { initializeApp } from 'firebase/app';
 
+import { FIREBASE_CONFIG } from '../firebase-config';
+
 const DRIVE_API_KEY = 'AIzaSyA1kUO5D0N0KAyNP4QVruujJocM7YM6IQc';
 
 // Discovery doc URL for APIs used by the quickstart
@@ -8,17 +10,6 @@ const DRIVE_DISCOVERY_DOC =
   'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
 const DOCS_DISCOVERY_DOC =
   'https://docs.googleapis.com/$discovery/rest?version=v1';
-
-const FIREBASE_CONFIG = {
-  apiKey: 'AIzaSyA1kUO5D0N0KAyNP4QVruujJocM7YM6IQc',
-  authDomain: 'oca-drive-manage.firebaseapp.com',
-  databaseURL:
-    'https://oca-drive-manage-default-rtdb.europe-west1.firebasedatabase.app',
-  projectId: 'oca-drive-manage',
-  storageBucket: 'oca-drive-manage.appspot.com',
-  messagingSenderId: '387763281186',
-  appId: '1:387763281186:web:73ee9da15e8db71629997b',
-};
 
 const firebaseApp = initializeApp(FIREBASE_CONFIG);
 const firebaseFunctions = getFunctions(firebaseApp, 'europe-west1');
