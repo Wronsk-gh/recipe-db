@@ -45,7 +45,7 @@ function RecipeTableLoaded({ recipes }: { recipes: Recipe[] }) {
           flexWrap: 'wrap',
           columnGap: '10px',
           rowGap: '10px',
-          justifyContent: 'left',
+          justifyContent: 'center',
         }}
       >
         {rows}
