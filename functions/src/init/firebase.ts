@@ -15,13 +15,16 @@ export const grant_type = 'refresh_token';
 
 // Initialize the app with a service account, granting admin privileges
 admin.initializeApp({
+  projectId: 'oca-drive-manage',
   credential: admin.credential.cert(serviceAccount),
   // The database URL depends on the location of the database
   databaseURL:
     'https://oca-drive-manage-default-rtdb.europe-west1.firebasedatabase.app',
+  storageBucket: 'oca-drive-manage.firebasestorage.app',
 });
 
 export { admin };
 
 // As an admin, the app has access to read and write all data, regardless of Security Rules
 export const db = admin.database();
+export const storage = admin.storage();
