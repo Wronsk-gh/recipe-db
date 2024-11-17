@@ -11,5 +11,7 @@ node_modules/
 # Key for the project (https://console.firebase.google.com/u/0/project/oca-drive-manage/settings/serviceaccounts/adminsdk - Create a new service account and download the key as JSON file. Rename it to serviceAccountKey.json and put it in the root of the project.)
 serviceAccountKey.json
 
-# Client secret for the project (TODO URL - Create a new OAuth 2.0 client ID and download the JSON file. Rename it to client_secret.json and put it in the root of the project.)
+# Client secret for the project (Create a new OAuth 2.0 client ID and download the JSON file. Rename it to client_secret.json and put it in the root of the project.)
+# From https://console.cloud.google.com/apis/credentials?inv=1&invt=AbhoCg&project=oca-drive-manage
+# Download the OAuth 2.0 Client IDs for the application, for this one it is https://console.cloud.google.com/apis/credentials/oauthclient/387763281186-20mdm0pvsh03guh6g55av1cl2364869l.apps.googleusercontent.com?inv=1&invt=AbhoCg&project=oca-drive-manage
 client_secret.json
