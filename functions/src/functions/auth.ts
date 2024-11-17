@@ -2,7 +2,7 @@ import {
   beforeUserCreated,
   beforeUserSignedIn,
 } from 'firebase-functions/v2/identity';
-import { onCall } from 'firebase-functions/v2/https';
+import { onCall, HttpsError } from 'firebase-functions/v2/https';
 // import { debug } from 'firebase-functions/logger';
 import {
   db,
@@ -15,22 +15,46 @@ import {
 export const beforecreated = beforeUserCreated(
   { region: 'europe-west1' },
   (event) => {
-    const user = event.data;
-    // Store the refresh token for later offline use.
-    // These will only be returned if refresh tokens credentials are included
-    // (enabled by Cloud console).
-    return saveUserRefreshToken(user.uid, event.credential?.refreshToken ?? '');
+    try {
+      const user = event.data;
+
+      if (!user) {
+        throw new Error('No user provided.');
+      }
+      // Store the refresh token for later offline use.
+      // These will only be returned if refresh tokens credentials are included
+      // (enabled by Cloud console).
+      return saveUserRefreshToken(
+        user.uid,
+        event.credential?.refreshToken ?? ''
+      );
+    } catch (error) {
+      console.error('Error storing refreshToken:', error);
+      throw new HttpsError('internal', 'Unable to store refreshToken', error);
+    }
   }
 );
 
 export const beforesignedin = beforeUserSignedIn(
   { region: 'europe-west1' },
   (event) => {
-    const user = event.data;
-    // Store the refresh token for later offline use.
-    // These will only be returned if refresh tokens credentials are included
-    // (enabled by Cloud console).
-    return saveUserRefreshToken(user.uid, event.credential?.refreshToken ?? '');
+    try {
+      const user = event.data;
+
+      if (!user) {
+        throw new Error('No user provided.');
+      }
+      // Store the refresh token for later offline use.
+      // These will only be returned if refresh tokens credentials are included
+      // (enabled by Cloud console).
+      return saveUserRefreshToken(
+        user.uid,
+        event.credential?.refreshToken ?? ''
+      );
+    } catch (error) {
+      console.error('Error storing refreshToken:', error);
+      throw new HttpsError('internal', 'Unable to store refreshToken', error);
+    }
   }
 );
 
