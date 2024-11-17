@@ -2,6 +2,11 @@
 
 Created with CodeSandbox
 
+# To edit cors policy for firebase functions :
+
+use cors.json and follow the link below
+https://firebase.google.com/docs/storage/web/download-files#cors_configuration
+
 ## Backlog :
 
 - [ ] Optimise firebase functions (https://firebase.google.com/docs/functions/networking)
