@@ -18,12 +18,11 @@ import {
   beforesignedin,
   getRefreshedAccessToken,
 } from './functions/auth';
-import { testDrive, saveDriveThumbnail } from './functions/thumbnails';
+import { saveDriveThumbnail } from './functions/thumbnails';
 
 export {
   beforecreated,
   beforesignedin,
   getRefreshedAccessToken,
-  testDrive,
   saveDriveThumbnail,
 };
