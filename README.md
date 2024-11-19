@@ -12,7 +12,7 @@ https://firebase.google.com/docs/storage/web/download-files#cors_configuration
 - [ ] Optimise firebase functions (https://firebase.google.com/docs/functions/networking)
   - Implement a persistent connection object
 - [x] Implement security rules for firestore
-- [ ] Implement a hash in metadata of thumbnails to check before uploading a new version
+- [x] Implement a hash in metadata of thumbnails to check before uploading a new version
 - [ ] Do not use multi define FIREBASE \_CONFIG, and use call initialiseApp a single time and share the instance...
 - [ ] Do not store the thumbnails as blobs but let the browser download such that caching works correctly ?
 - [ ] Add the tag 'New' to newly added recipes

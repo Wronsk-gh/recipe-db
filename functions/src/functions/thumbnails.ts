@@ -11,6 +11,7 @@ import * as functions from 'firebase-functions';
 import * as util from 'util';
 import * as fs from 'fs';
 import { join } from 'path';
+import { createHash } from 'crypto';
 
 // export const testDrive = onCall(
 //   { region: 'europe-west1' },
@@ -127,18 +128,50 @@ export const saveDriveThumbnail = onCall(
       // Define storage path
       const filePath = `${uid}/thumbnails/${fileId}.png`;
 
-      // Upload to Firebase Storage
-      const bucket = storage.bucket();
-      await bucket.file(filePath).save(Buffer.from(buffer), {
-        contentType: 'image/png',
-        metadata: {
-          metadata: {
-            firebaseStorageDownloadTokens: fileId, // Optional
-          },
-        },
-      });
+      // Compute hash of the image to store
+      const md5Hash = createHash('md5')
+        .update(Buffer.from(buffer))
+        .digest('hex');
 
-      return { message: 'Thumbnail stored successfully!', filePath: filePath };
+      // Get the bucket reference
+      const bucket = storage.bucket();
+
+      // Get the filemetadata (if existing)
+      const file = bucket.file(filePath);
+      let existingMd5Hash;
+      try {
+        const [metadata] = await file.getMetadata();
+        // console.log(util.inspect(metadata));
+        existingMd5Hash = metadata.metadata.md5Hash;
+        console.log('MD5 Hash from metadata:', existingMd5Hash);
+      } catch (error) {
+        existingMd5Hash = '';
+      }
+
+      if (existingMd5Hash === md5Hash) {
+        console.log('Hash are matching, no need to upload');
+        return {
+          message: 'Thumbnail is already stored!',
+          filePath: filePath,
+        };
+      } else {
+        console.log('Hash are differing, uploading to firestore');
+        // Upload to Firebase Storage
+        await file.save(Buffer.from(buffer), {
+          contentType: 'image/png',
+          metadata: {
+            metadata: {
+              firebaseStorageDownloadTokens: fileId,
+              md5Hash: md5Hash,
+            },
+          },
+        });
+
+        return {
+          message: 'Thumbnail stored successfully!',
+          filePath: filePath,
+        };
+      }
     } catch (error) {
       console.error('Error fetching and storing thumbnail:', error);
       throw new functions.https.HttpsError(
