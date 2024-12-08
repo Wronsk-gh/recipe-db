@@ -30,6 +30,7 @@ export function getRecipe(
     ingredients: getRecipeIngredients(recipeId, recipesDb),
     months: getRecipeMonths(recipeId, recipesDb, ingredientsDb, monthsDb),
     tags: getRecipeTags(recipeId, recipesDb, ingredientsDb),
+    thumbnailInfo: recipesDb[recipeId].thumbnailInfo,
   };
   return recipe;
 }
@@ -143,6 +144,7 @@ export function getRecipeDbRepr(recipe: Recipe): RecipeDb {
     name: recipe.name,
     google_id: recipe.google_id,
     isFavourite: recipe.isFavourite,
+    thumbnailInfo: recipe.thumbnailInfo,
   };
   return recipeDb;
 }

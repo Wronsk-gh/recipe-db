@@ -19,10 +19,14 @@ import {
   getRefreshedAccessToken,
 } from './functions/auth';
 import { saveDriveThumbnail } from './functions/thumbnails';
+import { getDriveFilesIds } from './functions/driveFiles';
+import { testDriveAuth } from './functions/testDriveAuth';
 
 export {
   beforecreated,
   beforesignedin,
   getRefreshedAccessToken,
   saveDriveThumbnail,
+  getDriveFilesIds,
+  testDriveAuth,
 };

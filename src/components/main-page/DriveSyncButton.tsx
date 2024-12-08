@@ -13,7 +13,7 @@ import { useContext } from 'react';
 import { RtdbContext } from '../auth/RtdbContext';
 import { useGetRecipesDbQuery } from '../../hooks/recipe/useGetRecipesDbQuery';
 import { useNewRecipesMutation } from '../../hooks/recipe/useNewRecipesMutation';
-import { storeAndFetchThumbnailLink } from '../../models/gapiUtils';
+import { getDriveFilesIds } from '../../models/gapiUtils';
 
 export function DriveSyncButton() {
   const { data: recipes } = useGetRecipesDbQuery();
@@ -173,48 +173,18 @@ function getDbGoogleIdsNames(recipes: RecipesDb): { [id: string]: string } {
 async function getGapiGoogleIdsNames(
   rtdbCred: RtdbCred
 ): Promise<{ [id: string]: string }> {
-  let response;
-  let page_token: string | undefined = '';
-  const allFiles: gapi.client.drive.File[] = [];
-  // Using an object with keys allow for setting duplicate entries as one
-  const idsNamesList: { [id: string]: string } = {};
-
-  const driveFolderId = await fetchDriveFolderId(rtdbCred);
-
   try {
-    while (true) {
-      // Send the request to gdrive api
-      response = await gapi.client.drive.files.list({
-        pageSize: 500,
-        fields: 'nextPageToken,files(id, name)',
-        q: `'${driveFolderId}' in parents and trashed=false`,
-        pageToken: page_token,
-      });
-
-      // Get the received files and append them to the list
-      const files = response.result.files;
-      if (files !== undefined && files.length > 0) {
-        allFiles.push(...files);
-      }
-      // Prepare next request or break out if there are no more items
-      page_token = response.result.nextPageToken;
-      if (page_token === undefined) {
-        break;
-      }
-    }
+    const driveFolderId = await fetchDriveFolderId(rtdbCred);
+    const result = await getDriveFilesIds({ folderId: driveFolderId });
+    console.log(result.data.message);
+    const idsNamesList = result.data.idsNamesDict;
+    return idsNamesList;
   } catch (err) {
     if (err instanceof Error) {
       console.log(err.message);
     }
     return {};
   }
-
-  // Create the set of google ids present in the Drive folder
-  allFiles.forEach((file) => {
-    idsNamesList[file!.id!] = file!.name!;
-  });
-
-  return idsNamesList;
 }
 
 // Set operation 'A - B' (aka return elements that are present in A, but not in B)

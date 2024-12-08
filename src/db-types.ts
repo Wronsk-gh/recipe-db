@@ -42,6 +42,10 @@ export type RecipeDb = {
   isFavourite?: boolean;
   name: string;
   google_id: string;
+  thumbnailInfo?: {
+    link: string;
+    lastRefreshed: number;
+  };
 };
 
 export type RecipesDb = {
@@ -91,4 +95,8 @@ export type Recipe = {
   ingredients: IdsList;
   months: IdsList;
   tags: IdsList;
+  thumbnailInfo?: {
+    link: string;
+    lastRefreshed: number;
+  };
 };

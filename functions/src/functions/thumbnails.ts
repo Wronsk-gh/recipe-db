@@ -8,10 +8,11 @@ import {
 import { getUserRefreshToken } from './auth';
 import { google } from 'googleapis';
 import * as functions from 'firebase-functions';
-import * as util from 'util';
+import { inspect } from 'util';
 import * as fs from 'fs';
 import { join } from 'path';
 import { createHash } from 'crypto';
+import { gaxios } from 'google-auth-library';
 
 // export const testDrive = onCall(
 //   { region: 'europe-west1' },
@@ -101,6 +102,7 @@ export const saveDriveThumbnail = onCall(
       }
 
       console.log(`Fetching ${fileId}`);
+
       // Fetch the file metadata to get the thumbnail link
       const fileMetadata = await drive.files.get({
         fileId: fileId,
@@ -141,7 +143,6 @@ export const saveDriveThumbnail = onCall(
       let existingMd5Hash;
       try {
         const [metadata] = await file.getMetadata();
-        // console.log(util.inspect(metadata));
         existingMd5Hash = metadata.metadata.md5Hash;
         console.log('MD5 Hash from metadata:', existingMd5Hash);
       } catch (error) {
@@ -150,35 +151,60 @@ export const saveDriveThumbnail = onCall(
 
       if (existingMd5Hash === md5Hash) {
         console.log('Hash are matching, no need to upload');
-        return {
-          message: 'Thumbnail is already stored!',
-          filePath: filePath,
-        };
       } else {
         console.log('Hash are differing, uploading to firestore');
         // Upload to Firebase Storage
         await file.save(Buffer.from(buffer), {
           contentType: 'image/png',
           metadata: {
+            cacheControl: 'private, max-age=3600', // Cache for 1 hour
             metadata: {
               firebaseStorageDownloadTokens: fileId,
               md5Hash: md5Hash,
             },
           },
         });
-
-        return {
-          message: 'Thumbnail stored successfully!',
-          filePath: filePath,
-        };
       }
+
+      // console.log('Hash are differing, uploading to firestore');
+      // // Upload to Firebase Storage
+      // await file.save(Buffer.from(buffer), {
+      //   contentType: 'image/png',
+      //   metadata: {
+      //     cacheControl: 'private, max-age=3600', // Cache for 1 hour
+      //     metadata: {
+      //       firebaseStorageDownloadTokens: fileId,
+      //       md5Hash: md5Hash,
+      //     },
+      //   },
+      // });
+
+      // const metadata = await file.getMetadata();
+      // console.log("here's the metadata :");
+      // console.log(inspect(metadata));
+
+      return {
+        message: 'Thumbnail stored successfully!',
+        filePath: filePath,
+      };
     } catch (error) {
       console.error('Error fetching and storing thumbnail:', error);
-      throw new functions.https.HttpsError(
-        'internal',
-        'Unable to fetch and store thumbnail',
-        error
-      );
+      if (
+        error instanceof gaxios.GaxiosError &&
+        error.message === 'invalid_grant'
+      ) {
+        throw new functions.https.HttpsError(
+          'internal',
+          'invalid_grant',
+          error
+        );
+      } else {
+        throw new functions.https.HttpsError(
+          'internal',
+          'Unable to fetch and store thumbnail',
+          error
+        );
+      }
     }
   }
 );

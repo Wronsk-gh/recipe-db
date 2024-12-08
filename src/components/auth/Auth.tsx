@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, Dispatch } from 'react';
 import { RtdbCred, fetchDisplay } from '../../rtdb';
 
-import { initializeApp } from 'firebase/app';
+import { FirebaseError, initializeApp } from 'firebase/app';
 import { getDatabase, Database } from 'firebase/database';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
 import {
@@ -14,6 +14,8 @@ import {
 } from 'firebase/auth';
 import { refreshGapiAccessToken } from '../../models/gapiUtils';
 
+import { testDriveAuth } from '../../models/gapiUtils';
+
 import { FIREBASE_CONFIG } from '../../firebase-config';
 
 // Authorization scopes required by the API; multiple scopes can be
@@ -23,8 +25,10 @@ const DRIVE_SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
 
 export function Auth({
   setRtdbCred,
+  driveAuthorisationDispatch,
 }: {
   setRtdbCred: (rtdbCred: RtdbCred) => void;
+  driveAuthorisationDispatch: Dispatch<{ type: string }>;
 }) {
   // An effect triggered at page load is needed to act after the redirect
   // Note: an empty dependency array means the useEffect hook will run once when the component mounts
@@ -56,10 +60,29 @@ export function Auth({
         rtdbCred.displayUserId = await fetchDisplay(rtdbCred);
       }
 
-      // Set the initial gapi client token
-      await refreshGapiAccessToken();
+      // // Set the initial gapi client token
+      // await refreshGapiAccessToken();
 
       setRtdbCred(rtdbCred);
+      try {
+        console.log('trying the drive auth');
+        await testDriveAuth();
+        console.log('If I end up here, then I m authorized');
+        driveAuthorisationDispatch({ type: 'authorized' });
+      } catch (error) {
+        if (
+          error instanceof FirebaseError &&
+          error.message === 'invalid_grant'
+        ) {
+          console.log(
+            'If I end up here, then I m NOT authorized (invalid_grant)'
+          );
+          driveAuthorisationDispatch({ type: 'invalid_grant' });
+        } else {
+          console.log('Unrecognized error...');
+          throw error;
+        }
+      }
     } else {
       // User is signed out
       // ...

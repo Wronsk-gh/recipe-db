@@ -1,14 +1,27 @@
 import { RtdbCred } from '../../rtdb';
-import { useState } from 'react';
+import { useState, useReducer, useEffect } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { DriveSyncButton } from './DriveSyncButton';
 import { SettingsButton } from './SettingsButton';
 
+import { DriveAuthorizationDispatchContext } from '../auth/DriveAuthorizationDispatchContext';
 import { RtdbContext } from '../auth/RtdbContext';
 import { Auth } from '../auth/Auth';
+import { testDriveAuth } from '../../models/gapiUtils';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import { FirebaseError } from '@firebase/app';
+
+function driveAuthorisationReducer(state: boolean, action: { type: string }) {
+  if (action.type === 'authorized') {
+    return true;
+  } else if (action.type === 'invalid_grant') {
+    return false;
+  } else {
+    return false;
+  }
+}
 
 export function RecipeManager() {
   const [rtdbCred, setRtdbCred] = useState<RtdbCred>({
@@ -17,6 +30,30 @@ export function RecipeManager() {
     storage: null,
     displayUserId: null,
   });
+  // const [driveAuthorisationState, driveAuthorisationDispatch] = useReducer(
+  //   driveAuthorisationReducer,
+  //   false
+  // );
+  const [driveAuthorisationState, driveAuthorisationDispatch] = useReducer(
+    driveAuthorisationReducer,
+    false
+  );
+
+  // // Perform a test of drive authorisation when loading the app
+  // useEffect(() => {
+  //   async function runTestDriveAuth() {
+  //     await testDriveAuth();
+  //   }
+  //   try {
+  //     runTestDriveAuth();
+  //   } catch (error) {
+  //     if (error instanceof FirebaseError && error.message === 'invalid_grant') {
+  //       driveAuthorisationDispatch({ type: 'invalid_grant' });
+  //     } else {
+  //       throw error;
+  //     }
+  //   }
+  // }, []);
 
   return (
     <>
@@ -38,15 +75,22 @@ export function RecipeManager() {
         </Navbar.Collapse>
       </Navbar>
 
-      <Auth setRtdbCred={setRtdbCred} />
+      <Auth
+        setRtdbCred={setRtdbCred}
+        driveAuthorisationDispatch={driveAuthorisationDispatch}
+      />
       <RtdbContext.Provider value={rtdbCred}>
-        <DriveSyncButton />
-        <SettingsButton />
-        <br />
-        <br />
-        <br />
-        {/* {rtdbCred.user ? <Outlet /> : <div>Please log in !</div>} */}
-        <Outlet />
+        <DriveAuthorizationDispatchContext.Provider
+          value={driveAuthorisationDispatch}
+        >
+          <DriveSyncButton />
+          <SettingsButton />
+          <br />
+          <br />
+          <br />
+          {driveAuthorisationState ? <Outlet /> : <div>Please log in !</div>}
+          {/* <Outlet /> */}
+        </DriveAuthorizationDispatchContext.Provider>
       </RtdbContext.Provider>
     </>
   );
