@@ -45,6 +45,7 @@ function RecipeTableLoaded({ recipes }: { recipes: Recipe[] }) {
         }}
       >
         {rows}
+        {/* {rows[0]} */}
       </div>
     </div>
   );
