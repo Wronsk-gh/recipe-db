@@ -13,7 +13,7 @@ import {
 } from '../init/firebase';
 
 export const beforecreated = beforeUserCreated(
-  { region: 'europe-west1' },
+  { region: 'europe-west1', refreshToken: true },
   (event) => {
     try {
       const user = event.data;
@@ -36,7 +36,7 @@ export const beforecreated = beforeUserCreated(
 );
 
 export const beforesignedin = beforeUserSignedIn(
-  { region: 'europe-west1' },
+  { region: 'europe-west1', refreshToken: true },
   (event) => {
     try {
       const user = event.data;
