@@ -3,7 +3,6 @@ import {
   app_client_id,
   app_client_secret,
   app_redirect_uris,
-  storage,
 } from '../init/firebase';
 import { getUserRefreshToken } from './auth';
 import { google } from 'googleapis';

@@ -1,10 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Recipe } from '../../db-types';
-import {
-  isRefreshingToken,
-  gapiAuthorized,
-  storeAndFetchThumbnailLink,
-} from '../../models/gapiUtils';
+import { storeAndFetchThumbnailLink } from '../../models/gapiUtils';
 import { useContext } from 'react';
 import { RtdbContext } from '../../components/auth/RtdbContext';
 import { useGetRecipesDbQuery } from './useGetRecipesDbQuery';
@@ -44,7 +40,7 @@ export function useGetRecipeThumbnailLink(recipe: Recipe): string {
         }
       }
     },
-    enabled: !isRefreshingToken,
+    // enabled: !isRefreshingToken,
     // staleTime: 10 * 60 * 1000, // 10 minute
   });
 

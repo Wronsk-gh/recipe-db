@@ -23,8 +23,6 @@ admin.initializeApp({
   storageBucket: 'oca-drive-manage.firebasestorage.app',
 });
 
-export { admin };
-
 // As an admin, the app has access to read and write all data, regardless of Security Rules
 export const db = admin.database();
 export const storage = admin.storage();

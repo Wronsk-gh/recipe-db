@@ -12,7 +12,6 @@ import {
   User,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { refreshGapiAccessToken } from '../../models/gapiUtils';
 
 import { testDriveAuth } from '../../models/gapiUtils';
 
@@ -130,14 +129,9 @@ export function Auth({
     handleAuthClick();
   }
 
-  async function onTokenButtonClick() {
-    await refreshGapiAccessToken();
-  }
-
   return (
     <>
       <button onClick={onButtonClick}>Auth</button>
-      <button onClick={onTokenButtonClick}>get token</button>
     </>
   );
 }

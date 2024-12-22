@@ -13,11 +13,7 @@
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
-import {
-  beforecreated,
-  beforesignedin,
-  getRefreshedAccessToken,
-} from './functions/auth';
+import { beforecreated, beforesignedin } from './functions/auth';
 import { saveDriveThumbnail } from './functions/thumbnails';
 import { getDriveFilesIds } from './functions/driveFiles';
 import { testDriveAuth } from './functions/testDriveAuth';
@@ -25,7 +21,6 @@ import { testDriveAuth } from './functions/testDriveAuth';
 export {
   beforecreated,
   beforesignedin,
-  getRefreshedAccessToken,
   saveDriveThumbnail,
   getDriveFilesIds,
   testDriveAuth,
