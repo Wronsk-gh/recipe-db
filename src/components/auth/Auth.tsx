@@ -13,7 +13,7 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth';
 
-import { testDriveAuth } from '../../models/gapiUtils';
+import { testDriveAuth } from '../../models/funcUtils';
 
 import { FIREBASE_CONFIG } from '../../firebase-config';
 

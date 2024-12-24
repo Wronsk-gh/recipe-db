@@ -7,7 +7,7 @@ import { SettingsButton } from './SettingsButton';
 import { DriveAuthorizationDispatchContext } from '../auth/DriveAuthorizationDispatchContext';
 import { RtdbContext } from '../auth/RtdbContext';
 import { Auth } from '../auth/Auth';
-import { testDriveAuth } from '../../models/gapiUtils';
+import { testDriveAuth } from '../../models/funcUtils';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';

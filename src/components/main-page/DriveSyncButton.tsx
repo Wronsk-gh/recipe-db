@@ -13,7 +13,7 @@ import { useContext } from 'react';
 import { RtdbContext } from '../auth/RtdbContext';
 import { useGetRecipesDbQuery } from '../../hooks/recipe/useGetRecipesDbQuery';
 import { useNewRecipesMutation } from '../../hooks/recipe/useNewRecipesMutation';
-import { getDriveFilesIds } from '../../models/gapiUtils';
+import { getDriveFilesIds } from '../../models/funcUtils';
 
 export function DriveSyncButton() {
   const { data: recipes } = useGetRecipesDbQuery();

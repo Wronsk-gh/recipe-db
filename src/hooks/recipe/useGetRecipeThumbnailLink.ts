@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Recipe } from '../../db-types';
-import { storeAndFetchThumbnailLink } from '../../models/gapiUtils';
+import { storeAndFetchThumbnailLink } from '../../models/funcUtils';
 import { useContext } from 'react';
 import { RtdbContext } from '../../components/auth/RtdbContext';
 import { useGetRecipesDbQuery } from './useGetRecipesDbQuery';
