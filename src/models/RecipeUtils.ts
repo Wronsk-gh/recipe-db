@@ -4,7 +4,7 @@ import {
   RecipesDb,
   IdsList,
   IdsDict,
-} from '../db-types';
+} from './db-types';
 import {
   Recipe,
   Ingredient,
@@ -14,7 +14,7 @@ import {
   TagsDb,
   TagDb,
   Tag,
-} from '../db-types';
+} from './db-types';
 
 export function getRecipe(
   recipeId: string,

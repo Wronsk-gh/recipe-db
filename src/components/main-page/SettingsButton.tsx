@@ -7,7 +7,7 @@ import { RtdbContext } from '../auth/RtdbContext';
 import {
   fetchDriveFolderId,
   updateDriveFolderIdDisplayUserDb,
-} from '../../rtdb';
+} from '../../models/rtdb';
 
 export function SettingsButton() {
   const rtdbCred = useContext(RtdbContext);

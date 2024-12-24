@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RtdbContext } from '../../components/auth/RtdbContext';
-import { updateTagDisplayUserDb } from '../../rtdb';
-import { Tag } from '../../db-types';
+import { updateTagDisplayUserDb } from '../../models/rtdb';
+import { Tag } from '../../models/db-types';
 
 export function useTagMutation() {
   // Get QueryClient from the context

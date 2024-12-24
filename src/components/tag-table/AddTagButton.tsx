@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createTagDisplayUserDb } from '../../rtdb';
+import { createTagDisplayUserDb } from '../../models/rtdb';
 
 import { useContext } from 'react';
 import { RtdbContext } from '../auth/RtdbContext';

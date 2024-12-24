@@ -1,4 +1,4 @@
-import { RtdbCred } from '../../rtdb';
+import { RtdbCred } from '../../models/rtdb';
 import { useState, useReducer, useEffect } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { DriveSyncButton } from './DriveSyncButton';

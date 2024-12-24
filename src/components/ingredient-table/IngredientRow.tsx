@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { MonthBar } from '../ui/MonthBar';
-import { Ingredient } from '../../db-types';
+import { Ingredient } from '../../models/db-types';
 import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import { IngredientEditModal } from './IngredientEditModal';

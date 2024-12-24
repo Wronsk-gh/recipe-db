@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { Tag } from '../../db-types';
+import { Tag } from '../../models/db-types';
 import { useGetTag } from '../../hooks/tag/useGetTag';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';

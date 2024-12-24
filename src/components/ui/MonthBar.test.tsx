@@ -1,7 +1,7 @@
 // FILEPATH: /d:/Projects/recipe-db/src/components/ui/MonthBar.test.tsx
 import { render, screen } from '@testing-library/react';
 import { MonthBar } from './MonthBar';
-import { IdsList } from '../../db-types';
+import { IdsList } from '../../models/db-types';
 
 jest.mock('../../hooks/month/useGetAllMonths', () => ({
   useGetAllMonths: () => [

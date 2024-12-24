@@ -26,7 +26,7 @@ import {
   getRecipeDbRepr,
   getIngredientDbRepr,
   getTagDbRepr,
-} from './models/RecipeUtils';
+} from './RecipeUtils';
 
 export interface RtdbCred {
   user: User | null;

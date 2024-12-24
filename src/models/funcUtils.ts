@@ -2,12 +2,12 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 import { FirebaseError, initializeApp } from 'firebase/app';
 
 import { connectFunctionsEmulator } from 'firebase/functions';
-import { getFileLink } from '../storage';
+import { getFileLink } from './storage';
 
-import { RtdbCred, updateRecipeDisplayUserDb } from '../rtdb';
+import { RtdbCred, updateRecipeDisplayUserDb } from './rtdb';
 
 import { FIREBASE_CONFIG } from '../firebase-config';
-import { Recipe } from '../db-types';
+import { Recipe } from './db-types';
 
 const firebaseApp = initializeApp(FIREBASE_CONFIG);
 const firebaseFunctions = getFunctions(firebaseApp, 'europe-west1');

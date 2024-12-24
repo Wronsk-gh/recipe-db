@@ -1,6 +1,6 @@
 // import '../App.css';
 import { TagRow } from './TagRow';
-import { Tag } from '../../db-types';
+import { Tag } from '../../models/db-types';
 import { useGetAllTags } from '../../hooks/tag/useGetAllTags';
 import { AddTagButton } from './AddTagButton';
 import { useGetIsRecipesLoading } from '../../hooks/db/useGetIsDbLoading';

@@ -1,4 +1,4 @@
-import { ObjectWithId, ObjectWithName } from '../../db-types';
+import { ObjectWithId, ObjectWithName } from '../../models/db-types';
 import { Column, Table } from '@tanstack/react-table';
 import { ComboSelect } from '../ui/ComboSelect';
 

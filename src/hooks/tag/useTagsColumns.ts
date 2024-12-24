@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Tag } from '../../db-types';
+import { Tag } from '../../models/db-types';
 
 export function useTagsColumns() {
   const columns = useMemo<ColumnDef<Tag>[]>(

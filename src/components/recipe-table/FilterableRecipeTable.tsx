@@ -4,23 +4,26 @@ import {
   IngredientsDb,
   RecipesDb,
   RecipesThumbnails,
-} from '../../db-types';
+} from '../../models/db-types';
 import { RecipeTable } from './RecipeTable';
 import { useOutletContext } from 'react-router-dom';
 import { useGetAllRecipes } from '../../hooks/recipe/useGetAllRecipes';
 import { useGetAllMonths } from '../../hooks/month/useGetAllMonths';
 import { useGetAllIngredients } from '../../hooks/ingredient/useGetAllIngredients';
 
-export function FilterableRecipeTable({} // months,
-// ingredients,
-// recipes,
-// recipesThumbnails,
-: {
-  // months: MonthsDb;
-  // ingredients: IngredientsDb;
-  // recipes: RecipesDb;
-  // recipesThumbnails: RecipesThumbnails;
-}) {
+export function FilterableRecipeTable(
+  {
+    // ingredients,
+    // recipes,
+    // recipesThumbnails,
+  } // months,
+  : {
+    // months: MonthsDb;
+    // ingredients: IngredientsDb;
+    // recipes: RecipesDb;
+    // recipesThumbnails: RecipesThumbnails;
+  }
+) {
   const [filterText, setFilterText] = useState('');
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const recipes = useGetAllRecipes();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { IdsList } from '../../db-types';
+import { IdsList } from '../../models/db-types';
 import { useGetAllMonths } from '../../hooks/month/useGetAllMonths';
 
 export function MonthBar({ selectedMonths }: { selectedMonths: IdsList }) {

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useContext } from 'react';
 import { RtdbContext } from '../../components/auth/RtdbContext';
-import { fetchTags } from '../../rtdb';
+import { fetchTags } from '../../models/rtdb';
 
 export function useGetTagsDbQuery() {
   const rtdbCred = useContext(RtdbContext);

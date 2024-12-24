@@ -1,6 +1,6 @@
 // import '../App.css';
 import { IngredientRow } from './IngredientRow';
-import { Ingredient } from '../../db-types';
+import { Ingredient } from '../../models/db-types';
 import { AddIngredientButton } from './AddIngredientButton';
 import { useGetAllIngredients } from '../../hooks/ingredient/useGetAllIngredients';
 import { useGetIsRecipesLoading } from '../../hooks/db/useGetIsDbLoading';

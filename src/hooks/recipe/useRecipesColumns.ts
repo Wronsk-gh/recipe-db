@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useGetAllMonths } from '../month/useGetAllMonths';
 import { useGetAllIngredients } from '../ingredient/useGetAllIngredients';
 import { ColumnDef } from '@tanstack/react-table';
-import { Recipe } from '../../db-types';
+import { Recipe } from '../../models/db-types';
 import { useGetAllTags } from '../tag/useGetAllTags';
 
 export function useRecipesColumns() {

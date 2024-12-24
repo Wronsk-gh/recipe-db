@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ObjectWithId, ObjectWithName } from '../../db-types';
+import { ObjectWithId, ObjectWithName } from '../../models/db-types';
 import { useMultipleSelection, useCombobox } from 'downshift';
 
 function itemToString(item: (ObjectWithName & ObjectWithId) | null) {

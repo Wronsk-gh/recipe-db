@@ -5,7 +5,7 @@ import { ComboSelect } from '../ui/ComboSelect';
 import { useGetAllMonths } from '../../hooks/month/useGetAllMonths';
 import { useGetMonthsDbQuery } from '../../hooks/month/useGetMonthsDbQuery';
 import { useGetIngredient } from '../../hooks/ingredient/useGetIngredient';
-import { Ingredient } from '../../db-types';
+import { Ingredient } from '../../models/db-types';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
 import { useGetAllTags } from '../../hooks/tag/useGetAllTags';

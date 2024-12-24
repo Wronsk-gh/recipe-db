@@ -1,5 +1,5 @@
 import { useEffect, Dispatch } from 'react';
-import { RtdbCred, fetchDisplay } from '../../rtdb';
+import { RtdbCred, fetchDisplay } from '../../models/rtdb';
 
 import { FirebaseError, initializeApp } from 'firebase/app';
 import { getDatabase, Database } from 'firebase/database';

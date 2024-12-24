@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useGetAllMonths } from '../month/useGetAllMonths';
 import { ColumnDef } from '@tanstack/react-table';
-import { Ingredient } from '../../db-types';
+import { Ingredient } from '../../models/db-types';
 import { useGetAllTags } from '../tag/useGetAllTags';
 
 export function useIngredientsColumns() {

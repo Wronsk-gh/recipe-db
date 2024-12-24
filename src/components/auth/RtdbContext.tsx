@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { RtdbCred } from '../../rtdb';
+import { RtdbCred } from '../../models/rtdb';
 
 export const RtdbContext = createContext<RtdbCred>({
   user: null,

@@ -1,5 +1,5 @@
 import { useGetMonthsDbQuery } from './useGetMonthsDbQuery';
-import { Month } from '../../db-types';
+import { Month } from '../../models/db-types';
 import { getMonth } from '../../models/RecipeUtils';
 
 export function useGetAllMonths(): Month[] {

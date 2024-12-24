@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useContext } from 'react';
 import { RtdbContext } from '../../components/auth/RtdbContext';
-import { fetchMonths } from '../../rtdb';
+import { fetchMonths } from '../../models/rtdb';
 
 export function useGetMonthsDbQuery() {
   const rtdbCred = useContext(RtdbContext);

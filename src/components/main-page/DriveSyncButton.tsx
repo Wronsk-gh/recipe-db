@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { RecipesDb } from '../../db-types';
+import { RecipesDb } from '../../models/db-types';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { useState } from 'react';
@@ -8,7 +8,7 @@ import {
   createRecipeDisplayUserDb,
   deleteRecipeDisplayUserDb,
   fetchDriveFolderId,
-} from '../../rtdb';
+} from '../../models/rtdb';
 import { useContext } from 'react';
 import { RtdbContext } from '../auth/RtdbContext';
 import { useGetRecipesDbQuery } from '../../hooks/recipe/useGetRecipesDbQuery';

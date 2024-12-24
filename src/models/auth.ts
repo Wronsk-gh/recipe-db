@@ -9,7 +9,7 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth';
 
-import { FIREBASE_CONFIG } from './firebase-config';
+import { FIREBASE_CONFIG } from '../firebase-config';
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.

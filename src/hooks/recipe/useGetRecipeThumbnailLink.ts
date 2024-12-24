@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Recipe } from '../../db-types';
+import { Recipe } from '../../models/db-types';
 import { storeAndFetchThumbnailLink } from '../../models/funcUtils';
 import { useContext } from 'react';
 import { RtdbContext } from '../../components/auth/RtdbContext';

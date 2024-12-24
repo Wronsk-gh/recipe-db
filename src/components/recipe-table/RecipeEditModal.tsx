@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { TagBox } from '../ui/TagBox';
-import { TagBadge } from '../../db-types';
+import { TagBadge } from '../../models/db-types';
 import { ComboSelect } from '../ui/ComboSelect';
 import { useGetAllIngredients } from '../../hooks/ingredient/useGetAllIngredients';
 import { useGetAllTags } from '../../hooks/tag/useGetAllTags';
@@ -10,7 +10,7 @@ import { useGetIngredientsDbQuery } from '../../hooks/ingredient/useGetIngredien
 import { useGetTagsDbQuery } from '../../hooks/tag/useGetTagsDbQuery';
 import { useGetRecipe } from '../../hooks/recipe/useGetRecipe';
 import { useRecipeMutation } from '../../hooks/recipe/useRecipeMutation';
-import { Recipe } from '../../db-types';
+import { Recipe } from '../../models/db-types';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
 

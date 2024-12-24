@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Tag } from '../../db-types';
+import { Tag } from '../../models/db-types';
 import Card from 'react-bootstrap/Card';
 import { TagEditModal } from './TagEditModal';
 import { useGetTag } from '../../hooks/tag/useGetTag';

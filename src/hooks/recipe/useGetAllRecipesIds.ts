@@ -1,7 +1,7 @@
 import { useGetMonthsDbQuery } from '../month/useGetMonthsDbQuery';
 import { useGetIngredientsDbQuery } from '../ingredient/useGetIngredientsDbQuery';
 import { useGetRecipesDbQuery } from './useGetRecipesDbQuery';
-import { MonthsDb, IngredientsDb, RecipesDb } from '../../db-types';
+import { MonthsDb, IngredientsDb, RecipesDb } from '../../models/db-types';
 
 export function useGetAllRecipesIds(): string[] {
   const { data: recipesDbData } = useGetRecipesDbQuery();
