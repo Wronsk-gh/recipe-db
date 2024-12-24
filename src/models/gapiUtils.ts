@@ -69,35 +69,3 @@ export async function storeAndFetchThumbnailLink(
   // });
   // });
 }
-
-// async function apiCallWrapper(apiCall: () => Promise<any>): Promise<any> {
-//   try {
-//     return await apiCall();
-//   } catch (error: any) {
-//     if (error?.status === 404 || error?.status === 401) {
-//       if (!isRefreshingToken) {
-//         isRefreshingToken = true;
-//         await refreshGapiAccessToken();
-//         isRefreshingToken = false;
-//         return await apiCall();
-//       }
-//     }
-//     throw error;
-//   }
-// }
-
-// async function apiCallWrapper(apiCall: () => Promise<any>): Promise<any> {
-//   try {
-//     return await apiCall();
-//   } catch (error: any) {
-//     if (error?.status === 404 || error?.status === 401) {
-//       if (!isRefreshingToken) {
-//         isRefreshingToken = true;
-//         await refreshGapiAccessToken();
-//         isRefreshingToken = false;
-//         return await apiCall();
-//       }
-//     }
-//     throw error;
-//   }
-// }

@@ -59,9 +59,6 @@ export function Auth({
         rtdbCred.displayUserId = await fetchDisplay(rtdbCred);
       }
 
-      // // Set the initial gapi client token
-      // await refreshGapiAccessToken();
-
       setRtdbCred(rtdbCred);
       try {
         console.log('trying the drive auth');
