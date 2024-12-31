@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "build-deploy",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build-deploy",
+      "detail": "react-scripts build && firebase deploy --only hosting"
+    }
+  ]
+}
