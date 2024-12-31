@@ -9,6 +9,10 @@ https://firebase.google.com/docs/storage/web/download-files#cors_configuration
 
 ## Backlog :
 
+- [ ] Remove gapi from loading at beginning as no longer used
+- [ ] Display a loading page/animation until I finished the firebase auth process and testing the authorisation of drive
+- [ ] Optimise page load time (e.g. do not wait for gapi script to be loaded before proceeding with react rendering...)
+- [ ] Refactor queries of realtime database data to use listener events from the firebase api ? (to study)
 - [ ] Optimise firebase functions (https://firebase.google.com/docs/functions/networking)
   - Implement a persistent connection object
 - [x] Implement security rules for firestore
@@ -23,7 +27,6 @@ https://firebase.google.com/docs/storage/web/download-files#cors_configuration
 - [ ] Add the user ID in the query keys to avoid mixing up user data in case of persitent query cache
 - [ ] Check how google drive web app handles the auth and keeps the token, etc
 - [ ] Cache the access_token to avoid reauth
-- [ ] Optimise page load time (e.g. do not wait for gapi script to be loaded before proceeding with react rendering...)
 - [x] Prevent loading and api access before a user is initialised
 - [ ] Implement a persistent cache for the thumbnails such that they aren't all fetched at every refresh (e.g. with persistQueryClient plugin)
 - [ ] Ensure that the refresh token of a user is not visible by the client
@@ -84,6 +87,10 @@ return signInWithEmailAndPassword(auth, email, password);
 
 ## Bugs :
 
+- [ ] The compilation of cloud functions fails the first time I try it (TODO fill in the error message)
+  - Error message :
+    !! functions: Failed to load function definition from source: FirebaseError: User code failed to load. Cannot determine backend specification
+    -> Could it be due to having the test server running in parallel ?
 - [x] When adding new recipes (filter on pepe), the thumbnail doesn't get loaded when the recipe is displayed
   - did not occur when the recipes query key was not directly reset after addind the recipes to the database
   - seems like it occurs if the recipe is added, removed, then added again

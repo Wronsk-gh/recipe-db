@@ -9,7 +9,6 @@
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "deploy-getRefreshedAccessToken": "firebase deploy --only functions:getRefreshedAccessToken",
     "logs": "firebase functions:log"
   },
   "engines": {
